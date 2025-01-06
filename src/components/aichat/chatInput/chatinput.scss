@@ -1,0 +1,17 @@
+.chatinputContainer {
+  height: 15%;
+  // background-color: rgb(168, 168, 168);
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+
+  .inputs {
+    display: flex;
+    .input_text {
+      flex-grow: 2;
+    }
+    button {
+      flex-grow: 1;
+    }
+  }
+}
