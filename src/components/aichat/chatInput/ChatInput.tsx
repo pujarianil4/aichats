@@ -11,13 +11,8 @@ export default function ChatInput() {
   const superChatAdminAddress = "0xe80fe9b925F2717047e6f0CcF2A82367bdDf2219";
 
   const handleSendMessage = () => {
-    if (!isConnected) {
-      alert("Please connect your wallet to send a message.");
-      return;
-    }
     console.log("Sending message:", message);
     setMessage("");
-    // Add logic for message handling if necessary
   };
 
   return (
