@@ -1,11 +1,20 @@
-import React from "react";
 import ChatFeed from "./chatfeed/ChatFeed.js";
 import ChatInput from "./chatInput/ChatInput.js";
 import "./index.scss";
-export default function AiChats() {
+import YoutubeVideo from "./youtubeVideo/index.tsx";
+
+interface IProps {
+  youtubeLink: string;
+  address: string;
+}
+export default function AiChats({ youtubeLink, address }: IProps) {
+  console.log("Address", address);
+  console.log("youtubeLink", youtubeLink);
   return (
     <div className='aichats'>
-      <div className='live'>youtube live</div>
+      <div className='live'>
+        <YoutubeVideo youtubeLink={youtubeLink} />
+      </div>
       <div className='chatfeed'>
         <ChatFeed />
         <ChatInput />

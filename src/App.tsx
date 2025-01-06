@@ -1,12 +1,13 @@
-import { useState } from "react";
-
 import "./App.css";
 import AiChats from "./components/aichat/index.js";
 
 function App() {
   return (
     <>
-      <AiChats />
+      <AiChats
+        youtubeLink='https://www.youtube.com/embed/818MflVnP4I'
+        address=''
+      />
     </>
   );
 }

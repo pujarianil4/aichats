@@ -1,0 +1,19 @@
+.videoContainer {
+  position: relative;
+  height: fit-content;
+  p {
+    background-color: red;
+    padding: 2px 4px 2px 8px;
+    position: absolute;
+    left: 1rem;
+    top: 0.5rem;
+    color: #fff;
+    border-radius: 8px;
+  }
+}
+
+iframe {
+  // aspect-ratio: 0.56634 / 1;
+  // height: 100%;
+  // width: 100%;
+}
