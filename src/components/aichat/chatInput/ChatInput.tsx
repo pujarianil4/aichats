@@ -1,15 +1,41 @@
-import React from "react";
+import React, { useState } from "react";
+import { useAccount } from "wagmi";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import TipPanel from "./TipPanel";
 import "./chatinput.scss";
+
 export default function ChatInput() {
+  const { isConnected } = useAccount();
+  const [message, setMessage] = useState("");
+
+  const superChatAdminAddress = "0xe80fe9b925F2717047e6f0CcF2A82367bdDf2219";
+
+  const handleSendMessage = () => {
+    if (!isConnected) {
+      alert("Please connect your wallet to send a message.");
+      return;
+    }
+    console.log("Sending message:", message);
+    setMessage("");
+    // Add logic for message handling if necessary
+  };
+
   return (
     <div className='chatinputContainer'>
+      <TipPanel recipient={superChatAdminAddress} />
       <div className='inputs'>
         <input
           type='text'
           className='input_text'
-          placeholder='Type Something..'
+          placeholder='Type Something...'
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
         />
-        <button>Send</button>
+        {isConnected ? (
+          <button onClick={handleSendMessage}>Send</button>
+        ) : (
+          <ConnectButton />
+        )}
       </div>
     </div>
   );

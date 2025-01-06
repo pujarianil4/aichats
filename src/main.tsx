@@ -2,7 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.tsx";
-
+import ReactDOM from "react-dom/client";
 //rainbowkit integration
 import "@rainbow-me/rainbowkit/styles.css";
 import {
@@ -11,7 +11,7 @@ import {
   getDefaultConfig,
 } from "@rainbow-me/rainbowkit";
 import { WagmiProvider, http } from "wagmi";
-import { mainnet, base, arbitrum } from "wagmi/chains";
+import { mainnet, base, arbitrum, polygon } from "wagmi/chains";
 import { darkTheme } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -29,7 +29,7 @@ const { wallets } = getDefaultWallets();
 export const wagmiConfig = getDefaultConfig({
   appName: "Super chat",
   projectId: "project_id",
-  chains: [mainnet, base, arbitrum],
+  chains: [mainnet, base, arbitrum, polygon],
   wallets: [
     ...wallets,
     {
@@ -48,6 +48,7 @@ export const wagmiConfig = getDefaultConfig({
     [mainnet.id]: http(),
     [base.id]: http(),
     [arbitrum.id]: http(),
+    [polygon.id]: http(),
   },
 });
 
@@ -62,7 +63,7 @@ const queryClient = new QueryClient({
   },
 });
 
-createRoot(document.getElementById("root")!).render(
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
