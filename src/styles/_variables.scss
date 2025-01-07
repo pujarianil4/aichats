@@ -1,0 +1,60 @@
+//font family
+$font-family-name: 'Source Sans Pro', sans-serif; //update
+
+//spacing
+$base-padding: 0.5rem;
+$base-margin: 0.5rem;
+
+//weight
+$font-weight-thin: 100;
+$font-weight-extra-light: 200;
+$font-weight-light: 300;
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-semi-bold: 600;
+$font-weight-bold: 700;
+$font-weight-extra-bold: 800;
+$font-weight-heavy: 900;
+
+//borders
+$base-border-thickness-sm: 0.5px;
+$base-border-thickness-md: 0.7px;
+$base-border-thickness-rg: 1px;
+$base-border-thickness-lg: 1.3px;
+
+$base-border-radius-sm: 5px;
+$base-border-radius-md: 8px;
+$base-border-radius-rg-: 10px;
+$base-border-radius-lg: 16px;
+
+//box-shadow
+// $base-box-shadow:
+//   8px -9px 0 -3px #f6f7f9,
+//   7px -8px 0 0 #333;
+// $base-box-shadow-mobile:
+//   4px -4.5px 0 -1.5px #f6f7f9,
+//   4px -4.5px 0 0 #333;
+
+//font size map values
+$base-font-size: 16px;
+$font-size-xxxsm: $base-font-size - 8; // 8px
+$font-size-xxsm: $base-font-size - 6; // 10px
+$font-size-xsm: $base-font-size - 4; // 12px
+$font-size-sm: $base-font-size - 2; // 14px
+$font-size-md: $base-font-size; // 16px
+$font-size-lg: $base-font-size + 2; // 18px
+$font-size-xlg: $base-font-size + 4; // 20px
+$font-size-xxlg: $base-font-size + 6; // 22px
+$font-size-xxxlg: $base-font-size + 8; // 24px
+
+$font-size-lg-1: 28px;
+$font-size-lg-2: 32px;
+$font-size-lg-3: 36px;
+$font-size-lg-4: 44px;
+$font-size-lg-5: 56px;
+$font-size-lg-6: 72px;
+
+//line hight map values
+$line-height-sm: 1.2;
+$line-height-base: 1.5;
+$line-height-lg: 2;
