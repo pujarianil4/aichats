@@ -1,4 +1,13 @@
 .feedContainer {
+  max-height: 672px;
   height: 85%;
   background-color: rgb(234, 234, 234);
+  overflow: auto;
+}
+
+.items {
+  height: 100px;
+  width: 90%;
+  margin: 16px auto;
+  border: 1px solid tomato;
 }
