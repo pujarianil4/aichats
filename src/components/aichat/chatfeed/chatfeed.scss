@@ -10,4 +10,28 @@
   width: 90%;
   margin: 16px auto;
   border: 1px solid tomato;
+  height: 90%;
+  // background-color: rgb(234, 234, 234);
+
+  .feed_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    /* margin-bottom: 7px; */
+    padding: 10px;
+    background-color: #2f425d;
+    height: 52px;
+    border-radius: 10px;
+    margin: 10px;
+    position: relative;
+    .close_icon {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      svg {
+        width: 20px;
+      }
+    }
+  }
 }

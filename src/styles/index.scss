@@ -1,0 +1,52 @@
+// base and layout
+@import "./breakPoints";
+
+// variables and functions
+@import "./variables";
+
+//colors
+@import "./colors";
+
+//typography
+// @import './typography';
+
+// .light {
+//   @each $name, $color in $light {
+//     --#{$name}: #{$color};
+//   }
+// }
+
+// .dark,
+// body {
+//   @each $name, $color in $dark {
+//     --#{$name}: #{$color};
+//   }
+// }
+
+@mixin main-button {
+  padding: 7px 15px !important;
+  background-color: var(--secondary-bg) !important;
+  border: 1px solid var(--primary-border) !important;
+  border-radius: 5px !important;
+  color: var(--primary) !important;
+  height: 40px;
+  font-size: 15px !important;
+  cursor: pointer !important;
+  transition: background-color 0.3s ease;
+  @include lessThan(md) {
+    font-size: 12px !important;
+    height: 28px;
+    padding: 8px !important;
+  }
+  &:hover {
+    opacity: 0.9;
+    background-color: var(--secondary-bg) !important;
+  }
+
+  &:disabled {
+    background-color: var(--secondary-bg) !important;
+    color: var(--primary) !important;
+    opacity: 0.7;
+    cursor: not-allowed !important;
+  }
+}
