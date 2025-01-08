@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import TipPanel from "./TipPanel";
 import "./chatinput.scss";
+import EmojiPicker from "../emoji/EmojiPicker.js";
 
 export default function ChatInput() {
   const { isConnected } = useAccount();
@@ -13,6 +14,10 @@ export default function ChatInput() {
   const handleSendMessage = () => {
     console.log("Sending message:", message);
     setMessage("");
+  };
+
+  const handleEmojiPicker = (emoji: any) => {
+    setMessage(message + emoji);
   };
 
   return (
@@ -26,6 +31,8 @@ export default function ChatInput() {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         />
+        <EmojiPicker setEmoji={handleEmojiPicker} />
+
         {isConnected ? (
           <button onClick={handleSendMessage}>Send</button>
         ) : (
