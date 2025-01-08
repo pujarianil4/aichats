@@ -1,41 +1,50 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import "./chatfeed.scss";
+import VirtualizedContainer from "../../common/virtualList.tsx";
+import socket from "../../../services/socket.ts";
 import UserMessage from "../userMessage/index.tsx";
-
 export default function ChatFeed() {
-  const messages = [
-    {
-      id: 1,
-      userIcon: "https://via.placeholder.com/40",
-      userName: "0x0d2A...008631",
-      message: "Hey there! How are you?",
-    },
-    {
-      id: 2,
-      userIcon: "https://via.placeholder.com/40",
-      userName: "0x0d2A...008631",
-      message: "I'm good, thanks! What about you?",
-    },
-    {
-      id: 3,
-      userIcon: "https://via.placeholder.com/40",
-      userName: "0x0d2A...008631",
-      message:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ",
-    },
-    {
-      id: 4,
-      userIcon: "https://via.placeholder.com/40",
-      userName: "0x0d2A...008631",
-      message: "Got it! I'll be there.",
-    },
-  ];
+  const [page, setPage] = useState(1);
+  const [chat, setChat] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const limit = 10;
+  const loadingArray = Array(5).fill(() => 0);
+  console.log("PAGE", page);
+
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        `https://jsonplaceholder.typicode.com/posts?_page=${page}&_limit=${limit}`
+      );
+      const data = await response.json();
+      console.log("DATA", data);
+      setChat((prevChat) => [...prevChat, ...data]);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  // useEffect(() => {
+  //   fetchData();
+  // }, [page]);
+
+  useEffect(() => {
+    // Listen for incoming messages
+    socket.on("chatMessage", (msg) => {
+      setChat((prevChat) => [...prevChat, { id: prevChat.length + 1, ...msg }]);
+    });
+
+    return () => {
+      socket.off("chatMessage"); // Cleanup
+    };
+  }, []);
 
   return (
     <div className='feedContainer'>
       <div className='feed_header'>
         <div className='close_icon'>
-          {" "}
           <svg
             width='28'
             height='25'
@@ -53,14 +62,35 @@ export default function ChatFeed() {
           </svg>
         </div>
       </div>
-      {messages.map((msg) => (
-        <UserMessage
-          key={msg.id}
-          userIcon={msg.userIcon}
-          userName={msg.userName}
-          message={msg.message}
-        />
-      ))}
+      {!isLoading && chat?.length === 0 ? (
+        <p>No data</p>
+      ) : page < 2 && isLoading ? (
+        loadingArray.map((_: any, i: number) => <p key={i}>Loading...</p>)
+      ) : (
+        <>
+          <VirtualizedContainer
+            listData={chat}
+            isLoading={isLoading}
+            page={page}
+            setPage={setPage}
+            limit={limit}
+            renderComponent={(index: number, chat: any) => (
+              // <div className='items' key={index}>
+              //   {chat.id}: {chat.message}
+              // </div>
+              <UserMessage
+                key={index}
+                userIcon={"https://via.placeholder.com/40"}
+                userName={"0x0d2A...008631"}
+                message={chat.message}
+              />
+            )}
+            footerHeight={10}
+          />
+
+          {isLoading && page > 1 && <p>Loading...</p>}
+        </>
+      )}
     </div>
   );
 }

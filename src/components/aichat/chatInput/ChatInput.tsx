@@ -1,8 +1,9 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import TipPanel from "./TipPanel.tsx";
 import "./chatinput.scss";
+import socket from "../../../services/socket.ts";
 import { FaDollarSign } from "react-icons/fa6";
 import { BsEmojiSmile } from "react-icons/bs";
 
@@ -14,12 +15,16 @@ export default function ChatInput() {
 
   const superChatAdminAddress = "0xe80fe9b925F2717047e6f0CcF2A82367bdDf2219";
 
-  const handleSendMessage = () => {
-    console.log("Sending message:", message);
-    setMessage("");
+  const handleSend = () => {
+    if (message.trim() !== "") {
+      socket.emit("chatMessage", {
+        message,
+        timestamp: new Date().toISOString(),
+      });
+      setMessage("");
+    }
   };
 
-  // Close the popup when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -50,6 +55,7 @@ export default function ChatInput() {
           placeholder='Send a Message'
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          onKeyPress={(e) => e.key === "Enter" && handleSend()}
         />
 
         <div
@@ -62,7 +68,7 @@ export default function ChatInput() {
           <BsEmojiSmile color='#fff' />
         </div>
         {isConnected ? (
-          <div className='send_btn' onClick={handleSendMessage}>
+          <div className='send_btn' onClick={handleSend}>
             <svg
               width='16'
               height='15'
