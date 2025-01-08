@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import TipButton from "./TipButton.tsx";
 import uftLogo from "../../../assets/uftLogo.svg";
+import { FaChevronDown } from "react-icons/fa6";
 import "./chatinput.scss";
 import {
   useWriteContract,
@@ -9,15 +9,13 @@ import {
 } from "wagmi";
 import { parseUnits } from "viem";
 import { erc20Abi } from "../../../helpers/contracts/abi.ts";
+
 interface TipPanelProps {
   recipient: string;
 }
 
 export default function TipPanel({ recipient }: TipPanelProps) {
-  const tipAmounts = [100, 1000, 10000];
-
   const { isConnected } = useAccount();
-
   const {
     data: hash,
     error: writeError,
@@ -33,55 +31,55 @@ export default function TipPanel({ recipient }: TipPanelProps) {
   } = useWaitForTransactionReceipt({
     hash,
   });
+  const tipAmount = [10, 100, 1000];
+  const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
+  const [customAmount, setCustomAmount] = useState("");
 
-  async function handleTip() {
-    if (!isConnected) return alert("please connect your wallet");
+  async function handleTip(amount: string) {
+    if (!isConnected) return alert("Please connect your wallet");
+    if (!amount || parseFloat(amount) <= 0) {
+      return alert("Please enter a valid amount");
+    }
     try {
       await writeContract({
         address: sushiTokenAddress,
         abi: erc20Abi,
         functionName: "transfer",
-        args: [recipient, parseUnits("10", 18)],
+        args: [recipient, parseUnits(amount, 18)],
       });
     } catch (err: any) {
-      onError(err.message || "Transaction submission failed"); // Handle write errors
+      alert(err.message || "Transaction submission failed");
     }
   }
 
-  const [message, setMessage] = useState("");
+  const handleButtonClick = (amount: number) => {
+    setSelectedAmount(amount);
+    setCustomAmount("");
+    handleTip(amount.toString());
+  };
+
+  const handleCustomTip = () => {
+    handleTip(customAmount);
+  };
+
   return (
     <>
       <div className='tipPanel'>
-        <div className='tip_bx'>
-          <img src={uftLogo} alt='token Logo' className='user-message__icon' />
-          <span
-            onClick={handleTip}
-            disabled={isPending || isConfirming}
-            type='submit'
-          >
-            100k
-          </span>
-        </div>
-        <div className='tip_bx'>
-          <img src={uftLogo} alt='token Logo' className='user-message__icon' />
-          <span
-            onClick={handleTip}
-            disabled={isPending || isConfirming}
-            type='submit'
-          >
-            100k
-          </span>
-        </div>
-        <div className='tip_bx'>
-          <img src={uftLogo} alt='token Logo' className='user-message__icon' />
-          <span
-            onClick={handleTip}
-            disabled={isPending || isConfirming}
-            type='submit'
-          >
-            100k
-          </span>
-        </div>
+        {tipAmount.map((amount) => (
+          <div key={amount} className='tip_bx'>
+            <img
+              src={uftLogo}
+              alt='Token Logo'
+              className='user-message__icon'
+            />
+            <span
+              onClick={() => handleButtonClick(amount)}
+              disabled={isPending || isConfirming}
+            >
+              {amount.toLocaleString()}k
+            </span>
+          </div>
+        ))}
       </div>
 
       <div className='token_input'>
@@ -89,11 +87,19 @@ export default function TipPanel({ recipient }: TipPanelProps) {
           type='number'
           className='input_text'
           placeholder='Enter Amount'
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          value={customAmount}
+          onChange={(e) => {
+            setCustomAmount(e.target.value);
+            setSelectedAmount(null); // Clear selected button if custom input is used
+          }}
         />
 
-        <span className='send_btn'>
+        <div className='selectToken'>
+          <img src={uftLogo} alt='Token Logo' className='user-message__icon' />
+          <span>UFT</span>
+          <FaChevronDown />
+        </div>
+        <span className='send_btn' onClick={handleCustomTip}>
           <svg
             width='16'
             height='15'
