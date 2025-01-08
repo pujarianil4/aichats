@@ -1,4 +1,28 @@
 .feedContainer {
+  max-height: 672px;
   height: 85%;
   background-color: rgb(234, 234, 234);
+  overflow: auto;
+
+  .feed_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    /* margin-bottom: 7px; */
+    padding: 10px;
+    background-color: #2f425d;
+    height: 52px;
+    border-radius: 10px;
+    margin: 10px;
+    position: relative;
+    .close_icon {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      svg {
+        width: 20px;
+      }
+    }
+  }
 }
