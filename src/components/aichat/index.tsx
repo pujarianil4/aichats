@@ -13,7 +13,7 @@ export default function AiChats({ youtubeLink, address }: IProps) {
   return (
     <div className='aichats'>
       <div className='live'>
-        <YoutubeVideo youtubeLink={youtubeLink} />
+        {/* <YoutubeVideo youtubeLink={youtubeLink} /> */}
       </div>
       <div className='chatfeed'>
         <ChatFeed />

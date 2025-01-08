@@ -1,15 +1,17 @@
 .aichats {
   // width: 700px;
   // height: 600px;
-  width: 892px;
-  height: 792px;
+  width: 50%;
+  max-width: 900px;
+  height: 80vh;
+  max-height: 800px;
   // border: 1px solid black;
   display: flex;
   color: #213547;
   background-color: #ffffff;
   position: fixed;
-  right: 20px;
-  bottom: 15px;
+  right: 50px;
+  bottom: 50px;
   border-radius: 16px;
   overflow: hidden;
   .live,
@@ -19,7 +21,6 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    overflow: hidden;
   }
 
   .chatfeed {
