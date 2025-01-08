@@ -63,7 +63,6 @@ export default function ChatInput() {
         />
         {/* <EmojiPicker setEmoji={handleEmojiPicker} /> */}
 
-
         <div
           className='tip_btn'
           onClick={() => setShowTipPopup((prev) => !prev)}
@@ -71,7 +70,7 @@ export default function ChatInput() {
           <FaDollarSign color='#fff' />
         </div>
         <div className='emoji'>
-          <BsEmojiSmile color='#fff' />
+          <EmojiPicker setEmoji={handleEmojiPicker} />
         </div>
         {isConnected ? (
           <div className='send_btn' onClick={handleSend}>

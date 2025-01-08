@@ -6,11 +6,12 @@ import useOnlineStatus from "./hooks/useOnlineStatus.js";
 
 function App() {
   const isOnline = useOnlineStatus();
+  const chartUrl = `https://dexscreener.com/eth/usdt`;
   return (
     <>
       <Navbar />
       <AiChats
-        youtubeLink='https://www.youtube.com/embed/818MflVnP4I'
+        youtubeLink='https://www.youtube.com/embed/1mwjOdC4Si8'
         address=''
       />
     </>
