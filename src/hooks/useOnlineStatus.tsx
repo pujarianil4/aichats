@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+
 const HEARTBEAT_KEY = "last-heartbeat";
 const HEARTBEAT_INTERVAL = 5000; // 5 seconds
-const OFFLINE_THRESHOLD = 10000; // 10 seconds
+const OFFLINE_THRESHOLD = 10000; // 10 seconds (5 minutes in ms)
+
 const useOnlineStatus = (): boolean => {
   const [isOnline, setIsOnline] = useState<boolean>(false);
   const [isTabActive, setIsTabActive] = useState<boolean>(true);
@@ -29,7 +31,8 @@ const useOnlineStatus = (): boolean => {
     const broadcast = new BroadcastChannel("user-status");
 
     const updateHeartbeat = () => {
-      localStorage.setItem(HEARTBEAT_KEY, Date.now().toString());
+      const now = Date.now();
+      localStorage.setItem(HEARTBEAT_KEY, now.toString());
       broadcast.postMessage("heartbeat");
     };
 
