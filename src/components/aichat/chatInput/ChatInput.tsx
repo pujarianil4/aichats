@@ -3,6 +3,7 @@ import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import TipPanel from "./TipPanel.tsx";
 import "./chatinput.scss";
+import EmojiPicker from "../emoji/EmojiPicker.js";
 import socket from "../../../services/socket.ts";
 import { FaDollarSign } from "react-icons/fa6";
 import { BsEmojiSmile } from "react-icons/bs";
@@ -25,6 +26,9 @@ export default function ChatInput() {
     }
   };
 
+  const handleEmojiPicker = (emoji: any) => {
+    setMessage(message + emoji);
+  };
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -57,6 +61,8 @@ export default function ChatInput() {
           onChange={(e) => setMessage(e.target.value)}
           onKeyPress={(e) => e.key === "Enter" && handleSend()}
         />
+        {/* <EmojiPicker setEmoji={handleEmojiPicker} /> */}
+
 
         <div
           className='tip_btn'
