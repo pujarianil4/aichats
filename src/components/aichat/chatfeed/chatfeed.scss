@@ -1,7 +1,7 @@
 .feedContainer {
   max-height: 672px;
   height: 85%;
-  background-color: rgb(234, 234, 234);
+  background-color: var(--black);
 
   .feed_header {
     display: flex;
