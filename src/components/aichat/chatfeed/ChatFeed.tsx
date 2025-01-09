@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./chatfeed.scss";
 import VirtualizedContainer from "../../common/virtualList.tsx";
 import socket from "../../../services/socket.ts";
@@ -8,29 +8,31 @@ export default function ChatFeed() {
   const [chat, setChat] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const limit = 10;
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const [isAutoScrollEnabled, setIsAutoScrollEnabled] = useState(true);
   const loadingArray = Array(5).fill(() => 0);
-  console.log("PAGE", page);
 
-  const fetchData = async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch(
-        `https://jsonplaceholder.typicode.com/posts?_page=${page}&_limit=${limit}`
-      );
-      const data = await response.json();
-      console.log("DATA", data);
-      setChat((prevChat) => [...prevChat, ...data]);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // const fetchData = async () => {
+  //   setIsLoading(true);
+  //   try {
+  //     const response = await fetch(
+  //       `https://jsonplaceholder.typicode.com/posts?_page=${page}&_limit=${limit}`
+  //     );
+  //     const data = await response.json();
+  //     console.log("DATA", data);
+  //     setChat((prevChat) => [...prevChat, ...data]);
+  //   } catch (error) {
+  //     console.error("Error fetching data:", error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
   // useEffect(() => {
   //   fetchData();
   // }, [page]);
 
   useEffect(() => {
+    // if wallet add succesfull then start connect
     // Listen for incoming messages
     socket.on("chatMessage", (msg) => {
       setChat((prevChat) => [...prevChat, { id: prevChat.length + 1, ...msg }]);
@@ -41,8 +43,30 @@ export default function ChatFeed() {
     };
   }, []);
 
+  // Auto-scroll when new messages arrive if auto-scroll is enabled
+  useEffect(() => {
+    if (isAutoScrollEnabled && scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [chat, isAutoScrollEnabled]);
+
+  // Handle manual scroll interactions
+  // const handleScroll = () => {
+  //   if (!scrollRef.current) return;
+  //   const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
+
+  //   // Disable auto-scroll if the user is not at the bottom
+  //   const isAtBottom = scrollTop + clientHeight >= scrollHeight - 10;
+  //   setIsAutoScrollEnabled(isAtBottom);
+  // };
+
   return (
-    <div className='feedContainer'>
+    <div
+      className='feedContainer'
+      // ref={scrollRef}
+      // onScroll={handleScroll}
+      // style={{ overflowY: "auto", height: "600px" }}
+    >
       <div className='feed_header'>
         <div className='close_icon'>
           <svg
@@ -62,35 +86,43 @@ export default function ChatFeed() {
           </svg>
         </div>
       </div>
-      {!isLoading && chat?.length === 0 ? (
-        <p>No data</p>
-      ) : page < 2 && isLoading ? (
-        loadingArray.map((_: any, i: number) => <p key={i}>Loading...</p>)
-      ) : (
-        <>
-          <VirtualizedContainer
-            listData={chat}
-            isLoading={isLoading}
-            page={page}
-            setPage={setPage}
-            limit={limit}
-            renderComponent={(index: number, chat: any) => (
-              // <div className='items' key={index}>
-              //   {chat.id}: {chat.message}
-              // </div>
-              <UserMessage
-                key={index}
-                userIcon={"https://via.placeholder.com/40"}
-                userName={"0x0d2A...008631"}
-                message={chat.message}
-              />
-            )}
-            footerHeight={10}
-          />
+      <div
+        className='listContainer'
+        style={{ height: "580px" }}
+        // ref={scrollRef}
+        // onScroll={handleScroll}
+        // style={{ overflowY: "auto", height: "580px" }}
+      >
+        {!isLoading && chat?.length === 0 ? (
+          <p>No data</p>
+        ) : page < 2 && isLoading ? (
+          loadingArray.map((_: any, i: number) => <p key={i}>Loading...</p>)
+        ) : (
+          <>
+            <VirtualizedContainer
+              listData={chat}
+              isLoading={isLoading}
+              page={page}
+              setPage={setPage}
+              limit={limit}
+              renderComponent={(index: number, chat: any) => (
+                // <div className='items' key={index}>
+                //   {chat.id}: {chat.message}
+                // </div>
+                <UserMessage
+                  key={index}
+                  userIcon={"https://via.placeholder.com/40"}
+                  userName={"0x0d2A...008631"}
+                  message={chat.message}
+                />
+              )}
+              footerHeight={10}
+            />
 
-          {isLoading && page > 1 && <p>Loading...</p>}
-        </>
-      )}
+            {isLoading && page > 1 && <p>Loading...</p>}
+          </>
+        )}
+      </div>
     </div>
   );
 }
