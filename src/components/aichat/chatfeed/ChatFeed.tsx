@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./chatfeed.scss";
 import VirtualizedContainer from "../../common/virtualList.tsx";
 import socket from "../../../services/socket.ts";
@@ -8,29 +8,31 @@ export default function ChatFeed() {
   const [chat, setChat] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const limit = 10;
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const [isAutoScrollEnabled, setIsAutoScrollEnabled] = useState(true);
   const loadingArray = Array(5).fill(() => 0);
-  console.log("PAGE", page);
 
-  const fetchData = async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch(
-        `https://jsonplaceholder.typicode.com/posts?_page=${page}&_limit=${limit}`
-      );
-      const data = await response.json();
-      console.log("DATA", data);
-      setChat((prevChat) => [...prevChat, ...data]);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // const fetchData = async () => {
+  //   setIsLoading(true);
+  //   try {
+  //     const response = await fetch(
+  //       `https://jsonplaceholder.typicode.com/posts?_page=${page}&_limit=${limit}`
+  //     );
+  //     const data = await response.json();
+  //     console.log("DATA", data);
+  //     setChat((prevChat) => [...prevChat, ...data]);
+  //   } catch (error) {
+  //     console.error("Error fetching data:", error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
   // useEffect(() => {
   //   fetchData();
   // }, [page]);
 
   useEffect(() => {
+    // if wallet add succesfull then start connect
     // Listen for incoming messages
     socket.on("chatMessage", (msg) => {
       setChat((prevChat) => [...prevChat, { id: prevChat.length + 1, ...msg }]);
@@ -41,8 +43,30 @@ export default function ChatFeed() {
     };
   }, []);
 
+  // Auto-scroll when new messages arrive if auto-scroll is enabled
+  useEffect(() => {
+    if (isAutoScrollEnabled && scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [chat, isAutoScrollEnabled]);
+
+  // Handle manual scroll interactions
+  // const handleScroll = () => {
+  //   if (!scrollRef.current) return;
+  //   const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
+
+  //   // Disable auto-scroll if the user is not at the bottom
+  //   const isAtBottom = scrollTop + clientHeight >= scrollHeight - 10;
+  //   setIsAutoScrollEnabled(isAtBottom);
+  // };
+
   return (
-    <div className='feedContainer'>
+    <div
+      className='feedContainer'
+      // ref={scrollRef}
+      // onScroll={handleScroll}
+      // style={{ overflowY: "auto", height: "600px" }}
+    >
       <div className='feed_header'>
         <div className='close_icon'>
           <svg
@@ -62,7 +86,13 @@ export default function ChatFeed() {
           </svg>
         </div>
       </div>
-      <div className='chat_container'>
+      <div
+        className='listContainer'
+        style={{ height: "580px" }}
+        // ref={scrollRef}
+        // onScroll={handleScroll}
+        // style={{ overflowY: "auto", height: "580px" }}
+      >
         {!isLoading && chat?.length === 0 ? (
           <p>No data</p>
         ) : page < 2 && isLoading ? (

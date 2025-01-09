@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./index.scss";
 import { Virtuoso, VirtuosoGrid } from "react-virtuoso";
 
 interface IProps {
   listData: any[];
   isLoading: boolean;
-  page: number;
   setPage: React.Dispatch<React.SetStateAction<number>>;
   limit: number;
   renderComponent: any;
@@ -18,18 +17,19 @@ interface IProps {
 export default function VirtualizedContainer({
   listData,
   isLoading,
-  page,
   setPage,
   limit,
   renderComponent,
   isGrid = false,
   itemWidth = 200,
-  customScrollSelector = "feedContainer",
+  customScrollSelector = "listContainer",
   footerHeight = 50,
 }: IProps) {
   const [customScrollParent, setCustomScrollParent] = useState<
     HTMLElement | undefined
   >(undefined);
+  const [isAutoScrollEnabled, setIsAutoScrollEnabled] = useState(true);
+  const virtuosoRef = useRef<any>(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -40,15 +40,46 @@ export default function VirtualizedContainer({
       setCustomScrollParent(scrollParent);
     }
   }, [customScrollSelector]);
+
+  // Detect scroll position and toggle auto-scroll behavior
+  const handleScroll = () => {
+    if (!customScrollParent) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = customScrollParent;
+    const isAtBottom = scrollTop + clientHeight >= scrollHeight - 10;
+    setIsAutoScrollEnabled(isAtBottom);
+  };
+
+  useEffect(() => {
+    if (customScrollParent) {
+      customScrollParent.addEventListener("scroll", handleScroll);
+      return () => {
+        customScrollParent.removeEventListener("scroll", handleScroll);
+      };
+    }
+  }, [customScrollParent]);
+
+  useEffect(() => {
+    // Scroll to the bottom if auto-scroll is enabled
+    if (isAutoScrollEnabled && virtuosoRef.current) {
+      virtuosoRef.current.scrollToIndex({ index: listData.length - 1 });
+    }
+  }, [listData, isAutoScrollEnabled]);
   const commonProps = {
     data: listData,
-    endReached: () => {
-      if (
-        !isLoading &&
-        listData.length % limit === 0
-        // &&
-        // listData.length / limit === page
-      ) {
+    // endReached: () => {
+    //   if (
+    //     !isLoading
+    //     // &&
+    //     // listData.length % limit === 0 &&
+    //     // listData.length / limit === page
+    //   ) {
+    //     setPage((prevPage) => prevPage + 1);
+    //   }
+    // },
+    startReached: () => {
+      if (!isLoading) {
+        // setPage((prevPage) => Math.max(prevPage - 1, 0));
         setPage((prevPage) => prevPage + 1);
       }
     },
@@ -82,6 +113,6 @@ export default function VirtualizedContainer({
       }}
     />
   ) : (
-    <Virtuoso {...commonProps} className='virtuoso' />
+    <Virtuoso {...commonProps} ref={virtuosoRef} className='virtuoso' />
   );
 }

@@ -1,8 +1,7 @@
 .feedContainer {
   max-height: 672px;
-  height: 90%;
+  height: 85%;
   background-color: var(--black);
-  // overflow: auto;
 
   .feed_header {
     display: flex;
@@ -25,8 +24,8 @@
       }
     }
   }
-  .chat_container {
-    max-height: 560px;
+
+  .listContainer {
     overflow: auto;
   }
 }
