@@ -62,35 +62,37 @@ export default function ChatFeed() {
           </svg>
         </div>
       </div>
-      {!isLoading && chat?.length === 0 ? (
-        <p>No data</p>
-      ) : page < 2 && isLoading ? (
-        loadingArray.map((_: any, i: number) => <p key={i}>Loading...</p>)
-      ) : (
-        <>
-          <VirtualizedContainer
-            listData={chat}
-            isLoading={isLoading}
-            page={page}
-            setPage={setPage}
-            limit={limit}
-            renderComponent={(index: number, chat: any) => (
-              // <div className='items' key={index}>
-              //   {chat.id}: {chat.message}
-              // </div>
-              <UserMessage
-                key={index}
-                userIcon={"https://via.placeholder.com/40"}
-                userName={"0x0d2A...008631"}
-                message={chat.message}
-              />
-            )}
-            footerHeight={10}
-          />
+      <div className='chat_container'>
+        {!isLoading && chat?.length === 0 ? (
+          <p>No data</p>
+        ) : page < 2 && isLoading ? (
+          loadingArray.map((_: any, i: number) => <p key={i}>Loading...</p>)
+        ) : (
+          <>
+            <VirtualizedContainer
+              listData={chat}
+              isLoading={isLoading}
+              page={page}
+              setPage={setPage}
+              limit={limit}
+              renderComponent={(index: number, chat: any) => (
+                // <div className='items' key={index}>
+                //   {chat.id}: {chat.message}
+                // </div>
+                <UserMessage
+                  key={index}
+                  userIcon={"https://via.placeholder.com/40"}
+                  userName={"0x0d2A...008631"}
+                  message={chat.message}
+                />
+              )}
+              footerHeight={10}
+            />
 
-          {isLoading && page > 1 && <p>Loading...</p>}
-        </>
-      )}
+            {isLoading && page > 1 && <p>Loading...</p>}
+          </>
+        )}
+      </div>
     </div>
   );
 }

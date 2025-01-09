@@ -1,4 +1,4 @@
-import "./App.css";
+import "./App.scss";
 import "./styles/index.scss";
 import AiChats from "./components/aichat/index.js";
 import Navbar from "./components/navbar/index.tsx";

@@ -1,0 +1,16 @@
+      <svg
+              width='16'
+              height='15'
+              viewBox='0 0 16 15'
+              fill='none'
+              xmlns='http://www.w3.org/2000/svg'
+              className='send-icon'
+            >
+              <path
+                d='M14.3419 7.64462L0.95119 14.092L3.43095 7.64462L0.95119 1.19725L14.3419 7.64462Z'
+                stroke='white'
+                strokeWidth='1.40276'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+              />
+            </svg>

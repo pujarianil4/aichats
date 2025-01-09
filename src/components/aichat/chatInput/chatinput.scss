@@ -1,6 +1,8 @@
+@use "../../../styles//index.scss";
+
 .chatinputContainer {
   height: 8%;
-  // background-color: rgb(168, 168, 168);
+  background-color: var(--black);
   display: flex;
   flex-direction: column;
   justify-content: end;
@@ -22,7 +24,7 @@
       border: none;
       height: 40px;
       color: #fff;
-      font-size: 12px;
+      font-size: 14px;
       &:focus {
         border: none;
         outline: none;
@@ -127,7 +129,7 @@
         border: none;
         height: 40px;
         color: #fff;
-        font-size: 12px;
+        font-size: 14px;
 
         &::-webkit-outer-spin-button,
         &::-webkit-inner-spin-button {
