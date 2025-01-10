@@ -15,9 +15,10 @@
     gap: 14px;
     /* margin-bottom: 7px; */
     padding: 5px;
-    background-color: #2f425d;
+    background: #2f425d;
     height: 48px;
     border-radius: 10px;
+
     .input_text {
       flex-grow: 2;
       background-color: transparent;
@@ -25,7 +26,7 @@
       height: 40px;
       color: #fff;
       font-size: 14px;
-      padding-left: 6px;
+      padding-left: 5px;
       &:focus {
         border: none;
         outline: none;
@@ -36,13 +37,13 @@
       }
     }
 
-    .tipped {
-      background: linear-gradient(to right, #ecc7ff, #c46cf0);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      text-fill-color: transparent;
-    }
+    // .tipped {
+    //   background: linear-gradient(to right, #ecc7ff, #c46cf0);
+    //   -webkit-background-clip: text;
+    //   -webkit-text-fill-color: transparent;
+    //   background-clip: text;
+    //   text-fill-color: transparent;
+    // }
 
     button {
       flex-grow: 1;
@@ -74,23 +75,29 @@
         width: 19px;
         height: 19px;
       }
-      .tipped {
-        background: linear-gradient(
-          to right,
-          #ecc7ff,
-          #ecc7ff
-        ); /* Gradient colors */
-        -webkit-background-clip: text; /* Ensures the gradient applies only to text */
-        -webkit-text-fill-color: transparent; /* Makes the background of the text transparent */
-        background-clip: text; /* Standard background clip for text */
-        text-fill-color: transparent;
-      }
+      // .tipped {
+      //   background: linear-gradient(
+      //     to right,
+      //     #ecc7ff,
+      //     #ecc7ff
+      //   ); /* Gradient colors */
+      //   -webkit-background-clip: text; /* Ensures the gradient applies only to text */
+      //   -webkit-text-fill-color: transparent; /* Makes the background of the text transparent */
+      //   background-clip: text; /* Standard background clip for text */
+      //   text-fill-color: transparent;
+      // }
     }
+  }
+  .input_gradeint {
+    background: linear-gradient(to bottom, #e7b8ff 0%, #959aff 100%);
+    // border: 5px solid transparent; /* Set border to transparent */
+    // border-image: linear-gradient(to bottom, #39b680 0%, #76777b 100%) 1;
+    // border-radius: 12px;
   }
 
   .tip-popup {
     position: absolute;
-    top: -155px;
+    top: -165px;
     left: 12px;
     padding: 5px;
     z-index: 10;
@@ -168,7 +175,8 @@
         }
         &::placeholder {
           color: #fff;
-          font-weight: 600;
+          font-weight: 400;
+          font-size: 12px;
         }
       }
       button {

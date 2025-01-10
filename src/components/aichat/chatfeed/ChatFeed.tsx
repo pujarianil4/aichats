@@ -5,17 +5,18 @@ import VirtualizedContainer from "../../common/virtualList.tsx";
 import closeIcon from "../../../assets/close.svg";
 import socket from "../../../services/socket.ts";
 import UserMessage from "../userMessage/index.tsx";
+import SuperChatMessage from "../superChat/index.tsx";
 import { getMessages } from "../../../services/api.ts";
 export default function ChatFeed() {
   const [page, setPage] = useState<number>(1);
   const [chat, setChat] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const limit = 20;
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [isInitialLoad, setIsInitialLoad] = useState(false);
   const [firstItemIndex, setFirstItemIndex] = useState(0);
   const loadingArray = Array(10).fill(() => 0);
 
-  const [isFullHeight, setIsFullHeight] = useState(true);
+  const [isFullHeight, setIsFullHeight] = useState(false);
   const fetchData = async (page: number, limit: number) => {
     setIsLoading(true);
     try {
@@ -109,41 +110,57 @@ export default function ChatFeed() {
               className='icon'
             />
             <div className='chat_content'>
+              <div className='name'>0xgh...7897</div>
+              <div className='value'> $1000 </div>
+            </div>
+          </div>
+          <div className='s_chat_bx'>
+            <img
+              src='https://via.placeholder.com/40'
+              alt={`'s icon`}
+              className='icon'
+            />
+            <div className='chat_content'>
+              <span className='name'>0xgh...7897</span>
+              <span className='value'> $1000 </span>
+            </div>
+          </div>
+          <div className='s_chat_bx'>
+            <img
+              src='https://via.placeholder.com/40'
+              alt={`'s icon`}
+              className='icon'
+            />
+            <div className='chat_content'>
               <span className='name'>0xgh...7897</span>
               <span className='value'> $1000 </span>
             </div>
           </div>
         </div>
-        <div>
-          {!isFullHeight && (
-            <div className='super_listContainer'>
-              {!isLoading && chat?.length === 0 ? (
-                <p>No data</p>
-              ) : (
-                <VirtualizedContainer
-                  listData={chat}
-                  isLoading={isLoading}
-                  page={page}
-                  setPage={setPage}
-                  limit={limit}
-                  renderComponent={(index: number, chat: any) => (
-                    <UserMessage
-                      key={index}
-                      userIcon={"https://via.placeholder.com/40"}
-                      userName={"0x0d2A...008631"}
-                      message={chat.message}
-                    />
-                  )}
-                  footerHeight={10}
+        {/* <div className='super_listContainer'>
+          {!isLoading && chat?.length === 0 ? (
+            <p>No data</p>
+          ) : (
+            <VirtualizedContainer
+              listData={chat}
+              isLoading={isLoading}
+              page={page}
+              setPage={setPage}
+              limit={limit}
+              renderComponent={(index: number, chat: any) => (
+                <UserMessage
+                  key={index}
+                  userIcon={"https://via.placeholder.com/40"}
+                  userName={"0x0d2A...008631"}
+                  message={chat.message}
                 />
               )}
-            </div>
+              footerHeight={10}
+            />
           )}
-        </div>
-      </div>
+        </div> */}
 
-      <div className='chat_ox'>
-        <div className='normal_chat_container' style={{ height: "612px" }}>
+        <div className='super_listContainer'>
           {!isLoading && chat?.length === 0 ? (
             <p>No data</p>
           ) : page < 2 && isLoading ? (
@@ -167,7 +184,7 @@ export default function ChatFeed() {
                 isInitialLoad={isInitialLoad}
                 setIsInitialLoad={setIsInitialLoad}
                 renderComponent={(index: number, chat: any) => (
-                  <UserMessage
+                  <SuperChatMessage
                     key={index}
                     userIcon={"https://via.placeholder.com/40"}
                     userName={"0x0d2A...008631"}
@@ -183,6 +200,45 @@ export default function ChatFeed() {
             </>
           )}
         </div>
+      </div>
+
+      <div className='listContainer'>
+        {!isLoading && chat?.length === 0 ? (
+          <p>No data</p>
+        ) : page < 2 && isLoading ? (
+          loadingArray.map((_: any, i: number) => (
+            <div className='messageLoader skeleton' key={i}></div>
+          ))
+        ) : (
+          <>
+            {isLoading && page > 1 && (
+              <>
+                <div className='messageLoader skeleton'></div>
+                <div className='messageLoader skeleton'></div>
+              </>
+            )}
+            <VirtualizedContainer
+              listData={chat}
+              isLoading={isLoading}
+              setPage={setPage}
+              limit={limit}
+              firstItemIndex={firstItemIndex}
+              isInitialLoad={isInitialLoad}
+              setIsInitialLoad={setIsInitialLoad}
+              renderComponent={(index: number, chat: any) => (
+                <UserMessage
+                  key={index}
+                  userIcon={"https://via.placeholder.com/40"}
+                  userName={"0x0d2A...008631"}
+                  message={
+                    chat.message || chat.content || `${chat.id}: ${chat.title}`
+                  }
+                />
+              )}
+              footerHeight={10}
+            />
+          </>
+        )}
       </div>
     </div>
   );
