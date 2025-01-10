@@ -7,14 +7,14 @@ interface UserMessageProps {
   message: string;
 }
 
-export default function UserMessage({
+export default function SuerChatMessage({
   userIcon,
   userName,
   message,
 }: UserMessageProps) {
   return (
     <>
-      <div className='admin'>
+      <div className='super_container'>
         <img
           src={userIcon}
           alt={`${userName}'s icon`}
@@ -27,18 +27,6 @@ export default function UserMessage({
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
             eiusmod tempor incididunt ut labore et dolore magna aliqua.
           </div>
-        </div>
-      </div>
-
-      <div className='user-message'>
-        <img
-          src={userIcon}
-          alt={`${userName}'s icon`}
-          className='user-message__icon'
-        />
-        <div className='user-message__content'>
-          <span className='user-message__name'>{userName}:</span>
-          <span className='user-message__text'>{message}</span>
         </div>
       </div>
     </>

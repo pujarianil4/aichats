@@ -1,21 +1,45 @@
 .feedContainer {
-  max-height: 672px;
-  height: 90%;
-  padding: 0 0 0 10px;
+  max-height: 712px;
+  height: 95%;
   background-color: var(--black);
+  &.fullHeight {
+    .listContainer {
+      height: 612px;
+    }
+    .feed_header {
+      .super_listContainer {
+        display: none;
+      }
+    }
+  }
 
+  &.splitView {
+    .listContainer {
+      height: 306px;
+      overflow: auto;
+    }
+    .feed_header {
+      .super_listContainer {
+        height: 306px;
+        overflow: auto;
+        margin-top: 5px;
+      }
+    }
+  }
   .feed_header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
     /* margin-bottom: 7px; */
-    padding: 10px 0;
+    padding: 10px;
     background-color: #2f425d;
-    height: 52px;
+    // height: 58px;
     border-radius: 10px;
-    margin: 10px 10px 10px 0;
+    margin: 10px;
     position: relative;
+
+    .super_listContainer {
+      display: block;
+      // background-color: var(--secondary);
+    }
+
     .close_icon {
       position: absolute;
       top: 6px;
@@ -24,6 +48,62 @@
         width: 20px;
       }
     }
+    .holder {
+      color: var(--black);
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .super_chat_container {
+      display: flex;
+      justify-items: center;
+      justify-content: space-between;
+      gap: 3px;
+
+      .s_chat_bx {
+        display: flex;
+        align-items: center;
+
+        gap: 5px;
+        padding: 4px 10px;
+        border-radius: 16px;
+        background-color: var(--secondary);
+
+        .icon {
+          width: 15px;
+          height: 15px;
+          border-radius: 50%;
+          object-fit: cover;
+        }
+
+        .chat_content {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          flex-wrap: wrap;
+          .name {
+            font-weight: 600;
+            font-size: 8px;
+            color: var(--black);
+            margin-bottom: 2px;
+          }
+
+          .value {
+            font-weight: 600;
+            font-size: 7px;
+            color: var(--black);
+            margin-bottom: 2px;
+            padding: 2px 10px;
+            background-color: var(--info);
+
+            border-radius: 4px;
+          }
+        }
+      }
+    }
+  }
+
+  .normal_chat_container {
+    overflow: auto;
   }
 
   .listContainer {
