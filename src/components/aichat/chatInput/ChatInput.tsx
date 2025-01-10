@@ -12,9 +12,10 @@ import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { erc20Abi } from "../../../helpers/contracts/abi.ts";
 import { parseUnits } from "viem";
 import TipPopup from "./TipPanel.tsx";
+import { connectAddress } from "../../../services/api.ts";
 
 export default function ChatInput() {
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
   const [message, setMessage] = useState("");
   const [showTipPopup, setShowTipPopup] = useState(false);
   const [customAmount, setCustomAmount] = useState("");
@@ -32,11 +33,15 @@ export default function ChatInput() {
     if (isConfirmed && message.trim() !== "") {
       const updateText = `Send 10 UFT Token ${message}`;
       if (updateText) {
-        socket.emit("chatMessage", {
-          message: updateText,
-          timestamp: new Date().toISOString(),
+        // socket.emit("chatMessage", {
+        //   message: updateText,
+        //   timestamp: new Date().toISOString(),
+        // });
+        socket.emit("message", {
+          content: message,
+          hash: "skdjFGjhghaeiwuyiewh",
+          amnt: 100,
         });
-        // socket.emit("message", { content: message });
         setMessage("");
         setCustomAmount("");
       }
@@ -44,22 +49,25 @@ export default function ChatInput() {
   }, [isConfirmed]);
 
   const handleSend = async () => {
-    if (customAmount) {
-      console.log("Sending tip...");
-      await writeContract({
-        address: sushiTokenAddress,
-        abi: erc20Abi,
-        functionName: "transfer",
-        args: [superChatAdminAddress, parseUnits(customAmount, 18)],
-      });
-    } else if (message.trim() !== "") {
-      socket.emit("chatMessage", {
-        message: message,
-        timestamp: new Date().toISOString(),
-      });
-      // socket.emit("message", { content: message });
-      setMessage("");
-    }
+    //connectAddress
+    if (address)
+      if (customAmount) {
+        // await connectAddress("0x99A221a87b3C2238C90650fa9BE0F11e4c499D06");
+        console.log("Sending tip...");
+        await writeContract({
+          address: sushiTokenAddress,
+          abi: erc20Abi,
+          functionName: "transfer",
+          args: [superChatAdminAddress, parseUnits(customAmount, 18)],
+        });
+      } else if (message.trim() !== "") {
+        // socket.emit("chatMessage", {
+        //   message: message,
+        //   timestamp: new Date().toISOString(),
+        // });
+        socket.emit("message", { content: message });
+        setMessage("");
+      }
   };
 
   return (

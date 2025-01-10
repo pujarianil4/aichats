@@ -32,58 +32,36 @@ export default function ChatFeed() {
     }
   };
 
-  useEffect(() => {
-    fetchData(1, limit);
-  }, []);
+  // useEffect(() => {
+  //   fetchData(1, limit);
+  // }, []);
+
+  // useEffect(() => {
+  //   if (page > 1) {
+  //     fetchData(page, limit);
+  //   }
+  // }, [page]);
 
   useEffect(() => {
-    if (page > 1) {
-      fetchData(page, limit);
-    }
-  }, [page]);
-
-  useEffect(() => {
-    socket.on("chatMessage", (msg) => {
-      setChat((prevChat) => [...prevChat, { id: prevChat.length + 1, ...msg }]);
+    // socket.on("chatMessage", (msg) => {
+    //   setChat((prevChat) => [...prevChat, { id: prevChat.length + 1, ...msg }]);
+    //   setIsInitialLoad(true);
+    // });
+    // return () => {
+    //   socket.off("chatMessage");
+    // };
+    // Listen for new messages
+    socket.on("newMessage", (data) => {
+      console.log("New message received:", data);
+      setChat((prevChat) => [
+        ...prevChat,
+        { id: prevChat.length + 1, ...data },
+      ]);
       setIsInitialLoad(true);
     });
-
-    return () => {
-      socket.off("chatMessage");
-    };
-
-    // socket.on("connect", () => {
-    //   console.log("Connected:", socket.id);
-
-    //   // Join the chat with a wallet address
-    //   const res = socket.emit(
-    //     "join",
-    //     "0x99A221a87b3C2238C90650fa9BE0F11e4c499D06"
-    //   );
-    //   console.log("Sent join event.", res);
-
-    //   // Send a message
-    //   // setInterval(() => {
-    //   //   console.log("every 2 sec");
-    //   //   socket.emit("message", { content: "Hello, World!" });
-    //   //   console.log("Sent message event.");
-    //   // }, 10000);
-    // });
-
-    // // Listen for new messages
-    // socket.on("newMessage", (data) => {
-    //   console.log("DATA", data);
-    //   setChat((prevChat) => [
-    //     ...prevChat,
-    //     { id: prevChat.length + 1, ...data },
-    //   ]);
-    //   console.log("New message received:", data);
-    // });
-
-    // // Listen for errors
-    // socket.on("error", (err) => {
-    //   console.error("Error:", err);
-    // });
+    socket.on("error", (err) => {
+      console.error("Error:", err);
+    });
   }, []);
 
   return (
