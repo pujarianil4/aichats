@@ -2,19 +2,35 @@
   max-height: 672px;
   height: 85%;
   background-color: var(--black);
+  &.fullHeight {
+    .normal_chat_container {
+      height: 560px;
+    }
+  }
+
+  &.splitView {
+    .normal_chat_container {
+      height: 280px;
+      overflow: auto;
+    }
+  }
 
   .feed_header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
     /* margin-bottom: 7px; */
     padding: 10px;
     background-color: #2f425d;
-    height: 52px;
+    height: 58px;
     border-radius: 10px;
     margin: 10px;
     position: relative;
+    .super_listContainer {
+      display: none;
+    }
+    .super_listContainer {
+      display: block;
+      height: 280px;
+      overflow: auto;
+    }
     .close_icon {
       position: absolute;
       top: 6px;
@@ -23,9 +39,68 @@
         width: 20px;
       }
     }
+    .holder {
+      color: var(--black);
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .super_chat_container {
+      display: flex;
+      justify-items: center;
+      justify-content: space-between;
+      gap: 3px;
+
+      .s_chat_bx {
+        display: flex;
+        align-items: center;
+
+        gap: 5px;
+        padding: 4px 10px;
+        border-radius: 16px;
+        background-color: var(--secondary);
+
+        .icon {
+          width: 15px;
+          height: 15px;
+          border-radius: 50%;
+          object-fit: cover;
+        }
+
+        .chat_content {
+          display: inline-block;
+          // flex-direction: column;
+          line-height: 18px;
+          .name {
+            font-weight: 600;
+            font-size: 8px;
+            color: var(--black);
+            margin-bottom: 2px;
+          }
+
+          .value {
+            font-weight: 600;
+            font-size: 7px;
+            color: var(--black);
+            margin-bottom: 2px;
+            padding: 2px 10px;
+            background-color: var(--info);
+            margin-left: 4px;
+            border-radius: 4px;
+          }
+        }
+      }
+    }
   }
 
-  .listContainer {
-    overflow: auto;
+  .super_listContainer {
+    background-color: var(--primary);
+    padding: 10px;
+  }
+
+  .normal_chat_container {
+    overflow-y: auto;
+    background-color: var(--black);
+    padding: 10px;
+    border: 1px solid var(--white);
   }
 }

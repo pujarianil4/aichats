@@ -22,7 +22,30 @@
     flex-direction: column;
     justify-content: space-between;
   }
+  // .live,
+  // .chatfeed {
+  //   transition: flex-grow 0.3s ease, width 0.3s ease;
+  //   flex: 1;
+  // }
 
+  // /* When screen size is 1024px or smaller */
+  // @media (max-width: 1024px) {
+  //   .live,
+  //   .chatfeed {
+  //     flex: 1; /* Both stay 50% width */
+  //   }
+  // }
+
+  // /* When screen size is larger than 1400px */
+  // @media (min-width: 1400px) {
+  //   .live {
+  //     flex-grow: 3; /* Left section grows dynamically */
+  //   }
+
+  //   .chatfeed {
+  //     flex-grow: 1; /* Right section shrinks dynamically */
+  //   }
+  // }
   .chatfeed {
     // border: 1px solid black;
     border-radius: 16px;
