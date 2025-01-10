@@ -1,5 +1,5 @@
 import { useEffect, useRef, memo } from "react";
-import "./tradingview.scss";
+import "./index.scss";
 
 function TradingViewWidget() {
   const container = useRef<HTMLDivElement | null>(null);
@@ -44,7 +44,7 @@ function TradingViewWidget() {
   }, []);
 
   return (
-    <div className='tradingview_container'>
+    <div className='chart_container'>
       <div
         className='tradingview-widget-container'
         ref={container}

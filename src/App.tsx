@@ -5,6 +5,7 @@ import Navbar from "./components/navbar/index.tsx";
 import useOnlineStatus from "./hooks/useOnlineStatus.js";
 import TradingViewChart from "./components/Charts/TradingViewChart.tsx";
 import DextoolsWidget from "./components/Charts/Dex.tsx";
+import GeckoChart from "./components/Charts/GeckoChart.tsx";
 
 function App() {
   const isOnline = useOnlineStatus();
@@ -16,7 +17,8 @@ function App() {
         address=''
       /> */}
       {/* <TradingViewChart /> */}
-      <DextoolsWidget />
+      {/* <DextoolsWidget /> */}
+      <GeckoChart />
     </div>
   );
 }
