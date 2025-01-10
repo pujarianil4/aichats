@@ -36,6 +36,7 @@ export default function ChatInput() {
           message: updateText,
           timestamp: new Date().toISOString(),
         });
+        // socket.emit("message", { content: message });
         setMessage("");
         setCustomAmount("");
       }
@@ -56,7 +57,8 @@ export default function ChatInput() {
         message: message,
         timestamp: new Date().toISOString(),
       });
-      setMessage(""); // Reset the message
+      // socket.emit("message", { content: message });
+      setMessage("");
     }
   };
 
