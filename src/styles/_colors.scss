@@ -23,7 +23,7 @@ $light: (
   label-tx: #666666,
   primary-disable-tx: rgba(0, 0, 0, 0.25),
   primary-disable: rgba(0, 0, 0, 0.04),
-  primary: #8b79ff,
+  primary: #2f425d,
   primary-hover: #4c32f9,
   primary-bg-hover: #4c32f9,
   // secondary: #dee2e6,
@@ -64,36 +64,41 @@ $light: (
   //     rgba(110, 86, 255, 0.9),
   //     rgba(108, 84, 255, 0.87),
   //     rgba(32, 13, 148, 0.83)
-  //   ),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+  //   ),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 );
 
 $dark: (
+  //new
   white: #000,
   black: #ffffff,
+  primary: #2f425d,
+  primary-bg: #2f425d,
+  primary-hover: #2f425d,
+  primary-border: #2f425d,
+
+  secondary: #002338,
+  secondary-text: #002338,
+  secondary-bg: #002338,
+  secondary-hover: #002338,
+  secondary-border: #002338,
+
+  super-color: #00fff2,
+  info: #ff9500,
+  label: #ffe100,
+  //old
   body-bg: #1e1e1e,
   wrapper-bg: #110f1b,
-
-  primary: #ebb82a,
-  primary-bg: #101113,
-  primary-hover: #ebb82ab3,
-  primary-border: #495057,
 
   primary-text: #f5f5f5,
   primary-disable: rgba(127, 127, 127, 0.5),
   //
-  secondary-text: #636466,
-  secondary: #18181b,
-  secondary-bg: #18181b,
-  secondary-hover: #0b0b11,
-  secondary-border: #2b3236,
-
   tertiary: #393a3d,
   tertiary-bg: #393a3d,
   tertiary-border: #393a3d,
   divider: rgba(255, 255, 255, 0.3),
-  success: #00b012,
+  success: #08ff35,
   label-text: #8ba2ad,
-  info: #408dfc,
+
   warning: #ffc107,
   error: #fe4242,
   // TODO: update color code
