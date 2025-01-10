@@ -18,10 +18,11 @@ export default function ChatInput() {
 
   const handleSend = () => {
     if (message.trim() !== "") {
-      socket.emit("chatMessage", {
-        message,
-        timestamp: new Date().toISOString(),
-      });
+      // socket.emit("chatMessage", {
+      //   message,
+      //   timestamp: new Date().toISOString(),
+      // });
+      socket.emit("message", { content: message });
       setMessage("");
     }
   };
@@ -62,7 +63,6 @@ export default function ChatInput() {
           onKeyPress={(e) => e.key === "Enter" && handleSend()}
         />
         {/* <EmojiPicker setEmoji={handleEmojiPicker} /> */}
-
 
         <div
           className='tip_btn'

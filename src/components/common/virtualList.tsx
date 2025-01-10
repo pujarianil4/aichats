@@ -1,15 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./index.scss";
-import { Virtuoso, VirtuosoGrid } from "react-virtuoso";
+import { Virtuoso } from "react-virtuoso";
 
 interface IProps {
   listData: any[];
   isLoading: boolean;
   setPage: React.Dispatch<React.SetStateAction<number>>;
   limit: number;
+  firstItemIndex: number;
+  isInitialLoad: boolean;
+  setIsInitialLoad: React.Dispatch<React.SetStateAction<boolean>>;
+  // onLoadOlderMessages: () => void;
   renderComponent: any;
-  isGrid?: boolean;
-  itemWidth?: number;
   customScrollSelector?: string;
   footerHeight?: number;
 }
@@ -19,9 +21,11 @@ export default function VirtualizedContainer({
   isLoading,
   setPage,
   limit,
+  firstItemIndex,
+  isInitialLoad,
+  setIsInitialLoad,
+  // onLoadOlderMessages,
   renderComponent,
-  isGrid = false,
-  itemWidth = 200,
   customScrollSelector = "listContainer",
   footerHeight = 50,
 }: IProps) {
@@ -30,6 +34,7 @@ export default function VirtualizedContainer({
   >(undefined);
   const [isAutoScrollEnabled, setIsAutoScrollEnabled] = useState(true);
   const virtuosoRef = useRef<any>(null);
+  const previousDataLength = useRef<number>(0);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -60,59 +65,48 @@ export default function VirtualizedContainer({
   }, [customScrollParent]);
 
   useEffect(() => {
-    // Scroll to the bottom if auto-scroll is enabled
-    if (isAutoScrollEnabled && virtuosoRef.current) {
-      virtuosoRef.current.scrollToIndex({ index: listData.length - 1 });
+    const currentDataLength = listData.length;
+
+    // Handle scroll for initial load or socket data
+    if (isInitialLoad && virtuosoRef.current && currentDataLength > 0) {
+      virtuosoRef.current.scrollToIndex({ index: currentDataLength - 1 });
+      setIsInitialLoad(false);
     }
-  }, [listData, isAutoScrollEnabled]);
+    // Handle scroll when loading older data (pages)
+    else if (!isInitialLoad && currentDataLength > previousDataLength.current) {
+      const addedItems = currentDataLength - previousDataLength.current;
+      if (virtuosoRef.current) {
+        virtuosoRef.current.scrollBy({ top: addedItems * 40 });
+      }
+    }
+
+    previousDataLength.current = currentDataLength;
+  }, [listData, isInitialLoad]);
+
   const commonProps = {
     data: listData,
-    // endReached: () => {
-    //   if (
-    //     !isLoading
-    //     // &&
-    //     // listData.length % limit === 0 &&
-    //     // listData.length / limit === page
-    //   ) {
-    //     setPage((prevPage) => prevPage + 1);
-    //   }
-    // },
     startReached: () => {
       if (!isLoading) {
-        // setPage((prevPage) => Math.max(prevPage - 1, 0));
         setPage((prevPage) => prevPage + 1);
+        console.log("START_REACHED");
       }
     },
     itemContent: renderComponent,
     style: { overflow: "hidden" },
     customScrollParent,
+
     components: {
       Footer: () => <div style={{ height: `${footerHeight}px` }}></div>,
     },
   };
 
-  return isGrid ? (
-    <VirtuosoGrid
+  return (
+    <Virtuoso
       {...commonProps}
-      components={{
-        List: React.forwardRef(({ style, children }, ref) => (
-          <div
-            ref={ref}
-            style={{
-              display: "grid",
-              gridTemplateColumns: `repeat(auto-fill, minmax(${itemWidth}px, 1fr))`,
-              gap: "16px",
-              ...style,
-            }}
-            className='virtuoso_grid_list'
-          >
-            {children}
-          </div>
-        )),
-        ...commonProps.components,
-      }}
+      ref={virtuosoRef}
+      followOutput={isInitialLoad}
+      firstItemIndex={firstItemIndex}
+      className='virtuoso'
     />
-  ) : (
-    <Virtuoso {...commonProps} ref={virtuosoRef} className='virtuoso' />
   );
 }
