@@ -1,8 +1,8 @@
 .feedContainer {
   max-height: 672px;
-  height: 85%;
-  background-color: rgb(234, 234, 234);
-  padding: 0 10px;
+  height: 90%;
+  padding: 0 0 0 10px;
+  background-color: var(--black);
 
   .feed_header {
     display: flex;
@@ -14,7 +14,7 @@
     background-color: #2f425d;
     height: 52px;
     border-radius: 10px;
-    margin: 10px 0;
+    margin: 10px 10px 10px 0;
     position: relative;
     .close_icon {
       position: absolute;

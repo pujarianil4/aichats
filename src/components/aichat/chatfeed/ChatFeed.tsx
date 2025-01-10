@@ -43,47 +43,47 @@ export default function ChatFeed() {
   }, [page]);
 
   useEffect(() => {
-    // socket.on("chatMessage", (msg) => {
-    //   setChat((prevChat) => [...prevChat, { id: prevChat.length + 1, ...msg }]);
-    //   setIsInitialLoad(true);
+    socket.on("chatMessage", (msg) => {
+      setChat((prevChat) => [...prevChat, { id: prevChat.length + 1, ...msg }]);
+      setIsInitialLoad(true);
+    });
+
+    return () => {
+      socket.off("chatMessage");
+    };
+
+    // socket.on("connect", () => {
+    //   console.log("Connected:", socket.id);
+
+    //   // Join the chat with a wallet address
+    //   const res = socket.emit(
+    //     "join",
+    //     "0x99A221a87b3C2238C90650fa9BE0F11e4c499D06"
+    //   );
+    //   console.log("Sent join event.", res);
+
+    //   // Send a message
+    //   // setInterval(() => {
+    //   //   console.log("every 2 sec");
+    //   //   socket.emit("message", { content: "Hello, World!" });
+    //   //   console.log("Sent message event.");
+    //   // }, 10000);
     // });
 
-    // return () => {
-    //   socket.off("chatMessage");
-    // };
+    // // Listen for new messages
+    // socket.on("newMessage", (data) => {
+    //   console.log("DATA", data);
+    //   setChat((prevChat) => [
+    //     ...prevChat,
+    //     { id: prevChat.length + 1, ...data },
+    //   ]);
+    //   console.log("New message received:", data);
+    // });
 
-    socket.on("connect", () => {
-      console.log("Connected:", socket.id);
-
-      // Join the chat with a wallet address
-      const res = socket.emit(
-        "join",
-        "0x99A221a87b3C2238C90650fa9BE0F11e4c499D06"
-      );
-      console.log("Sent join event.", res);
-
-      // Send a message
-      // setInterval(() => {
-      //   console.log("every 2 sec");
-      //   socket.emit("message", { content: "Hello, World!" });
-      //   console.log("Sent message event.");
-      // }, 10000);
-    });
-
-    // Listen for new messages
-    socket.on("newMessage", (data) => {
-      console.log("DATA", data);
-      setChat((prevChat) => [
-        ...prevChat,
-        { id: prevChat.length + 1, ...data },
-      ]);
-      console.log("New message received:", data);
-    });
-
-    // Listen for errors
-    socket.on("error", (err) => {
-      console.error("Error:", err);
-    });
+    // // Listen for errors
+    // socket.on("error", (err) => {
+    //   console.error("Error:", err);
+    // });
   }, []);
 
   return (
@@ -100,9 +100,9 @@ export default function ChatFeed() {
             <path
               d='M7.84357 3.94482V5.75057C7.84357 6.06984 7.69538 6.37604 7.43159 6.6018C7.16781 6.82756 6.81004 6.95439 6.437 6.95439H4.32715M16.9863 6.95439H14.8764C14.5034 6.95439 14.1456 6.82756 13.8818 6.6018C13.618 6.37604 13.4698 6.06984 13.4698 5.75057V3.94482M13.4698 14.7793V12.9735C13.4698 12.6543 13.618 12.3481 13.8818 12.1223C14.1456 11.8965 14.5034 11.7697 14.8764 11.7697H16.9863M4.32715 11.7697H6.437C6.81004 11.7697 7.16781 11.8965 7.43159 12.1223C7.69538 12.3481 7.84357 12.6543 7.84357 12.9735V14.7793'
               stroke='white'
-              stroke-width='1.81116'
-              stroke-linecap='round'
-              stroke-linejoin='round'
+              strokeWidth='1.81116'
+              strokeLinecap='round'
+              strokeLinejoin='round'
             />
           </svg>
         </div>
