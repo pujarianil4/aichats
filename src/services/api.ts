@@ -9,7 +9,8 @@ export const getMessages = async (page: number, limit = 20) => {
     //   `${BASE_URL1}/posts?_page=${page}&_limit=${limit}`
     // );
     const { data } = await axios.get(
-      `${BASE_URL_CHAT}/messages?limit=${limit}&offset=${page}`
+      // `${BASE_URL_CHAT}/messages?limit=${limit}&offset=${page}`
+      `${BASE_URL_CHAT}/messages?limit=${limit}`
     );
     console.log("DATA", data);
     return data;

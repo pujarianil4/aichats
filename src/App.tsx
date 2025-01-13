@@ -14,7 +14,7 @@ function App() {
     if (isConnected) {
       socket.on("connect", () => {
         console.log("Connected:", socket.id);
-        socket.emit("join", "0x99A221a87b3C2238C90650fa9BE0F11e4c499D06");
+        socket.emit("join", "0xD5b26AC46d2F43F4d82889f4C7BBc975564859e3");
         // const res = socket.emit("join", address);
         // console.log("CONNECTED", res);
       });
