@@ -8,91 +8,143 @@
   justify-content: end;
   position: relative;
   padding: 10px;
-  .inputs {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 14px;
-    /* margin-bottom: 7px; */
-    padding: 5px;
-    background: #2f425d;
-    height: 48px;
-    border-radius: 10px;
+  @property --animate-duration {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+  }
 
-    .input_text {
-      flex-grow: 2;
-      background-color: transparent;
-      border: none;
-      height: 40px;
-      color: #fff;
-      font-size: 14px;
-      padding-left: 5px;
-      &:focus {
-        border: none;
-        outline: none;
-      }
-      &::placeholder {
-        color: #fff;
-        font-weight: 500;
-      }
-    }
+  @property --Color {
+    syntax: "<color>";
+    initial-value: #9997ff;
+  }
 
-    // .tipped {
-    //   background: linear-gradient(to right, #ecc7ff, #c46cf0);
-    //   -webkit-background-clip: text;
-    //   -webkit-text-fill-color: transparent;
-    //   background-clip: text;
-    //   text-fill-color: transparent;
-    // }
-
-    button {
-      flex-grow: 1;
+  // Keyframes for rotation animation
+  @keyframes rotate {
+    0% {
+      --animate-duration: 0deg;
+      --Color: #9997ff;
     }
-
-    .tip_btn {
-      border-top-left-radius: 6px;
-      border-bottom-right-radius: 6px;
-      vertical-align: middle;
-      &:hover {
-        opacity: 0.8;
-      }
-    }
-    .emoji {
-      &:hover {
-        opacity: 0.8;
-      }
-      svg {
-        width: 19px;
-        height: 19px;
-      }
-    }
-    .send_btn {
-      padding: 0px 11px;
-      &:hover {
-        opacity: 0.8;
-      }
-      svg {
-        width: 19px;
-        height: 19px;
-      }
-      // .tipped {
-      //   background: linear-gradient(
-      //     to right,
-      //     #ecc7ff,
-      //     #ecc7ff
-      //   ); /* Gradient colors */
-      //   -webkit-background-clip: text; /* Ensures the gradient applies only to text */
-      //   -webkit-text-fill-color: transparent; /* Makes the background of the text transparent */
-      //   background-clip: text; /* Standard background clip for text */
-      //   text-fill-color: transparent;
-      // }
+    100% {
+      --animate-duration: 360deg;
+      --Color: #7c63eb;
     }
   }
+
+  // Button styles
+  .gradient-border-button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: none;
+    padding: 3px;
+    border-radius: 11px;
+    cursor: pointer;
+    &::after,
+    &::before {
+      content: "";
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      background-size: 100% 100%;
+      background-position: 0px 0px;
+      // background-image: conic-gradient(
+      //   from var(--animate-duration) at 50% 50%,
+      //   #ffff 0%,
+      //   #ffff 20%,
+      //   var(--Color) 50%,
+      //   var(--Color) 66%,
+      //   #ffff 100%
+      // );
+      animation: rotate 3s infinite linear;
+    }
+
+    &::before {
+      filter: blur(20px);
+    }
+
+    &__content {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      border-radius: 10px;
+      background: var(--primary);
+      padding: 16px;
+      font-size: 16px;
+      color: #fff;
+      backdrop-filter: blur(40px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      .input_text {
+        flex-grow: 2;
+        background-color: transparent;
+        border: none;
+        // height: 40px;
+        color: #fff;
+        font-size: 14px;
+        padding-left: 5px;
+        &:focus {
+          border: none;
+          outline: none;
+        }
+        &::placeholder {
+          color: #fff;
+          font-weight: 500;
+        }
+      }
+      .tip_btn {
+        border-top-left-radius: 6px;
+        border-bottom-right-radius: 6px;
+        vertical-align: middle;
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+      .emoji {
+        &:hover {
+          opacity: 0.8;
+        }
+        svg {
+          width: 19px;
+          height: 19px;
+        }
+      }
+      .send_btn {
+        padding: 0px 11px;
+        &:hover {
+          opacity: 0.8;
+        }
+        svg {
+          width: 19px;
+          height: 19px;
+        }
+      }
+    }
+    .bg_normal {
+      background-color: #141249;
+    }
+  }
+
   .input_gradeint {
-    background: linear-gradient(to bottom, #e7b8ff 0%, #959aff 100%);
-    // border: 5px solid transparent; /* Set border to transparent */
-    // border-image: linear-gradient(to bottom, #39b680 0%, #76777b 100%) 1;
-    // border-radius: 12px;
+    &::after,
+    &::before {
+      background-image: conic-gradient(
+        from var(--animate-duration) at 50% 50%,
+        #ffff 0%,
+        #ffff 20%,
+        var(--Color) 50%,
+        var(--Color) 66%,
+        #ffff 100%
+      );
+    }
   }
 
   .tip-popup {
@@ -113,11 +165,11 @@
 
       .tip_bx {
         color: #fff;
-        font-size: 14px;
+
         cursor: pointer;
         border: 1px solid #002338;
         border-radius: 1rem;
-        padding: 2px 18px;
+        padding: 3px 18px;
         display: flex;
         align-items: center;
         gap: 8px;
@@ -137,6 +189,7 @@
         }
         span {
           font-weight: 600;
+          font-size: 12px;
         }
       }
     }
@@ -249,11 +302,11 @@
           &::after {
             content: "";
             position: absolute;
-            top: 1px;
-            left: 3px;
+            top: 2px;
+            left: 4px;
             width: 3px;
-            height: 6px;
-            border: solid var(--secondary); /* Set border color for the tick */
+            height: 5px;
+            border: solid var(--secondary);
             border-width: 0 2px 2px 0;
             transform: rotate(45deg);
           }
@@ -266,11 +319,5 @@
         cursor: pointer;
       }
     }
-  }
-}
-
-.tip_btn.active {
-  svg path {
-    stroke: #28a745;
   }
 }
