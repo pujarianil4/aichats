@@ -54,6 +54,10 @@ const TipPopup: React.FC<TipPopupProps> = ({
     }
   };
 
+  const handleTipClick = (amount: string) => {
+    setCustomAmount(amount);
+  };
+
   return (
     <div className='tip-popup'>
       <div className='tipPanel'>
@@ -64,7 +68,7 @@ const TipPopup: React.FC<TipPopupProps> = ({
               alt='Token Logo'
               className='user-message__icon'
             />
-            <span onClick={() => setCustomAmount(amount)}>{amount}</span>
+            <span onClick={() => handleTipClick(amount)}>{amount}</span>
           </div>
         ))}
       </div>

@@ -47,52 +47,36 @@ export default function ChatFeed() {
   }, [page]);
 
   useEffect(() => {
-    socket.on("chatMessage", (msg) => {
-      setChat((prevChat) => [...prevChat, { id: prevChat.length + 1, ...msg }]);
-      setIsInitialLoad(true);
-    });
-
-    return () => {
-      socket.off("chatMessage");
-    };
-
+    // socket.on("chatMessage", (msg) => {
+    //   setChat((prevChat) => [...prevChat, { id: prevChat.length + 1, ...msg }]);
+    //   setIsInitialLoad(true);
+    // });
+    // return () => {
+    //   socket.off("chatMessage");
+    // };
     // socket.on("connect", () => {
     //   console.log("Connected:", socket.id);
-
-    //   // Join the chat with a wallet address
-    //   const res = socket.emit(
-    //     "join",
-    //     "0x99A221a87b3C2238C90650fa9BE0F11e4c499D06"
-    //   );
-    //   console.log("Sent join event.", res);
-
-    //   // Send a message
-    //   // setInterval(() => {
-    //   //   console.log("every 2 sec");
-    //   //   socket.emit("message", { content: "Hello, World!" });
-    //   //   console.log("Sent message event.");
-    //   // }, 10000);
+    //   socket.emit("join", "0x99A221a87b3C2238C90650fa9BE0F11e4c499D06");
+    //   // const res = socket.emit("join", address);
+    //   // console.log("CONNECTED", res);
     // });
-
-    // // Listen for new messages
-    // socket.on("newMessage", (data) => {
-    //   console.log("DATA", data);
-    //   setChat((prevChat) => [
-    //     ...prevChat,
-    //     { id: prevChat.length + 1, ...data },
-    //   ]);
-    //   console.log("New message received:", data);
-    // });
-
-    // // Listen for errors
-    // socket.on("error", (err) => {
-    //   console.error("Error:", err);
-    // });
+    // Listen for new messages
+    socket.on("newMessage", (data) => {
+      console.log("New message received:", data);
+      setChat((prevChat) => [
+        ...prevChat,
+        { id: prevChat.length + 1, ...data },
+      ]);
+      setIsInitialLoad(true);
+    });
+    socket.on("error", (err) => {
+      console.error("Error:", err);
+    });
   }, []);
 
   return (
     <div
-      className={`feedContainer ${isFullHeight ? "fullHeight" : "splitView"}`}
+      className={`feedContainer ${!isFullHeight ? "fullHeight" : "splitView"}`}
     >
       <div className='feed_header'>
         <div
@@ -160,7 +144,7 @@ export default function ChatFeed() {
           )}
         </div> */}
 
-        <div className='super_listContainer'>
+        {/* <div className='super_listContainer'>
           {!isLoading && chat?.length === 0 ? (
             <p>No data</p>
           ) : page < 2 && isLoading ? (
@@ -199,7 +183,7 @@ export default function ChatFeed() {
               />
             </>
           )}
-        </div>
+        </div>*/}
       </div>
 
       <div className='listContainer'>
@@ -229,10 +213,11 @@ export default function ChatFeed() {
                 <UserMessage
                   key={index}
                   userIcon={"https://via.placeholder.com/40"}
-                  userName={"0x0d2A...008631"}
-                  message={
-                    chat.message || chat.content || `${chat.id}: ${chat.title}`
-                  }
+                  data={chat}
+                  // userName={"0x0d2A...008631"}
+                  // message={
+                  //   chat.message || chat.content || `${chat.id}: ${chat.title}`
+                  // }
                 />
               )}
               footerHeight={10}
