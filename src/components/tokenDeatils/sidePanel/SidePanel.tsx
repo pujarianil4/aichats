@@ -1,5 +1,6 @@
 import React from "react";
 import "./sidePanel.scss";
+import TwitterFeed from "../twitterFeed/index.tsx";
 
 type prop = {
   tokenDetails: any;
@@ -68,6 +69,10 @@ export default function SidePanel({ tokenDetails }: prop) {
         <div className='social'>
           <p>View Profile</p>
         </div>
+      </div>
+
+      <div className='developer_profile'>
+        <TwitterFeed />
       </div>
     </div>
   );
