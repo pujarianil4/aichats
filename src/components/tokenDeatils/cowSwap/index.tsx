@@ -4,10 +4,23 @@ import {
   TradeType,
 } from "@cowprotocol/widget-react";
 
+import { useConnections, useConnectorClient } from "wagmi";
+import { wagmiConfig } from "../../../main.tsx";
 import { useChainId } from "wagmi";
 
+import { useClient } from "wagmi";
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}
 function index() {
   const chainId = useChainId();
+
+  const client = useClient();
+
+  console.log("connectors", client);
+
   console.log("chainID", chainId);
   const params: CowSwapWidgetParams = {
     appCode: "Laama Ai Agent",
@@ -37,6 +50,7 @@ function index() {
     theme: {
       baseTheme: "dark",
       primary: "#7100c7",
+      background: "#000000",
       paper: "#1c1c1c",
       text: "#ffffff",
     },
