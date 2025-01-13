@@ -1,7 +1,7 @@
 import React from "react";
 import "./sidePanel.scss";
 import TwitterFeed from "../twitterFeed/index.tsx";
-
+import Cowswap from "../cowSwap/index.tsx";
 type prop = {
   tokenDetails: any;
 };
@@ -13,7 +13,9 @@ export function getColorForValue(value: number): string {
 export default function SidePanel({ tokenDetails }: prop) {
   return (
     <div className='sidepanel'>
-      <div className='swap'></div>
+      <div className='swap'>
+        <Cowswap />
+      </div>
       <div className='analytics'>
         <div className='analytics__title'>
           <h3>Token Data</h3>
