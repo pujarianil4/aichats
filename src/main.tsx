@@ -86,6 +86,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                 colorBgContainer: "#1c1c1c",
 
                 colorText: "#fffff",
+                boxShadow: "0px",
               },
               components: {
                 Table: {

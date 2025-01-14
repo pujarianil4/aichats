@@ -41,3 +41,15 @@
     color: #ffffff !important;
   }
 }
+
+.ant-btn-color-primary {
+  box-shadow: none;
+  border: none !important;
+  &:hover {
+    background-color: #ff00b7c8 !important;
+  }
+  &:focus {
+    border: none !important;
+    box-shadow: none !important;
+  }
+}
