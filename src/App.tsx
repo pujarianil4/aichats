@@ -12,7 +12,7 @@ import AgentList from "./components/AgentList/index.tsx";
 function App() {
   const isOnline = useOnlineStatus();
   return (
-    <div>
+    <div className='dark'>
       <Navbar />
       {/* <TokenDetails /> */}
       <AgentList />

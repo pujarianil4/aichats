@@ -2,7 +2,7 @@
   width: 80%;
   margin: auto;
   min-height: 500px;
-  background-color: #1c1c1c;
+  background-color: var(--primary-bg);
   border-radius: 15px;
   padding: 20px;
   min-width: 780px;
@@ -17,7 +17,7 @@
     height: 60px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid #ff00b7;
+    border: 2px solid var(--primary);
   }
 
   div {
@@ -40,7 +40,7 @@
       p {
         padding: 2px 20px;
         border-radius: 10px;
-        border: 1px solid #ffffff;
+        border: 1px solid var(--light);
         white-space: nowrap; // Prevents text from wrapping
         overflow: hidden; // Hides overflow text
         text-overflow: ellipsis; // Adds the ellipsis for overflowed text

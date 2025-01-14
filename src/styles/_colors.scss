@@ -1,7 +1,8 @@
 // TODO: update colors at commented places and for dark
 $light: (
   wrapper-bg: #ffffff,
-
+  dark: #ffffff,
+  light: #000000,
   primary-bg: #ffffff,
   secondary-bg: #f8f9fa,
   tertiary-bg: #e9ecef,
@@ -43,7 +44,6 @@ $light: (
   error-border: #a52834,
 
   card-shadow: 0 0.5rem 1.2rem rgb(189 197 209 / 20%),
-  light: rgb(170, 170, 170, 100%),
   // popup-shadow: -3px 5px 36px 3px #20004c,
   // popup-back-color: #1e174c,
   // popup-border:
@@ -53,15 +53,16 @@ $light: (
   //     rgba(110, 86, 255, 0.9),
   //     rgba(108, 84, 255, 0.87),
   //     rgba(32, 13, 148, 0.83)
-  //   ),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+  //   ),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 );
 
 $dark: (
   body-bg: #1e1e1e,
   wrapper-bg: #110f1b,
-
+  light: #ffffff,
+  dark: #000000,
   primary: #ff00b7,
-  primary-bg: #101113,
+  primary-bg: #1c1c1c,
   primary-hover: #ebb82ab3,
   primary-border: #495057,
 
@@ -87,7 +88,6 @@ $dark: (
   link-color: #6ab5db,
   link-hover-color: #9ccee7,
   card-shadow: 0 0.5rem 1.2rem rgba(82, 85, 92, 0.15),
-  light: rgb(170, 170, 170, 100%),
   //old
   // secondary-hov: #181c1f,
   // body-bg: #fff,
@@ -130,5 +130,5 @@ $dark: (
   //     rgba(110, 86, 255, 0.9),
   //     rgba(108, 84, 255, 0.87),
   //     rgba(32, 13, 148, 0.83)
-  //   ),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+  //   ),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 );

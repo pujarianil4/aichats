@@ -62,7 +62,7 @@ export default function AgentList() {
     <div className='agentlist_container'>
       <Table
         className='antd_table'
-        pagination={{ position: ["bottomCenter"], pageSize: 7 }}
+        pagination={{ position: ["bottomCenter"], pageSize: 10 }}
         dataSource={dataSource}
         columns={columns}
         bordered={false}

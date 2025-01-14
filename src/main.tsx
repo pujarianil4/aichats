@@ -79,22 +79,22 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             theme={{
               token: {
                 // Seed Token
-                colorPrimary: "#FF00B7",
-                colorTextSecondary: "#FF00B7",
+                colorPrimary: "#ff00b7",
+                colorTextSecondary: "#ff00b7",
                 borderRadius: 2,
 
                 // Alias Token
-                colorBgContainer: "#1c1c1c",
+                colorBgContainer: "var(--primary-bg)",
 
                 colorText: "#fffff",
                 boxShadow: "0px",
               },
               components: {
                 Table: {
-                  headerColor: "#FF00B7",
+                  headerColor: "var(--primary)",
                 },
                 Pagination: {
-                  itemActiveBg: "#FF00B7",
+                  itemActiveBg: "var(--primary)",
                 },
               },
             }}

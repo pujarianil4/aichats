@@ -6,7 +6,7 @@
   /* color-scheme: light dark; */
   /* color: rgba(255, 255, 255, 0.87);
   background-color: #242424; */
-  color: #ffffff;
+  color: #ffff;
   background-color: #000;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -45,7 +45,7 @@ button {
   background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
-  color: #ffffff;
+  color: var(--light);
 }
 button:hover {
   border-color: #646cff;
@@ -58,7 +58,7 @@ button:focus-visible {
 /* @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
-    background-color: #ffffff;
+    background-color: var(--light);
   }
   a:hover {
     color: #747bff;

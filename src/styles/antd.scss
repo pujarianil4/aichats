@@ -8,6 +8,7 @@
         border-color: #333333;
         padding: 15px;
         white-space: nowrap;
+        background-color: transparent;
       }
       .ant-table-cell {
         &::before {
@@ -23,6 +24,11 @@
         padding: 10px 15px;
         width: 100px;
         white-space: nowrap;
+        background: transparent;
+        cursor: pointer;
+      }
+      tr {
+        border-radius: 10px;
       }
     }
   }
@@ -38,7 +44,7 @@
 
 .ant-pagination-item {
   a {
-    color: #ffffff !important;
+    color: var(--light) !important;
   }
 }
 
@@ -46,7 +52,7 @@
   box-shadow: none;
   border: none !important;
   &:hover {
-    background-color: #ff00b7c8 !important;
+    background-color: var(--primary) c8 !important;
   }
   &:focus {
     border: none !important;
