@@ -8,6 +8,7 @@ import DextoolsWidget from "./components/Charts/Dex.tsx";
 import GeckoChart from "./components/Charts/GeckoChart.tsx";
 import { TokenDetails } from "./components/tokenDeatils/index.tsx";
 import AgentList from "./components/AgentList/index.tsx";
+import Footer from "./components/footer/index.tsx";
 
 function App() {
   const isOnline = useOnlineStatus();
@@ -16,6 +17,7 @@ function App() {
       <Navbar />
       {/* <TokenDetails /> */}
       <AgentList />
+      <Footer />
     </div>
   );
 }

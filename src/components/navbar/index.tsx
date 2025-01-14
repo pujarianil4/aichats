@@ -5,7 +5,10 @@ function Navbar() {
   return (
     <div className='navbar_container'>
       <div className='navigation'>
-        <img src='./logo.png' alt='logo' />
+        <a href='/'>
+          {" "}
+          <img src='./logo.png' alt='logo' />
+        </a>
         <nav>
           <ul>
             <li>
@@ -20,7 +23,9 @@ function Navbar() {
           </ul>
         </nav>
       </div>
-      <div className='search'></div>
+      <div className='search'>
+        <input type='text' placeholder='Search' />
+      </div>
       <div className='actions'>
         <Button> Create New Agent </Button>
         <Button type='primary'> Connect Wallet</Button>

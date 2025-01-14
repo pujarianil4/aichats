@@ -41,6 +41,18 @@
     }
   }
 
+  .search {
+    input {
+      background: var(--primary-bg);
+      padding: 10px 15px;
+      border: none;
+      border-radius: 20px;
+      width: 200px;
+
+      color: var(--light);
+    }
+  }
+
   .actions {
     display: flex;
     gap: 1rem;
