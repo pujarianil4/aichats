@@ -28,3 +28,8 @@ export function timeAgo(timestamp: number) {
 
   return 'just now';
 }
+
+
+export const toFixedNumber = (value: number, precision: number = 3)=> {
+  return Number(value).toFixed(precision)
+}

@@ -23,41 +23,39 @@ export default function SidePanel({ tokenDetails }: prop) {
         <div className='analytics_data'>
           <div>
             <p className='label'>Price</p>
-            <p>${tokenDetails.market_data.current_price[USD]}</p>
+            <p>${tokenDetails.priceInUsd}</p>
           </div>
           <div>
             <p className='label'>Market Cap</p>
-            <p>${tokenDetails.market_data.market_cap[USD]}</p>
+            <p>${tokenDetails.marketCapUsd}</p>
           </div>
           <div>
-            <p className='label'>TVL </p>
-            <p>${tokenDetails.market_data.total_value_locked[USD]}</p>
+            <p className='label'>Liquidity </p>
+            <p>${tokenDetails.liquidity}</p>
           </div>
-          <div>
+          {/* <div>
             <p className='label'>MC Rank</p>
             <p>{tokenDetails.market_data.market_cap_rank}</p>
-          </div>
+          </div> */}
         </div>
         <div className='analytics_data1'>
           <div>
             <p className='label'>24h change</p>
             <p
               style={{
-                color: getColorForValue(
-                  tokenDetails.market_data.price_change_percentage_24h
-                ),
+                color: getColorForValue(tokenDetails.priceChange24h),
               }}
             >
-              {tokenDetails.market_data.price_change_percentage_24h}%
+              {tokenDetails.priceChange24h}%
             </p>
           </div>
           <div>
             <p className='label'>Volume</p>
-            <p>${tokenDetails.market_data.total_volume[USD]}</p>
+            <p>${tokenDetails.volume}</p>
           </div>
           <div>
             <p className='label'>Holders</p>
-            <p>456789</p>
+            <p>45675678</p>
           </div>
         </div>
       </div>

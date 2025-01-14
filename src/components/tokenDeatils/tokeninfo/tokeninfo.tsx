@@ -13,7 +13,7 @@ export default function TokenInfo({ tokenDetails }: prop) {
       <div className='basic'>
         <div className='content'>
           <div className='tokenlogo'>
-            <img src={tokenDetails?.image?.small} alt='' />
+            <img src={tokenDetails?.imageUrl} alt='' />
           </div>
           <div className='info'>
             <h2>
@@ -22,18 +22,18 @@ export default function TokenInfo({ tokenDetails }: prop) {
 
             <div>
               <p>{shortenAddress(tokenDetails?.contract_address)}</p>
-              <p>{tokenDetails?.categories[0]}</p>
+              <p>Production</p>
             </div>
           </div>
         </div>
         <div className='market'>
           <div>
             <p className='label'>Price</p>
-            <p>${tokenDetails.market_data.current_price[USD]}</p>
+            <p>${tokenDetails.priceInUsd}</p>
           </div>
           <div>
             <p className='label'>Market Cap</p>
-            <p>${tokenDetails.market_data.market_cap[USD]}</p>
+            <p>${tokenDetails.marketCapUsd}</p>
           </div>
           <div>
             <p className='label'>Created at</p>
@@ -45,7 +45,7 @@ export default function TokenInfo({ tokenDetails }: prop) {
 
       <div className='details'>
         <h2>Biography</h2>
-        <p>{tokenDetails.description["en"]}</p>
+        <p>fghj</p>
       </div>
     </div>
   );

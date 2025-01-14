@@ -5,7 +5,7 @@ import SidePanel from "./sidePanel/SidePanel.tsx";
 import { getTokenDetails } from "../../services/api.ts";
 
 export const TokenDetails = () => {
-  const [tokenDetails, setTokenDetails] = React.useState(null);
+  const [tokenDetails, setTokenDetails] = React.useState<any>(null);
 
   const getToken = async () => {
     const data = await getTokenDetails(
