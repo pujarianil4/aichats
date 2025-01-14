@@ -10,18 +10,18 @@
 //typography
 // @import './typography';
 
-// .light {
-//   @each $name, $color in $light {
-//     --#{$name}: #{$color};
-//   }
-// }
+.light {
+  @each $name, $color in $light {
+    --#{$name}: #{$color};
+  }
+}
 
-// .dark,
-// body {
-//   @each $name, $color in $dark {
-//     --#{$name}: #{$color};
-//   }
-// }
+.dark,
+body {
+  @each $name, $color in $dark {
+    --#{$name}: #{$color};
+  }
+}
 
 @mixin main-button {
   padding: 7px 15px !important;

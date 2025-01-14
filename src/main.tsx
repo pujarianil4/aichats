@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import "./styles/antd.scss";
+import "./styles/index.scss";
 import App from "./App.tsx";
 import ReactDOM from "react-dom/client";
 //rainbowkit integration

@@ -33,7 +33,7 @@
             font-family: monospace;
             cursor: pointer;
             &:hover {
-              color: #ff00b7;
+              color: var(--primary);
             }
           }
         }
