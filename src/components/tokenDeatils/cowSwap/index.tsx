@@ -1,20 +1,33 @@
+import React, { useState, useEffect } from "react";
 import {
   CowSwapWidget,
   CowSwapWidgetParams,
   TradeType,
 } from "@cowprotocol/widget-react";
 
-import { useChainId } from "wagmi";
+import { useChainId, useAccount } from "wagmi";
 
 declare global {
   interface Window {
     ethereum: any;
   }
 }
+
 function index() {
   const chainId = useChainId();
+  const { isConnected } = useAccount();
+  const [provider, setProvider] = useState<any>(null);
+
+  useEffect(() => {
+    if (isConnected && typeof window !== "undefined" && window.ethereum) {
+      setProvider(window.ethereum);
+    } else {
+      setProvider("");
+    }
+  }, [isConnected]);
 
   console.log("chainID", chainId);
+
   const params: CowSwapWidgetParams = {
     appCode: "Laama Ai Agent",
     width: "100%",
@@ -56,9 +69,6 @@ function index() {
     sounds: {},
     customTokens: [],
   };
-
-  // Ethereum EIP-1193 provider. For a quick test, you can pass `window.ethereum`, but consider using something like https://web3modal.com
-  const provider = window.ethereum;
 
   return (
     <div className='cowSwap_bx'>
