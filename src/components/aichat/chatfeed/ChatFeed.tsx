@@ -4,7 +4,7 @@ import VirtualizedContainer from "../../common/virtualList.tsx";
 
 import closeIcon from "../../../assets/close.svg";
 import socket from "../../../services/socket.ts";
-import UserMessage from "../userMessage/index.tsx";
+import UserMessage, { shortenAddress } from "../userMessage/index.tsx";
 import { getMessages } from "../../../services/api.ts";
 export default function ChatFeed() {
   const [page, setPage] = useState<number>(1);
@@ -92,12 +92,18 @@ export default function ChatFeed() {
         <div className='super_chat_container'>
           <div className='s_chat_bx'>
             <img
-              src='https://via.placeholder.com/40'
+              src={`https://effigy.im/a/${"0xD5b26AC46d2F43F4d82889f4C7BBc975564859e3"}.svg`}
+              // src='https://via.placeholder.com/40'
               alt={`'s icon`}
               className='icon'
             />
             <div className='chat_content'>
-              <div className='name'>0xgh...7897</div>
+              <div className='name'>
+                {shortenAddress(
+                  "0xD5b26AC46d2F43F4d82889f4C7BBc975564859e3",
+                  4
+                )}
+              </div>
               <div className='value'> $1000 </div>
             </div>
           </div>

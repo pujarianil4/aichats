@@ -16,7 +16,7 @@ function Navbar() {
 
   const handleWalletConnected = async (connectedAddress: string) => {
     console.log("Wallet connected with address:", connectedAddress);
-    // await connectAddress("0xD5b26AC46d2F43F4d82889f4C7BBc975564859e3");
+    await connectAddress(connectedAddress);
   };
 
   return (

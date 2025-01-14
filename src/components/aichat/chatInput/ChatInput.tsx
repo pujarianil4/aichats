@@ -17,7 +17,6 @@ export default function ChatInput() {
   const [message, setMessage] = useState("");
   const [showTipPopup, setShowTipPopup] = useState(false);
   const [customAmount, setCustomAmount] = useState("");
-  console.log("customAmount", customAmount);
   const sushiTokenAddress = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"; // USDC - BASE
   const superChatAdminAddress = "0x79821a0F47e0c9598413b12FE4882b33326B0cF8";
 
@@ -51,7 +50,6 @@ export default function ChatInput() {
   const handleSend = async () => {
     if (address)
       if (customAmount) {
-        // await connectAddress("0xD5b26AC46d2F43F4d82889f4C7BBc975564859e3");
         console.log("Sending tip...");
         await writeContract({
           address: sushiTokenAddress,

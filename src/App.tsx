@@ -6,6 +6,7 @@ import useOnlineStatus from "./hooks/useOnlineStatus.js";
 import { useEffect } from "react";
 import socket from "./services/socket.ts";
 import { useAccount } from "wagmi";
+import ChatInstanceForm from "./components/chatInstanceForm/index.tsx";
 
 function App() {
   const isOnline = useOnlineStatus();
@@ -24,6 +25,7 @@ function App() {
   return (
     <>
       <Navbar />
+      <ChatInstanceForm />
       <AiChats
         youtubeLink='https://www.youtube.com/embed/1mwjOdC4Si8'
         address=''

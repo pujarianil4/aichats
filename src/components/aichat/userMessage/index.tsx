@@ -7,8 +7,9 @@ interface UserMessageProps {
   data: any;
 }
 
-export const shortenAddress = (address: string) =>
-  address && `${address.slice(0, 5)}....${address.slice(address.length - 5)}`;
+export const shortenAddress = (address: string, chars: number = 5) =>
+  address &&
+  `${address.slice(0, chars)}....${address.slice(address.length - chars)}`;
 
 export default function UserMessage({ data }: UserMessageProps) {
   const { data: ensName, isLoading: isEnsNameLoading } = useEnsName({
