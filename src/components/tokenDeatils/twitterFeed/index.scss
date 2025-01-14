@@ -1,0 +1,47 @@
+/* Wrapper styles */
+.twitter-feed-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Scrollable container */
+.twitter-feed-container {
+  position: relative;
+  height: 450px;
+  overflow-y: auto;
+  // border: 1px solid #002338;
+  border-radius: 1rem;
+}
+
+/* Custom scrollbar */
+.twitter-feed-container::-webkit-scrollbar {
+  width: 2px;
+}
+
+.twitter-feed-container::-webkit-scrollbar-track {
+  background: #14171a;
+  border-radius: 8px;
+}
+
+.twitter-feed-container::-webkit-scrollbar-thumb {
+  background-color: #1c1c1c;
+  border-radius: 8px;
+  border: 2px solid #1c1c1c;
+}
+
+.twitter-feed-container::-webkit-scrollbar-thumb:hover {
+  background-color: #1c1c1c;
+}
+
+/* Loader styles */
+.loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 16px;
+  color: #000;
+  font-weight: bold;
+}
