@@ -101,7 +101,7 @@ function extractPoolData(data: any) {
     marketCapUsd: toFixedNumber(pool.attributes.market_cap_usd),
     pairAddress: pool.id,
     imageUrl: tokenData.image_url,
-    
+    fdvInusd: tokenData.fdv_usd
   };
 }
 
