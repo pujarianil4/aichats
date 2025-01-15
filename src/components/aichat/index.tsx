@@ -8,12 +8,10 @@ interface IProps {
   address: string;
 }
 export default function AiChats({ youtubeLink, address }: IProps) {
-  console.log("Address", address);
-  console.log("youtubeLink", youtubeLink);
   return (
     <div className='aichats'>
       <div className='live'>
-        <YoutubeVideo youtubeLink={youtubeLink} />
+        {/* <YoutubeVideo youtubeLink={youtubeLink} /> */}
       </div>
       <div className='chatfeed'>
         <ChatFeed />

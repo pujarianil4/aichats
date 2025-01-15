@@ -1,14 +1,14 @@
 // base and layout
-@import "./breakPoints";
+@use "./breakPoints" as *;
 
 // variables and functions
-@import "./variables";
+@use "./variables" as *;
 
-//colors
-@import "./colors";
+// colors
+@use "./colors" as *;
 
-//typography
-// @import './typography';
+// typography
+// @use './typography';
 
 .light {
   @each $name, $color in $light {

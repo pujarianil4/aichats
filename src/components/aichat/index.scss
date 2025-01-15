@@ -1,15 +1,17 @@
 .aichats {
-  // width: 700px;
-  // height: 600px;
   width: 892px;
   height: 792px;
+  // width: 50%;
+  // max-width: 900px;
+  // height: 80vh;
+  // max-height: 800px;
   // border: 1px solid black;
   display: flex;
   color: #213547;
   background-color: var(--light);
   position: fixed;
-  right: 20px;
-  bottom: 15px;
+  right: 50px;
+  bottom: 5vh;
   border-radius: 16px;
   overflow: hidden;
   .live,
@@ -19,9 +21,31 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    overflow: hidden;
   }
+  // .live,
+  // .chatfeed {
+  //   transition: flex-grow 0.3s ease, width 0.3s ease;
+  //   flex: 1;
+  // }
 
+  // /* When screen size is 1024px or smaller */
+  // @media (max-width: 1024px) {
+  //   .live,
+  //   .chatfeed {
+  //     flex: 1; /* Both stay 50% width */
+  //   }
+  // }
+
+  // /* When screen size is larger than 1400px */
+  // @media (min-width: 1400px) {
+  //   .live {
+  //     flex-grow: 3; /* Left section grows dynamically */
+  //   }
+
+  //   .chatfeed {
+  //     flex-grow: 1; /* Right section shrinks dynamically */
+  //   }
+  // }
   .chatfeed {
     // border: 1px solid black;
     border-radius: 16px;

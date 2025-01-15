@@ -1,117 +1,101 @@
-import React, { useState } from "react";
-import TipButton from "./TipButton.tsx";
+import React, { useEffect, useState } from "react";
 import uftLogo from "../../../assets/uftLogo.svg";
 import "./chatinput.scss";
-import {
-  useWriteContract,
-  useWaitForTransactionReceipt,
-  useAccount,
-} from "wagmi";
-import { parseUnits } from "viem";
-import { erc20Abi } from "../../../helpers/contracts/abi.ts";
-interface TipPanelProps {
-  recipient: string;
+
+interface TipPopupProps {
+  customAmount: string;
+  setCustomAmount: (value: string) => void;
 }
 
-export default function TipPanel({ recipient }: TipPanelProps) {
-  const tipAmounts = [100, 1000, 10000];
+const TipPopup: React.FC<TipPopupProps> = ({
+  customAmount,
+  setCustomAmount,
+}) => {
+  const [tipAmount, setTipAmount] = useState<string[]>(["10", "100", "1000"]);
+  const [isChecked, setIsChecked] = useState<boolean>(false);
 
-  const { isConnected } = useAccount();
-
-  const {
-    data: hash,
-    error: writeError,
-    isPending,
-    writeContract,
-  } = useWriteContract();
-  const sushiTokenAddress = "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a";
-
-  const {
-    isLoading: isConfirming,
-    isSuccess: isConfirmed,
-    error: receiptError,
-  } = useWaitForTransactionReceipt({
-    hash,
-  });
-
-  async function handleTip() {
-    if (!isConnected) return alert("please connect your wallet");
-    try {
-      await writeContract({
-        address: sushiTokenAddress,
-        abi: erc20Abi,
-        functionName: "transfer",
-        args: [recipient, parseUnits("10", 18)],
-      });
-    } catch (err: any) {
-      onError(err.message || "Transaction submission failed"); // Handle write errors
+  // Load saved values from localStorage
+  useEffect(() => {
+    const savedAmounts = localStorage.getItem("savedTipAmounts");
+    if (savedAmounts) {
+      const parsedAmounts = JSON.parse(savedAmounts);
+      if (parsedAmounts.length > 0) {
+        setTipAmount(parsedAmounts);
+        setIsChecked(true);
+      }
     }
-  }
+  }, []);
 
-  const [message, setMessage] = useState("");
+  const handleSaveAmount = () => {
+    if (customAmount.trim() !== "") {
+      const savedAmounts = JSON.parse(
+        localStorage.getItem("savedTipAmounts") || "[]"
+      );
+
+      let updatedTipAmount = [...tipAmount];
+
+      if (savedAmounts.length === 0) {
+        updatedTipAmount[0] = customAmount;
+        savedAmounts.push(customAmount);
+      } else if (savedAmounts.length === 1) {
+        updatedTipAmount[1] = customAmount;
+        savedAmounts[1] = customAmount;
+      } else if (savedAmounts.length === 2) {
+        updatedTipAmount[2] = customAmount;
+        savedAmounts[2] = customAmount;
+      } else if (savedAmounts.length >= 3) {
+        updatedTipAmount[2] = customAmount;
+        savedAmounts[2] = customAmount;
+      }
+
+      localStorage.setItem("savedTipAmounts", JSON.stringify(savedAmounts));
+      setTipAmount(updatedTipAmount);
+      setIsChecked(true);
+    }
+  };
+
+  const handleTipClick = (amount: string) => {
+    setCustomAmount(amount);
+  };
+
   return (
-    <>
+    <div className='tip-popup'>
       <div className='tipPanel'>
-        <div className='tip_bx'>
-          <img src={uftLogo} alt='token Logo' className='user-message__icon' />
-          <span
-            onClick={handleTip}
-            disabled={isPending || isConfirming}
-            type='submit'
-          >
-            100k
-          </span>
-        </div>
-        <div className='tip_bx'>
-          <img src={uftLogo} alt='token Logo' className='user-message__icon' />
-          <span
-            onClick={handleTip}
-            disabled={isPending || isConfirming}
-            type='submit'
-          >
-            100k
-          </span>
-        </div>
-        <div className='tip_bx'>
-          <img src={uftLogo} alt='token Logo' className='user-message__icon' />
-          <span
-            onClick={handleTip}
-            disabled={isPending || isConfirming}
-            type='submit'
-          >
-            100k
-          </span>
-        </div>
+        {tipAmount.map((amount, index) => (
+          <div key={index} className='tip_bx'>
+            <img
+              src={uftLogo}
+              alt='Token Logo'
+              className='user-message__icon'
+            />
+            <span onClick={() => handleTipClick(amount)}>{amount}</span>
+          </div>
+        ))}
       </div>
-
       <div className='token_input'>
         <input
           type='number'
           className='input_text'
           placeholder='Enter Amount'
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          value={customAmount}
+          onChange={(e) => setCustomAmount(e.target.value)}
         />
-
-        <span className='send_btn'>
-          <svg
-            width='16'
-            height='15'
-            viewBox='0 0 16 15'
-            fill='none'
-            xmlns='http://www.w3.org/2000/svg'
-            className='send-icon'
-          >
-            <path
-              d='M14.3419 7.64462L0.95119 14.092L3.43095 7.64462L0.95119 1.19725L14.3419 7.64462Z'
-              stroke='white'
-              strokeWidth='1.40276'
-              strokeLinecap='round'
-              strokeLinejoin='round'
-            />
-          </svg>
-        </span>
       </div>
-    </>
+      <div
+        className='save-checkbox'
+        onClick={() => {
+          handleSaveAmount();
+        }}
+      >
+        <input
+          type='checkbox'
+          checked={isChecked}
+          onChange={() => setIsChecked(!isChecked)}
+        />
+        <span> Save this Amount</span>
+      </div>
+    </div>
   );
-}
+};
+
+export default TipPopup;
