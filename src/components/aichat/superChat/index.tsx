@@ -2,11 +2,11 @@ import { shortenAddress } from "../userMessage/index.tsx";
 import "./index.scss";
 
 interface UserMessageProps {
-  ensName: string;
+  ensName?: string;
   data: any;
 }
 
-export default function SuerChatMessage({ ensName, data }: UserMessageProps) {
+export default function SuperChatMessage({ ensName, data }: UserMessageProps) {
   return (
     <>
       <div className='super_container'>

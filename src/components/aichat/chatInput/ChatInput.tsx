@@ -20,6 +20,9 @@ export default function ChatInput() {
   const sushiTokenAddress = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"; // USDC - BASE
   const superChatAdminAddress = "0x79821a0F47e0c9598413b12FE4882b33326B0cF8";
 
+  const path = window.location.pathname;
+  const param = path.split("/")[1];
+
   // Transaction hash and status
   const { data: hash, isPending, writeContract } = useWriteContract();
 
@@ -38,8 +41,10 @@ export default function ChatInput() {
         socket.emit("message", {
           content: message,
           hash: hash,
-          amnt: 1, // TODO: DECIMAL IS not working
+          amnt: customAmount, // TODO: DECIMAL IS not working
         });
+        socket.emit("getSuperChat", { instanceId: param }); // TODO:
+        console.log("SUPER CHAT EMMITED");
         setMessage("");
         setCustomAmount("");
         setShowTipPopup(false);

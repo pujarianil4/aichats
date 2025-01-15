@@ -2,7 +2,7 @@
 
 .chatinputContainer {
   height: 8%;
-  background-color: var(--black);
+  background-color: var(--chat-bg);
   display: flex;
   flex-direction: column;
   justify-content: end;
@@ -39,7 +39,7 @@
     justify-content: center;
     overflow: hidden;
     border: none;
-    padding: 3px;
+    // padding: 3px;
     border-radius: 11px;
     cursor: pointer;
     &::after,

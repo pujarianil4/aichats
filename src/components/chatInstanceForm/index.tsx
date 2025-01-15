@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { isAddress } from "viem";
+import { createInstance } from "../../services/api.ts";
 
 interface FormData {
   name: string;
@@ -25,8 +26,6 @@ const ChatInstanceForm: React.FC = () => {
     moderators: "",
     tokenAddress: "",
   });
-
-  console.log("ERRORS", errors);
 
   const chainOptions = [
     { label: "Ethereum", value: "1" },
@@ -58,7 +57,7 @@ const ChatInstanceForm: React.FC = () => {
     return isAddress(address);
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
     const adminAddressValid = validateAddress(formData.adminAddress);
@@ -84,7 +83,12 @@ const ChatInstanceForm: React.FC = () => {
       return;
     }
 
-    console.log("Form Data:", formData);
+    try {
+      console.log("Form Data:", formData);
+      await createInstance(formData);
+    } catch (error) {
+      console.log("FAILED TO CREATE INSTANCE", error);
+    }
   };
 
   return (
