@@ -4,6 +4,7 @@ import { useAccount } from "wagmi";
 import { useEffect, useRef } from "react";
 import { connectAddress, getChatInstanceAdmin } from "../../services/api.ts";
 import { Button } from "antd";
+import { Link } from "react-router-dom";
 function Navbar() {
   const { address, isConnected } = useAccount();
   const wasConnected = useRef(false);
@@ -53,7 +54,10 @@ function Navbar() {
         <input type='text' placeholder='Search' />
       </div>
       <div className='actions'>
-        <Button> Create New Agent </Button>
+        <Link to={"/create-agent"}>
+          {" "}
+          <Button> Create New Agent </Button>
+        </Link>
         <Button type='primary'> Connect Wallet</Button>
       </div>
     </div>
