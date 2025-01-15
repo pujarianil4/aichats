@@ -53,13 +53,13 @@ $light: (
   //     rgba(110, 86, 255, 0.9),
   //     rgba(108, 84, 255, 0.87),
   //     rgba(32, 13, 148, 0.83)
-  //   ),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+  //   ),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 );
 
 $dark: (
   //new
-  white: #000,
-  black: #ffffff,
+  // white: #000,
+  // black: #ffffff,
   chat-bg: #fff7f7,
   chat-primary: #2f425d,
   chat-primary-bg: #2f425d,
@@ -84,7 +84,7 @@ $dark: (
   primary-bg: #1c1c1c,
   primary-hover: #ebb82ab3,
   primary-border: #495057,
-
+  light-text: rgb(144, 144, 144),
   primary-text: #f5f5f5,
   primary-disable: rgba(127, 127, 127, 0.5),
   //

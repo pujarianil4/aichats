@@ -52,10 +52,28 @@
   box-shadow: none;
   border: none !important;
   &:hover {
-    background-color: var(--primary) c8 !important;
+    background-color: #bb0788 !important;
   }
   &:focus {
     border: none !important;
     box-shadow: none !important;
   }
 }
+
+// .ant-select {
+//   &:focus-visible {
+//     border: none !important;
+//     outline: none !important;
+//   }
+//   .ant-select-selector {
+//     background-color: var(--dark) !important;
+//     border: 1px solid var(--light) !important;
+//     outline: none !important;
+//   }
+//   .ant-select-selection-item {
+//     color: var(--light) !important;
+//   }
+//   .ant-select-arrow {
+//     color: var(--light) !important;
+//   }
+// }
