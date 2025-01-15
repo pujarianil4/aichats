@@ -53,7 +53,7 @@ $light: (
   //     rgba(110, 86, 255, 0.9),
   //     rgba(108, 84, 255, 0.87),
   //     rgba(32, 13, 148, 0.83)
-  //   ),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+  //   ),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 );
 
 $dark: (
@@ -61,10 +61,10 @@ $dark: (
   white: #000,
   black: #ffffff,
   chat-bg: #fff7f7,
-  primary: #2f425d,
-  primary-bg: #2f425d,
-  primary-hover: #2f425d,
-  primary-border: #2f425d,
+  chat-primary: #2f425d,
+  chat-primary-bg: #2f425d,
+  chat-primary-hover: #2f425d,
+  chat-primary-border: #2f425d,
 
   secondary: #002338,
   secondary-text: #002338,
