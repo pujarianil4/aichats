@@ -28,6 +28,7 @@ import {
   phantomWallet,
   walletConnectWallet,
 } from "@rainbow-me/rainbowkit/wallets";
+import { BrowserRouter } from "react-router-dom";
 
 const { wallets } = getDefaultWallets();
 
@@ -72,37 +73,39 @@ const queryClient = new QueryClient({
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <WagmiProvider config={wagmiConfig}>
-      <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider theme={darkTheme()}>
-          <ConfigProvider
-            theme={{
-              token: {
-                // Seed Token
-                colorPrimary: "#ff00b7",
-                colorTextSecondary: "#ff00b7",
-                borderRadius: 2,
+    <BrowserRouter>
+      <WagmiProvider config={wagmiConfig}>
+        <QueryClientProvider client={queryClient}>
+          <RainbowKitProvider theme={darkTheme()}>
+            <ConfigProvider
+              theme={{
+                token: {
+                  // Seed Token
+                  colorPrimary: "#ff00b7",
+                  colorTextSecondary: "#ff00b7",
+                  borderRadius: 2,
 
-                // Alias Token
-                colorBgContainer: "var(--primary-bg)",
+                  // Alias Token
+                  colorBgContainer: "var(--primary-bg)",
 
-                colorText: "#fffff",
-                boxShadow: "0px",
-              },
-              components: {
-                Table: {
-                  headerColor: "var(--primary)",
+                  colorText: "#fffff",
+                  boxShadow: "0px",
                 },
-                Pagination: {
-                  itemActiveBg: "var(--primary)",
+                components: {
+                  Table: {
+                    headerColor: "var(--primary)",
+                  },
+                  Pagination: {
+                    itemActiveBg: "var(--primary)",
+                  },
                 },
-              },
-            }}
-          >
-            <App />
-          </ConfigProvider>
-        </RainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
+              }}
+            >
+              <App />
+            </ConfigProvider>
+          </RainbowKitProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
+    </BrowserRouter>
   </StrictMode>
 );

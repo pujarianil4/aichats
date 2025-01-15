@@ -13,6 +13,8 @@ import { useEffect } from "react";
 import socket from "./services/socket.ts";
 import { useAccount } from "wagmi";
 import ChatInstanceForm from "./components/chatInstanceForm/index.tsx";
+import AppRoutes from "./routes/Router.tsx";
+import AgentListpage from "./pages/allagents/index.tsx";
 
 function App() {
   const isOnline = useOnlineStatus();
@@ -36,15 +38,8 @@ function App() {
 
   return (
     <div className='dark'>
-      <Navbar />
-      {/* <ChatInstanceForm /> */}
-      <AiChats
-        youtubeLink='https://www.youtube.com/embed/1mwjOdC4Si8'
-        address=''
-      />
-      {/* <TokenDetails /> */}
-      <AgentList />
-      <Footer />
+      <AppRoutes />
+      {/* <AgentListpage /> */}
     </div>
   );
 }
