@@ -3,6 +3,12 @@ import "./styles/index.scss";
 import AiChats from "./components/aichat/index.js";
 import Navbar from "./components/navbar/index.tsx";
 import useOnlineStatus from "./hooks/useOnlineStatus.js";
+import TradingViewChart from "./components/Charts/TradingViewChart.tsx";
+import DextoolsWidget from "./components/Charts/Dex.tsx";
+import GeckoChart from "./components/Charts/GeckoChart.tsx";
+import { TokenDetails } from "./components/tokenDeatils/index.tsx";
+import AgentList from "./components/AgentList/index.tsx";
+import Footer from "./components/footer/index.tsx";
 import { useEffect } from "react";
 import socket from "./services/socket.ts";
 import { useAccount } from "wagmi";
@@ -29,14 +35,17 @@ function App() {
   }, [isConnected]);
 
   return (
-    <>
+    <div className='dark'>
       <Navbar />
       <ChatInstanceForm />
       <AiChats
         youtubeLink='https://www.youtube.com/embed/1mwjOdC4Si8'
         address=''
       />
-    </>
+      {/* <TokenDetails /> */}
+      <AgentList />
+      <Footer />
+    </div>
   );
 }
 

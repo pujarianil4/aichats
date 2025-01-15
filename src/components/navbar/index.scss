@@ -3,4 +3,62 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
+  width: 90%;
+  margin: auto;
+  margin-block: 10px;
+  .navigation {
+    display: flex;
+    gap: 50px;
+    img {
+      border: 1px solid white;
+      background-color: aliceblue;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      ul {
+        display: flex;
+        align-items: center;
+        gap: 3rem;
+
+        li {
+          list-style: none;
+          a {
+            text-decoration: none;
+            color: white;
+            font-family: monospace;
+            cursor: pointer;
+            &:hover {
+              color: var(--primary);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .search {
+    input {
+      background: var(--primary-bg);
+      padding: 10px 15px;
+      border: none;
+      border-radius: 20px;
+      width: 200px;
+
+      color: var(--light);
+    }
+  }
+
+  .actions {
+    display: flex;
+    gap: 1rem;
+
+    button {
+      border-radius: 15px;
+    }
+  }
 }

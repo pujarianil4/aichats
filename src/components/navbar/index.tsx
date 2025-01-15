@@ -3,6 +3,7 @@ import "./index.scss";
 import { useAccount } from "wagmi";
 import { useEffect, useRef } from "react";
 import { connectAddress, getChatInstanceAdmin } from "../../services/api.ts";
+import { Button } from "antd";
 function Navbar() {
   const { address, isConnected } = useAccount();
   const wasConnected = useRef(false);
@@ -29,9 +30,31 @@ function Navbar() {
 
   return (
     <div className='navbar_container'>
-      <div>Super chat</div>
-      <div>
-        <ConnectButton />
+      <div className='navigation'>
+        <a href='/'>
+          {" "}
+          <img src='./logo.png' alt='logo' />
+        </a>
+        <nav>
+          <ul>
+            <li>
+              <a href='#'>Sentient</a>
+            </li>
+            <li>
+              <a href='#'>Prototype</a>
+            </li>
+            <li>
+              <a href='#'>About</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <div className='search'>
+        <input type='text' placeholder='Search' />
+      </div>
+      <div className='actions'>
+        <Button> Create New Agent </Button>
+        <Button type='primary'> Connect Wallet</Button>
       </div>
     </div>
   );
