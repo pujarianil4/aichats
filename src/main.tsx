@@ -1,6 +1,8 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
+import "./styles/antd.scss";
+import "./styles/index.scss";
 import App from "./App.tsx";
 import ReactDOM from "react-dom/client";
 //rainbowkit integration
@@ -14,6 +16,7 @@ import { WagmiProvider, http } from "wagmi";
 import { mainnet, base, arbitrum, polygon } from "wagmi/chains";
 import { darkTheme } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ConfigProvider } from "antd";
 
 import {
   metaMaskWallet,
@@ -72,7 +75,32 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider theme={darkTheme()}>
-          <App />
+          <ConfigProvider
+            theme={{
+              token: {
+                // Seed Token
+                colorPrimary: "#ff00b7",
+                colorTextSecondary: "#ff00b7",
+                borderRadius: 2,
+
+                // Alias Token
+                colorBgContainer: "var(--primary-bg)",
+
+                colorText: "#fffff",
+                boxShadow: "0px",
+              },
+              components: {
+                Table: {
+                  headerColor: "var(--primary)",
+                },
+                Pagination: {
+                  itemActiveBg: "var(--primary)",
+                },
+              },
+            }}
+          >
+            <App />
+          </ConfigProvider>
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>

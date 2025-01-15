@@ -1,9 +1,8 @@
 // TODO: update colors at commented places and for dark
 $light: (
-  white: #ffffff,
-  black: #000000,
   wrapper-bg: #ffffff,
-
+  dark: #ffffff,
+  light: #000000,
   primary-bg: #ffffff,
   secondary-bg: #f8f9fa,
   tertiary-bg: #e9ecef,
@@ -26,16 +25,7 @@ $light: (
   primary: #2f425d,
   primary-hover: #4c32f9,
   primary-bg-hover: #4c32f9,
-  // secondary: #dee2e6,
-  // secondary-dark: #c2e2e3,
-  // secondary-light: #d2eded,
-  // secondary-bg: #eef2f2,
-  // tertiary: #002662,
-  // tertiary-dark: #02346a,
-  // tertiary-light: #384e6c,
-  // tertiary-link: #102662,
-  // tertiary-hover: #001d4a,
-  // quaternary: #1d4da1,
+
   success: #00a186,
   success-light: #d6ffde,
   success-bg: #26af98,
@@ -54,7 +44,6 @@ $light: (
   error-border: #a52834,
 
   card-shadow: 0 0.5rem 1.2rem rgb(189 197 209 / 20%),
-  light: rgb(170, 170, 170, 100%),
   // popup-shadow: -3px 5px 36px 3px #20004c,
   // popup-back-color: #1e174c,
   // popup-border:
@@ -64,30 +53,18 @@ $light: (
   //     rgba(110, 86, 255, 0.9),
   //     rgba(108, 84, 255, 0.87),
   //     rgba(32, 13, 148, 0.83)
-  //   ),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+  //   ),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 );
 
 $dark: (
-  //new
-  white: #000,
-  black: #ffffff,
-  primary: #2f425d,
-  primary-bg: #2f425d,
-  primary-hover: #2f425d,
-  primary-border: #2f425d,
-
-  secondary: #002338,
-  secondary-text: #002338,
-  secondary-bg: #002338,
-  secondary-hover: #002338,
-  secondary-border: #002338,
-
-  super-color: #00fff2,
-  info: #ff9500,
-  label: #ffe100,
-  //old
   body-bg: #1e1e1e,
   wrapper-bg: #110f1b,
+  light: #ffffff,
+  dark: #000000,
+  primary: #ff00b7,
+  primary-bg: #1c1c1c,
+  primary-hover: #ebb82ab3,
+  primary-border: #495057,
 
   primary-text: #f5f5f5,
   primary-disable: rgba(127, 127, 127, 0.5),
@@ -105,7 +82,6 @@ $dark: (
   link-color: #6ab5db,
   link-hover-color: #9ccee7,
   card-shadow: 0 0.5rem 1.2rem rgba(82, 85, 92, 0.15),
-  light: rgb(170, 170, 170, 100%),
   //old
   // secondary-hov: #181c1f,
   // body-bg: #fff,
@@ -148,5 +124,5 @@ $dark: (
   //     rgba(110, 86, 255, 0.9),
   //     rgba(108, 84, 255, 0.87),
   //     rgba(32, 13, 148, 0.83)
-  //   ),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+  //   ),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 );
