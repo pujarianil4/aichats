@@ -53,10 +53,29 @@ $light: (
   //     rgba(110, 86, 255, 0.9),
   //     rgba(108, 84, 255, 0.87),
   //     rgba(32, 13, 148, 0.83)
-  //   ),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+  //   ),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 );
 
 $dark: (
+  //new
+  white: #000,
+  black: #ffffff,
+  chat-bg: #fff7f7,
+  chat-primary: #2f425d,
+  chat-primary-bg: #2f425d,
+  chat-primary-hover: #2f425d,
+  chat-primary-border: #2f425d,
+
+  secondary: #002338,
+  secondary-text: #002338,
+  secondary-bg: #002338,
+  secondary-hover: #002338,
+  secondary-border: #002338,
+
+  super-color: #00fff2,
+  info: #ff9500,
+  label: #ffe100,
+  //old
   body-bg: #1e1e1e,
   wrapper-bg: #110f1b,
   light: #ffffff,

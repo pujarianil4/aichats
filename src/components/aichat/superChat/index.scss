@@ -1,12 +1,13 @@
 .super_container {
   display: flex;
   gap: 5px;
-  padding: 4px 4px;
+  padding: 8px 4px;
   border-radius: 8px;
   background-color: var(--primary);
-  max-width: 406px;
-
+  max-width: 420px;
+  margin-left: 10px;
   height: max-content;
+  margin-bottom: 8px;
 
   &__icon {
     width: 30px;

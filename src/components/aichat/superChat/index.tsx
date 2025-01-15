@@ -1,32 +1,26 @@
-import React from "react";
+import { shortenAddress } from "../userMessage/index.tsx";
 import "./index.scss";
 
 interface UserMessageProps {
-  userIcon: string; // URL or path to user icon
-  userName: string;
-  message: string;
+  ensName?: string;
+  data: any;
 }
 
-export default function SuerChatMessage({
-  userIcon,
-  userName,
-  message,
-}: UserMessageProps) {
+export default function SuperChatMessage({ ensName, data }: UserMessageProps) {
   return (
     <>
       <div className='super_container'>
         <img
-          src={userIcon}
-          alt={`${userName}'s icon`}
+          src={`https://effigy.im/a/${data.senderAddress}.svg`}
+          alt={`${data.senderAddress}'s icon`}
           className='user-message__icon'
         />
         <div className='admin__content'>
-          <span className='admin__name'>0xghfr...789776:</span>
-          <span className='admin__value'> $1000 </span>
-          <div className='admin__text'>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua.
-          </div>
+          <span className='admin__name'>
+            {ensName ? ensName : shortenAddress(data.senderAddress)}:
+          </span>
+          <span className='admin__value'> ${data.amnt} </span>
+          <div className='admin__text'>{data.content}</div>
         </div>
       </div>
     </>
