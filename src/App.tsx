@@ -37,7 +37,7 @@ function App() {
   return (
     <div className='dark'>
       <Navbar />
-      <ChatInstanceForm />
+      {/* <ChatInstanceForm /> */}
       <AiChats
         youtubeLink='https://www.youtube.com/embed/1mwjOdC4Si8'
         address=''

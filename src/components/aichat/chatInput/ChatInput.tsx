@@ -9,6 +9,7 @@ import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { erc20Abi } from "../../../helpers/contracts/abi.ts";
 import { parseUnits } from "viem";
 import TipPopup from "./TipPanel.tsx";
+import EmojiPicker from "../emoji/EmojiPicker.tsx";
 // import { connectAddress } from "../../../services/api.ts";
 // import EmojiPicker from "../emoji/EmojiPicker.tsx";
 
@@ -69,6 +70,10 @@ export default function ChatInput() {
       }
   };
 
+  const handleEmoji = (emoji: any) => {
+    setMessage(message + emoji);
+  };
+
   return (
     <div className='chatinputContainer'>
       {showTipPopup && (
@@ -125,7 +130,8 @@ export default function ChatInput() {
           </div>
 
           <div className='emoji'>
-            <BsEmojiSmile color='#fff' />
+            {/* <BsEmojiSmile color='#fff' /> */}
+            <EmojiPicker setEmoji={(emoji) => handleEmoji(emoji)} />
           </div>
 
           {isConnected ? (
