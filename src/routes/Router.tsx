@@ -28,7 +28,6 @@ function PublicRoute(props: IRoutesProps) {
 function AppRoutes() {
   // const { isLoggedIn } = useSelector((state: RootState) => state.auth);
   const isLoggedIn = true;
-  console.log("ROUTES", ROUTES);
 
   return (
     <Suspense fallback={<div>loading...</div>}>

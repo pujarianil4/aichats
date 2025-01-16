@@ -2,16 +2,19 @@ import { useEffect, useState } from "react";
 import "./chatfeed.scss";
 import VirtualizedContainer from "../../common/virtualList.tsx";
 
-import closeIcon from "../../../assets/close.svg";
+import dropdownIcon from "../../../assets/dropdownIcon.svg";
 import noChatFound from "../../../assets/noChatFound.svg";
 import socket from "../../../services/socket.ts";
 import UserMessage, { shortenAddress } from "../userMessage/index.tsx";
 import { getMessages } from "../../../services/api.ts";
 import SuperChatMessage from "../superChat/index.tsx";
 import { useAccount } from "wagmi";
-export default function ChatFeed() {
-  const path = window.location.pathname;
-  const param = path.split("/")[1];
+import NotificationMessage from "../../common/notificationMessage.tsx";
+
+interface IProps {
+  chatInstanceId: number;
+}
+export default function ChatFeed({ chatInstanceId }: IProps) {
   const { isConnected } = useAccount();
   const [page, setPage] = useState<number>(1);
   const [chat, setChat] = useState<any[]>([]);
@@ -36,7 +39,7 @@ export default function ChatFeed() {
   const fetchData = async (page: number, limit: number) => {
     setIsLoading(true);
     try {
-      const data = await getMessages(page, limit, +param);
+      const data = await getMessages(page, limit, chatInstanceId);
       if (!data || data.length === 0) {
         return;
       }
@@ -69,16 +72,13 @@ export default function ChatFeed() {
     }
   };
 
+  const handleDeleteMessage = (messageId: string) => {
+    setChat((prevChat) =>
+      prevChat.filter((message) => message.id !== messageId)
+    );
+  };
+
   useEffect(() => {
-    // socket.on("chatMessage", (msg) => {
-    //   setChat((prevChat) => [...prevChat, { id: prevChat.length + 1, ...msg }]);
-    //   setIsInitialLoad(true);
-    // });
-
-    // return () => {
-    //   socket.off("chatMessage");
-    // };
-
     const newMessageHandler = (data: any) => {
       console.log("New message received:", data);
       setChat((prevChat) => [
@@ -104,7 +104,7 @@ export default function ChatFeed() {
     };
 
     const errorHandler = (err: any) => {
-      console.error("Error:", err);
+      NotificationMessage("error", err.message);
     };
 
     socket.on("newMessage", newMessageHandler);
@@ -122,80 +122,36 @@ export default function ChatFeed() {
       className={`feedContainer ${isFullHeight ? "fullHeight" : "splitView"}`}
     >
       <div className='feed_header'>
-        {/* TODO: expand only if there is a superChat */}
-        <div
-          className='close_icon'
-          // onClick={() => setIsFullHeight(!isFullHeight)}
-          onClick={handleView}
-        >
-          <img src={closeIcon} />
+        <div className='close_icon' onClick={handleView}>
+          <img
+            className={`${!isFullHeight ? "down" : ""}`}
+            src={dropdownIcon}
+          />
         </div>
         <span className='holder'>Super Chat</span>
-        {superChat.length > 0 && (
+        {chat.length > 0 && (
           <>
-            {/* TODO: LATEST SUPER CHATS */}
             <div className='super_chat_container'>
-              {[superChat[0], superChat[1], superChat[2]].map((item) => (
+              {[chat[0]].map((item) => (
                 <div className='s_chat_bx' key={item.id}>
                   <img
-                    src={`https://effigy.im/a/${item.senderAddress}.svg`}
-                    // src='https://via.placeholder.com/40'
+                    src={`https://effigy.im/a/${item?.senderAddress}.svg`}
                     alt={`'s icon`}
                     className='icon'
                   />
                   <div className='chat_content'>
                     <div className='name'>
-                      {shortenAddress(item.senderAddress, 3)}
+                      {shortenAddress(item?.senderAddress, 4)}
                     </div>
-                    <div className='value'>{item.amnt}</div>
+                    <div className='value'>${item?.amnt}</div>
                   </div>
                 </div>
               ))}
-              {/* <div className='s_chat_bx'>
-                <img
-                  src={`https://effigy.im/a/${"0xD5b26AC46d2F43F4d82889f4C7BBc975564859e3"}.svg`}
-                  // src='https://via.placeholder.com/40'
-                  alt={`'s icon`}
-                  className='icon'
-                />
-                <div className='chat_content'>
-                  <div className='name'>
-                    {shortenAddress(
-                      "0xD5b26AC46d2F43F4d82889f4C7BBc975564859e3",
-                      4
-                    )}
-                  </div>
-                  <div className='value'> $1000 </div>
-                </div>
-              </div>
-              <div className='s_chat_bx'>
-                <img
-                  src='https://via.placeholder.com/40'
-                  alt={`'s icon`}
-                  className='icon'
-                />
-                <div className='chat_content'>
-                  <span className='name'>0xgh...7897</span>
-                  <span className='value'> $1000 </span>
-                </div>
-              </div>
-              <div className='s_chat_bx'>
-                <img
-                  src='https://via.placeholder.com/40'
-                  alt={`'s icon`}
-                  className='icon'
-                />
-                <div className='chat_content'>
-                  <span className='name'>0xgh...7897</span>
-                  <span className='value'> $1000 </span>
-                </div>
-              </div> */}
             </div>
 
             {!isFullHeight && (
               <div className='super_listContainer'>
                 {!isLoading && superChat?.length === 0 ? (
-                  // <img src={noChatFound} alt='No chat found' loading='lazy' />
                   <p>No data</p>
                 ) : page < 2 && isLoading ? (
                   loadingArray.map((_: any, i: number) => (
@@ -260,8 +216,9 @@ export default function ChatFeed() {
                 <UserMessage
                   key={index}
                   data={chat}
-                  instance={+param}
+                  instance={chatInstanceId}
                   isAdmin={isAdmin}
+                  onDeleteMessage={handleDeleteMessage}
                 />
               )}
               footerHeight={24}

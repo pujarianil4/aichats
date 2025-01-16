@@ -29,7 +29,7 @@
   .feed_header {
     /* margin-bottom: 7px; */
     padding: 10px;
-    background-color: #2f425d;
+    background-color: var(--primary);
     // height: 58px;
     border-radius: 10px;
     margin: 10px;
@@ -43,10 +43,24 @@
 
     .close_icon {
       position: absolute;
-      top: 6px;
-      right: 8px;
-      svg {
-        width: 20px;
+      top: 8px;
+      right: 36px;
+      width: 16px;
+      height: 16px;
+      margin-top: 0px;
+      img {
+        width: 16px;
+        height: 8px;
+        margin-bottom: auto;
+      }
+
+      .down {
+        -webkit-transform: rotate(180deg);
+        -moz-transform: rotate(180deg);
+        -o-transform: rotate(180deg);
+        -ms-transform: rotate(180deg);
+        transform: rotate(180deg);
+        transition: ease-out 300ms;
       }
     }
     .holder {
@@ -57,10 +71,16 @@
     .super_chat_container {
       display: flex;
       justify-items: center;
-      justify-content: space-between;
-      gap: 3px;
+      overflow-y: scroll;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+      gap: 8px;
 
       .s_chat_bx {
+        width: max-content;
         display: flex;
         align-items: center;
 
@@ -80,7 +100,7 @@
           display: flex;
           align-items: center;
           gap: 4px;
-          flex-wrap: wrap;
+          width: max-content;
           .name {
             font-weight: 600;
             font-size: 8px;

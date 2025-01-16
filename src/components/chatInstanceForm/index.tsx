@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { isAddress } from "viem";
 import { createInstance } from "../../services/api.ts";
+import { useNavigate } from "react-router-dom";
+import "./index.scss";
 
 interface FormData {
   name: string;
   adminAddress: string;
+  agentId: string;
   moderators: string[];
   tokenAddress: string;
   minTokenValue: number;
@@ -12,9 +15,11 @@ interface FormData {
 }
 
 const ChatInstanceForm: React.FC = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
     name: "",
     adminAddress: "",
+    agentId: "",
     moderators: [],
     tokenAddress: "",
     minTokenValue: 0,
@@ -48,7 +53,7 @@ const ChatInstanceForm: React.FC = () => {
     event: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
     const { value } = event.target;
-    //const items = value.split("\n").filter((item) => item.trim() !== ""
+    // const items = value.split("\n").filter((item) => item.trim() !== "");
     const items = value.split(/\s+/).filter((item) => item.trim() !== "");
     setFormData({ ...formData, moderators: items });
   };
@@ -84,8 +89,8 @@ const ChatInstanceForm: React.FC = () => {
     }
 
     try {
-      console.log("Form Data:", formData);
       await createInstance(formData);
+      navigate(`/agent/${1}`);
     } catch (error) {
       console.log("FAILED TO CREATE INSTANCE", error);
     }
@@ -95,34 +100,50 @@ const ChatInstanceForm: React.FC = () => {
     <form onSubmit={handleSubmit}>
       <div>
         <label>
-          Name:
-          <input
-            type='text'
-            name='name'
-            value={formData.name}
-            onChange={handleInputChange}
-            required
-          />
+          Name<span>*</span>
         </label>
+        <input
+          type='text'
+          name='name'
+          value={formData.name}
+          onChange={handleInputChange}
+          required
+        />
       </div>
 
       <div>
         <label>
-          Admin Address:
-          <input
-            type='text'
-            name='adminAddress'
-            value={formData.adminAddress}
-            onChange={handleInputChange}
-            required
-          />
+          Admin Address<span>*</span>
         </label>
+        <input
+          type='text'
+          name='adminAddress'
+          value={formData.adminAddress}
+          onChange={handleInputChange}
+          required
+        />
         {errors.adminAddress && (
           <p style={{ color: "red" }}>{errors.adminAddress}</p>
         )}
       </div>
 
       <div>
+        <label>
+          Agent ID<span>*</span>
+        </label>
+        <input
+          type='text'
+          name='agentId'
+          value={formData.agentId}
+          onChange={handleInputChange}
+          required
+        />
+        {errors.adminAddress && (
+          <p style={{ color: "red" }}>{errors.adminAddress}</p>
+        )}
+      </div>
+
+      {/* <div>
         <label>
           Moderators:
           <textarea
@@ -135,19 +156,33 @@ const ChatInstanceForm: React.FC = () => {
         {errors.moderators && (
           <p style={{ color: "red" }}>{errors.moderators}</p>
         )}
+      </div> */}
+      <div>
+        <label>
+          Moderators<span>*</span>
+        </label>
+        <textarea
+          name='moderators'
+          // value={formData.moderators}
+          onChange={handleModeratorsChange}
+          placeholder='Enter each address separated by a space or on a new line'
+        />
+        {errors.moderators && (
+          <p style={{ color: "red" }}>{errors.moderators}</p>
+        )}
       </div>
 
       <div>
         <label>
-          Token Address:
-          <input
-            type='text'
-            name='tokenAddress'
-            value={formData.tokenAddress}
-            onChange={handleInputChange}
-            required
-          />
+          Token Address<span>*</span>
         </label>
+        <input
+          type='text'
+          name='tokenAddress'
+          value={formData.tokenAddress}
+          onChange={handleInputChange}
+          required
+        />
         {errors.tokenAddress && (
           <p style={{ color: "red" }}>{errors.tokenAddress}</p>
         )}
@@ -155,36 +190,36 @@ const ChatInstanceForm: React.FC = () => {
 
       <div>
         <label>
-          Minimum Token Value:
-          <input
-            type='number'
-            name='minTokenValue'
-            value={formData.minTokenValue}
-            onChange={handleInputChange}
-            required
-          />
+          Minimum Token Value<span>*</span>
         </label>
+        <input
+          type='number'
+          name='minTokenValue'
+          value={formData.minTokenValue}
+          onChange={handleInputChange}
+          required
+        />
       </div>
 
       <div>
         <label>
-          Chain ID:
-          <select
-            name='chainId'
-            value={formData.chainId}
-            onChange={handleInputChange}
-            required
-          >
-            <option value='' disabled>
-              Select a Chain
-            </option>
-            {chainOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+          Chain ID<span>*</span>
         </label>
+        <select
+          name='chainId'
+          value={formData.chainId}
+          onChange={handleInputChange}
+          required
+        >
+          <option value='' disabled>
+            Select a Chain
+          </option>
+          {chainOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
       </div>
 
       <button type='submit'>Submit</button>

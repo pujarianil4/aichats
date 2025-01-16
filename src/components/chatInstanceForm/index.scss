@@ -1,0 +1,111 @@
+form {
+  box-sizing: border-box;
+  background-color: var(--primary-bg);
+  color: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  max-width: 800px;
+  width: 95%;
+  margin: 2rem auto;
+  // border: 1px solid var(--primary-bg);
+
+  label {
+    display: block;
+    font-size: 16px;
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+    color: var(--black);
+
+    span {
+      color: #ff4d4d;
+    }
+  }
+
+  input,
+  textarea,
+  select {
+    width: 97%;
+    padding: 12px;
+    font-size: 1rem;
+    color: var(--black);
+    background: var(--dark);
+    border: none;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    outline: none;
+
+    &:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 4px var(--primary);
+    }
+
+    &::placeholder {
+      color: #777;
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    height: 120px;
+  }
+
+  select {
+    width: 100%;
+    appearance: none;
+    cursor: pointer;
+    background: var(--dark)
+      url("data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='7'><path fill='%23fff' d='M6 7L0 0h12z'/></svg>")
+      no-repeat right 0.8rem center;
+    background-size: 12px;
+  }
+
+  p {
+    color: #ff4d4d;
+    font-size: 0.85rem;
+    margin-top: -1rem;
+    margin-bottom: 1rem;
+  }
+
+  button {
+    width: 100%;
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: var(--primary);
+    }
+
+    &:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  form {
+    padding: 1.5rem;
+  }
+
+  input,
+  textarea,
+  select {
+    width: 96%;
+    font-size: 0.9rem;
+    padding: 0.7rem;
+  }
+
+  button {
+    width: 100%;
+    text-align: center;
+  }
+}

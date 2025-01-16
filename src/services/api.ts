@@ -3,7 +3,7 @@
 //     `https://api.coingecko.com/api/v3/coins/ethereum/contract/${tokenAddress}`;
 //     const timeStampUrl = `https://api.etherscan.io/v2/api?chainid=1&module=contract&action=getcontractcreation&contractaddresses=${tokenAddress}&apikey=IIQF1RE4TP86VDXC27Z9CYMS3GKZQYXYK1`;
 
-import {  toFixedNumber } from '../utils/index.ts';
+import { toFixedNumber } from "../utils/index.ts";
 
 //   try {
 //     const response = await fetch(url);
@@ -21,36 +21,33 @@ import {  toFixedNumber } from '../utils/index.ts';
 //   }
 // }
 
-
 export async function getTokenDetails(tokenAddress: string) {
-
-  const eth_key = import.meta.env.VITE_ETHERSCAN_API_KEY
+  const eth_key = import.meta.env.VITE_ETHERSCAN_API_KEY;
   const apiUrl = `https://api.dexscreener.com/latest/dex/tokens/${tokenAddress}`;
-  const geckoApi =`https://api.geckoterminal.com/api/v2/networks/eth/tokens/${tokenAddress}?include=top_pools
-`
+  const geckoApi = `https://api.geckoterminal.com/api/v2/networks/eth/tokens/${tokenAddress}?include=top_pools
+`;
   const creationUrl = `https://api.etherscan.io/v2/api?chainid=1&module=contract&action=getcontractcreation&contractaddresses=${tokenAddress}&apikey=${eth_key}`;
-const holdersUrl = `https://api.etherscan.io/v2/api?chainid=1&module=token&action=tokenholdercount&contractaddress=${tokenAddress}&apikey=${eth_key}`
+  const holdersUrl = `https://api.etherscan.io/v2/api?chainid=1&module=token&action=tokenholdercount&contractaddress=${tokenAddress}&apikey=${eth_key}`;
   try {
     const [tokenResponse, creationResponse] = await Promise.all([
       fetch(geckoApi),
       fetch(creationUrl),
-
     ]);
 
     if (!tokenResponse.ok || !creationResponse.ok) {
-      throw new Error('Failed to fetch data from one or both APIs');
+      throw new Error("Failed to fetch data from one or both APIs");
     }
 
     const tokenData = await tokenResponse.json();
     const creationData = await creationResponse.json();
     // const holdersData = await holdersResponse.json();
 
-    console.log("Token Details:", tokenData, extractPoolData(tokenData) );
+    console.log("Token Details:", tokenData, extractPoolData(tokenData));
 
     return {
       ...extractPoolData(tokenData),
       contract_address: tokenAddress,
-      contract_creation: creationData.result?.[0] || null
+      contract_creation: creationData.result?.[0] || null,
     };
   } catch (error: any) {
     console.error("Error fetching token details:", error.message || error);
@@ -64,7 +61,6 @@ const createObjectFromPair = (pair: any) => {
   const priceChange24h = pair.priceChange.h24;
 
   // console.log(pair);
-  
 
   return {
     name: baseToken.name,
@@ -77,11 +73,17 @@ const createObjectFromPair = (pair: any) => {
     liquidity: pair.liquidity.usd,
     marketCapUsd: pair.marketCap,
     pairAddress: pair.pairAddress,
-    imageUrl: pair?.info?.imageUrl || '',
+    imageUrl: pair?.info?.imageUrl || "",
     header: pair?.info?.header || "",
-    website: pair?.info?.websites.find((site: any) => site.label === "Website")?.url || '',
-    twitter: pair?.info?.socials.find((social: any) => social.type === "twitter")?.url || '',
-    telegram: pair?.info?.socials.find((social:any) => social.type === "telegram")?.url || ''
+    website:
+      pair?.info?.websites.find((site: any) => site.label === "Website")?.url ||
+      "",
+    twitter:
+      pair?.info?.socials.find((social: any) => social.type === "twitter")
+        ?.url || "",
+    telegram:
+      pair?.info?.socials.find((social: any) => social.type === "telegram")
+        ?.url || "",
   };
 };
 
@@ -101,7 +103,7 @@ function extractPoolData(data: any) {
     marketCapUsd: toFixedNumber(pool.attributes.market_cap_usd),
     pairAddress: pool.id,
     imageUrl: tokenData.image_url,
-    fdvInusd: tokenData.fdv_usd
+    fdvInusd: tokenData.fdv_usd,
   };
 }
 
@@ -163,6 +165,18 @@ export const getChatInstanceAdmin = async (instance: number = 1) => {
   try {
     const { data } = await axios.get(
       `${BASE_URL_BALANCE}/address/instance/${instance}`
+    );
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const getChatInstanceWithAgentId = async (agentId: string) => {
+  try {
+    const { data } = await axios.get(
+      `${BASE_URL_BALANCE}/address/instance/agent/${agentId}`
     );
     return data;
   } catch (error) {

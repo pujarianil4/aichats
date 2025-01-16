@@ -2,13 +2,21 @@ import { useState } from "react";
 import ChatFeed from "./chatfeed/ChatFeed.js";
 import ChatInput from "./chatInput/ChatInput.js";
 import "./index.scss";
+import closeIcon from "../../assets/close.svg";
 import YoutubeVideo from "./youtubeVideo/index.tsx";
 
 interface IProps {
   youtubeLink: string;
-  address: string;
+  adminAddress: string;
+  tokenAddress: string;
+  chatInstanceId: number;
 }
-export default function AiChats({ youtubeLink, address }: IProps) {
+export default function AiChats({
+  youtubeLink,
+  adminAddress,
+  tokenAddress,
+  chatInstanceId,
+}: IProps) {
   const [viewSize, setViewSize] = useState(0);
   const [direction, setDirection] = useState<"up" | "down">("up");
   const apiKey = import.meta.env;
@@ -39,10 +47,10 @@ export default function AiChats({ youtubeLink, address }: IProps) {
 
   return (
     <div style={dynamicStyles} className='aichats'>
-      <div className='actions'>
-        <button className='expand_btn' onClick={handleViewSizeChange}>
-          Change
-        </button>
+      <div className='actions' onClick={handleViewSizeChange}>
+        {/* <button className='expand_btn' onClick={handleViewSizeChange}> */}
+        <img src={closeIcon} />
+        {/* </button> */}
       </div>
 
       <div
@@ -54,8 +62,12 @@ export default function AiChats({ youtubeLink, address }: IProps) {
       </div>
 
       <div className='chatfeed'>
-        <ChatFeed />
-        <ChatInput />
+        <ChatFeed chatInstanceId={chatInstanceId} />
+        <ChatInput
+          adminAddress={adminAddress}
+          tokenAddress={tokenAddress}
+          chatInstanceId={chatInstanceId}
+        />
       </div>
     </div>
   );
