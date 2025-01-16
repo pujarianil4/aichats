@@ -51,8 +51,21 @@ button:hover {
   border-color: #646cff;
 }
 input:focus,
-input:focus-visible {
+input:focus-visible,
+textarea:focus,
+textarea:focus-visible {
   outline: none;
+}
+
+input:-webkit-autofill {
+  background-color: #0046bf !important; /* Change the background color */
+  color: var(--light) !important;
+}
+
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  color: var(--light) !important;
+  background-color: #000000 !important; /* Different color on focus or hover */
 }
 /* button:focus,
 button:focus-visible {

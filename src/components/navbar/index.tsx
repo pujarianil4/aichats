@@ -1,6 +1,7 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import "./index.scss";
 import { Button } from "antd";
+import { Link } from "react-router-dom";
 function Navbar() {
   return (
     <div className='navbar_container'>
@@ -27,7 +28,10 @@ function Navbar() {
         <input type='text' placeholder='Search' />
       </div>
       <div className='actions'>
-        <Button> Create New Agent </Button>
+        <Link to={"/create-agent"}>
+          {" "}
+          <Button> Create New Agent </Button>
+        </Link>
         {/* <Button type='primary'> Connect Wallet</Button> */}
         <ConnectButton />
       </div>

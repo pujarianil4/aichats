@@ -1,7 +1,7 @@
 import { ReactNode, Suspense } from "react";
 
-import { Navigate, Route } from "react-router-dom";
-import { Routes } from "react-router";
+import { Navigate, Route, Routes } from "react-router-dom";
+// import { Routes } from "react-router";
 
 import { ROUTES } from "./routes.ts";
 import AgentListpage from "../pages/allagents/index.tsx";
@@ -20,9 +20,11 @@ function PrivateRoute(props: IRoutesProps) {
 
 function PublicRoute(props: IRoutesProps) {
   const { children, isAuthenticated } = props;
-  return isAuthenticated
-    ? (children as JSX.Element)
-    : (children as JSX.Element);
+  return isAuthenticated ? (
+    <div style={{ minHeight: "70vh" }}>{children as JSX.Element}</div>
+  ) : (
+    (children as JSX.Element)
+  );
 }
 
 function AppRoutes() {

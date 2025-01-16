@@ -52,10 +52,44 @@
   box-shadow: none;
   border: none !important;
   &:hover {
-    background-color: var(--primary) c8 !important;
+    background-color: #bb0788 !important;
   }
   &:focus {
     border: none !important;
     box-shadow: none !important;
   }
 }
+
+.custom_tabs {
+  background: var(--dark);
+  .ant-tabs-nav-wrap {
+    border-bottom: 2px solid var(--primary-bg);
+  }
+  .ant-tabs-tab {
+    border: 1px solid var(--primary-bg) !important;
+    outline: none !important;
+    margin: 0px !important;
+    color: var(--light-text);
+  }
+  .ant-tabs-tab-active {
+    background: var(--tertiary-bg) !important;
+  }
+}
+
+// .ant-select {
+//   &:focus-visible {
+//     border: none !important;
+//     outline: none !important;
+//   }
+//   .ant-select-selector {
+//     background-color: var(--dark) !important;
+//     border: 1px solid var(--light) !important;
+//     outline: none !important;
+//   }
+//   .ant-select-selection-item {
+//     color: var(--light) !important;
+//   }
+//   .ant-select-arrow {
+//     color: var(--light) !important;
+//   }
+// }
