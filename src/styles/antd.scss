@@ -60,6 +60,22 @@
   }
 }
 
+.custom_tabs {
+  background: var(--dark);
+  .ant-tabs-nav-wrap {
+    border-bottom: 2px solid var(--primary-bg);
+  }
+  .ant-tabs-tab {
+    border: 1px solid var(--primary-bg) !important;
+    outline: none !important;
+    margin: 0px !important;
+    color: var(--light-text);
+  }
+  .ant-tabs-tab-active {
+    background: var(--tertiary-bg) !important;
+  }
+}
+
 // .ant-select {
 //   &:focus-visible {
 //     border: none !important;
