@@ -58,6 +58,8 @@
           height: 70px;
           border-radius: 50%;
           background: var(--dark);
+          object-fit: cover;
+          cursor: pointer;
         }
 
         div {

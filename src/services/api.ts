@@ -1,25 +1,6 @@
-// export async function getTokenDetails(tokenAddress : string) {
-//   const url =
-//     `https://api.coingecko.com/api/v3/coins/ethereum/contract/${tokenAddress}`;
-//     const timeStampUrl = `https://api.etherscan.io/v2/api?chainid=1&module=contract&action=getcontractcreation&contractaddresses=${tokenAddress}&apikey=IIQF1RE4TP86VDXC27Z9CYMS3GKZQYXYK1`;
-
 import {  toFixedNumber } from '../utils/index.ts';
 
-//   try {
-//     const response = await fetch(url);
-//     const timeResponse = await fetch(timeStampUrl)
-//     const createdAt = await  timeResponse.json()
-//     const data = await response.json();
-//     console.log("Token Details:", data);
-//  return {...data, contract_creation: createdAt.result[0]};
 
-//   } catch (error: any) {
-//     console.error(
-//       "Error fetching token details:",
-//       error.response?.data || error.message
-//     );
-//   }
-// }
 
 
 export async function getTokenDetails(tokenAddress: string) {
@@ -170,3 +151,29 @@ export const getChatInstanceAdmin = async (instance: number = 1) => {
     throw error;
   }
 };
+
+export const uploadSingleFile = async (file: File) => {
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+    const response = await axios.post("https://ai-agent-r139.onrender.com/upload/single", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return response.data.url;
+  } catch (error) {
+    console.error("Error uploading file", error);
+    throw error;
+  }
+};
+
+export const createAgent = async (data: any)=> {
+  try {
+    const response = await axios.post("https://ai-agent-r139.onrender.com/agent", data, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error", error);
+    throw error;
+  }
+}

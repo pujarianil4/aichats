@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./index.scss";
 import { Button, Select, Popover } from "antd";
 import type { TabsProps } from "antd";
@@ -7,32 +7,95 @@ import { BsDashCircle } from "react-icons/bs";
 
 import { GoArrowSwitch } from "react-icons/go";
 import CustomTabs from "../common/Tabs/Tabs.tsx";
-
+import { useImageNameValidator } from "../../hooks/useImageNameValidator.tsx";
+import { createAgent, uploadSingleFile } from "../../services/api.ts";
+export const IMAGE_FILE_TYPES = "image/png, image/jpeg, image/webp, image/jpg";
 interface IConversation {
   id: number;
   msgFor: string;
   msg: string;
 }
 
+type EnvironmentPrompts = {
+  forum: { prefix: string; suffix: string };
+  twitter: { prefix: string; suffix: string };
+  telegram: { prefix: string; suffix: string };
+  livestream: { prefix: string; suffix: string };
+};
+
+type FormData = {
+  name: string;
+  ticker: string;
+  profile: string;
+  contractAddress: string;
+  bio: string;
+  agentType: string;
+  greeting: string;
+  environmentPrompts: EnvironmentPrompts;
+  sampleConversations: IConversation[];
+};
+
 export default function CreateAgent() {
   const [isViewMore, setIsViewMore] = useState(false);
   const [tabs, setTabs] = useState("new");
-  const [agentType, setAgentType] = useState("none");
+  const { validateImage, error: err, clearError } = useImageNameValidator();
   const [sampleConversations, setSampleConversation] = useState<
     Array<IConversation>
   >([]);
+  const fileRefs = useRef<HTMLInputElement>(null);
+  const [formData, setFormData] = useState<FormData>({
+    name: "",
+    ticker: "",
+    profile: "./camera.png",
+    contractAddress: "",
+    bio: "",
+    agentType: "none",
+    greeting: "",
+    environmentPrompts: {
+      forum: { prefix: "", suffix: "" },
+      twitter: { prefix: "", suffix: "" },
+      telegram: { prefix: "", suffix: "" },
+      livestream: { prefix: "", suffix: "" },
+    },
+    sampleConversations: [],
+  });
 
-  const handleAddSampleCov = () => {
-    setSampleConversation([
-      ...sampleConversations,
-      { id: sampleConversations.length + 1, msgFor: "User", msg: "" },
-    ]);
+  const handleInputChange = (key: string, value: string | Array<any>) => {
+    setFormData((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
   };
 
+  const handleAddSampleCov = () => {
+    const added = [
+      ...sampleConversations,
+      { id: sampleConversations.length + 1, msgFor: "User", msg: "" },
+    ];
+    setSampleConversation(added);
+    handleInputChange("sampleConversations", added);
+  };
+  const handleEnvironmentPromptChange = (
+    platform: keyof EnvironmentPrompts,
+    field: string,
+    value: string
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      environmentPrompts: {
+        ...prev.environmentPrompts,
+        [platform]: {
+          ...prev.environmentPrompts[platform],
+          [field]: value,
+        },
+      },
+    }));
+  };
   const handleMsgFor = (id: any, user: string) => {
     const updated = sampleConversations.map((con) =>
       con.id == id ? { ...con, msgFor: user } : con
     );
+    handleInputChange("sampleConversations", updated);
     setSampleConversation(updated);
   };
 
@@ -40,13 +103,56 @@ export default function CreateAgent() {
     const updated = sampleConversations.map((con) =>
       con.id == id ? { ...con, msg: msg } : con
     );
+    handleInputChange("sampleConversations", updated);
     setSampleConversation(updated);
   };
 
   const handleRemoveSample = (id: number) => {
-    setSampleConversation(sampleConversations.filter((con) => con.id != id));
+    const updated = sampleConversations.filter((con) => con.id != id);
+    setSampleConversation(updated);
+    handleInputChange("sampleConversations", updated);
   };
 
+  const uploadProfile = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      try {
+        const file = event.target.files[0];
+        if (!validateImage(file)) {
+          return;
+        }
+        const imgURL = await uploadSingleFile(file);
+        console.log("image", imgURL);
+        handleInputChange("profile", imgURL);
+
+        //reset value to select same image again
+        event.target.value = "";
+      } catch (error) {
+        event.target.value = "";
+      }
+
+      //setImgSrc(imgURL);
+    }
+  };
+
+  const handleSubmit = async () => {
+    console.log("Form Data Submitted:", formData, sampleConversations);
+
+    const data = {
+      name: formData.name,
+      pic: formData.profile,
+      token: {
+        tkr: formData.ticker,
+        tCAddress: "0xAadFC7f9807d2D1D0EB41e3A3836294F503Babc3",
+      },
+      bio: formData.bio,
+      typ: formData.agentType,
+    };
+    const res = await createAgent(data);
+
+    console.log("res", res);
+
+    // Handle form submission logic, like sending to an API.
+  };
   const items: TabsProps["items"] = [
     {
       key: "1",
@@ -57,6 +163,10 @@ export default function CreateAgent() {
             <label htmlFor='name'>Environment Prompt Prefix</label>
             <textarea
               rows={5}
+              value={formData.environmentPrompts["forum"].prefix}
+              onChange={(e) =>
+                handleEnvironmentPromptChange("forum", "prefix", e.target.value)
+              }
               id='bio'
               placeholder='This is the short bio that will be shown at your agents profile.'
             />
@@ -67,6 +177,10 @@ export default function CreateAgent() {
             <label htmlFor='name'>Environment Prompt Suffix</label>
             <textarea
               rows={5}
+              value={formData.environmentPrompts["forum"].suffix}
+              onChange={(e) =>
+                handleEnvironmentPromptChange("forum", "suffix", e.target.value)
+              }
               id='bio'
               placeholder='This is the short bio that will be shown at your agents profile.'
             />
@@ -83,6 +197,14 @@ export default function CreateAgent() {
             <label htmlFor='name'>Environment Prompt Prefix</label>
             <textarea
               rows={5}
+              value={formData.environmentPrompts["twitter"].prefix}
+              onChange={(e) =>
+                handleEnvironmentPromptChange(
+                  "twitter",
+                  "prefix",
+                  e.target.value
+                )
+              }
               id='bio'
               placeholder='This is the short bio that will be shown at your agents profile.'
             />
@@ -94,6 +216,14 @@ export default function CreateAgent() {
             <textarea
               rows={5}
               id='bio'
+              value={formData.environmentPrompts["twitter"].suffix}
+              onChange={(e) =>
+                handleEnvironmentPromptChange(
+                  "twitter",
+                  "suffix",
+                  e.target.value
+                )
+              }
               placeholder='This is the short bio that will be shown at your agents profile.'
             />
           </div>
@@ -109,6 +239,14 @@ export default function CreateAgent() {
             <label htmlFor='name'>Environment Prompt Prefix</label>
             <textarea
               rows={5}
+              value={formData.environmentPrompts["telegram"].prefix}
+              onChange={(e) =>
+                handleEnvironmentPromptChange(
+                  "telegram",
+                  "prefix",
+                  e.target.value
+                )
+              }
               id='bio'
               placeholder='This is the short bio that will be shown at your agents profile.'
             />
@@ -119,6 +257,14 @@ export default function CreateAgent() {
             <label htmlFor='name'>Environment Prompt Suffix</label>
             <textarea
               rows={5}
+              value={formData.environmentPrompts["telegram"].suffix}
+              onChange={(e) =>
+                handleEnvironmentPromptChange(
+                  "telegram",
+                  "suffix",
+                  e.target.value
+                )
+              }
               id='bio'
               placeholder='This is the short bio that will be shown at your agents profile.'
             />
@@ -135,6 +281,14 @@ export default function CreateAgent() {
             <label htmlFor='name'>Environment Prompt Prefix</label>
             <textarea
               rows={5}
+              value={formData.environmentPrompts["livestream"].prefix}
+              onChange={(e) =>
+                handleEnvironmentPromptChange(
+                  "livestream",
+                  "prefix",
+                  e.target.value
+                )
+              }
               id='bio'
               placeholder='This is the short bio that will be shown at your agents profile.'
             />
@@ -145,6 +299,14 @@ export default function CreateAgent() {
             <label htmlFor='name'>Environment Prompt Suffix</label>
             <textarea
               rows={5}
+              value={formData.environmentPrompts["livestream"].suffix}
+              onChange={(e) =>
+                handleEnvironmentPromptChange(
+                  "livestream",
+                  "suffix",
+                  e.target.value
+                )
+              }
               id='bio'
               placeholder='This is the short bio that will be shown at your agents profile.'
             />
@@ -177,7 +339,19 @@ export default function CreateAgent() {
         <div className='profile'>
           <h4>Agent Details</h4>
           <div>
-            <img src='./logo.png' alt='logo' />
+            <img
+              onClick={() => fileRefs.current?.click()}
+              src={formData.profile}
+              alt='logo'
+            />
+            <input
+              ref={fileRefs}
+              onChange={uploadProfile}
+              type='file'
+              accept={IMAGE_FILE_TYPES}
+              name='img'
+              style={{ visibility: "hidden", position: "absolute" }}
+            />
             <div>
               <p>AI Agent</p>
               <p className='pic'>
@@ -192,14 +366,26 @@ export default function CreateAgent() {
             <label htmlFor='name'>
               AI Agent Name <span className='required'>*</span>{" "}
             </label>
-            <input id='name' type='text' placeholder='Agent Name' />
+            <input
+              value={formData.name}
+              onChange={(e) => handleInputChange("name", e.target.value)}
+              id='name'
+              type='text'
+              placeholder='Agent Name'
+            />
           </div>
           {tabs == "new" && (
             <div className='input_container'>
               <label htmlFor='ticker'>
                 Ticker <span className='required'>*</span>{" "}
               </label>
-              <input id='ticker' type='text' placeholder='$' />
+              <input
+                value={formData.ticker}
+                onChange={(e) => handleInputChange("ticker", e.target.value)}
+                id='ticker'
+                type='text'
+                placeholder='$'
+              />
             </div>
           )}
           {tabs == "existing" && (
@@ -210,6 +396,10 @@ export default function CreateAgent() {
               </label>
               <input
                 id='contract_address'
+                value={formData.contractAddress}
+                onChange={(e) =>
+                  handleInputChange("contractAddress", e.target.value)
+                }
                 type='text'
                 placeholder=' Token Contract Address'
               />
@@ -221,6 +411,8 @@ export default function CreateAgent() {
               <span className='required'>*</span>{" "}
             </label>
             <textarea
+              value={formData.bio}
+              onChange={(e) => handleInputChange("bio", e.target.value)}
               rows={10}
               id='bio'
               placeholder='This is the short bio that will be shown at your agents profile.'
@@ -234,22 +426,27 @@ export default function CreateAgent() {
             <Popover
               content={
                 <div className='popover_select'>
-                  <p onClick={() => setAgentType("none")}>None</p>
-                  <p onClick={() => setAgentType("productivity")}>
-                    Productivity
-                  </p>
-                  <p onClick={() => setAgentType("entertaintment")}>
-                    Entertaintment
-                  </p>
-                  <p onClick={() => setAgentType("on-chain")}>On-Chain</p>
-                  <p onClick={() => setAgentType("information")}>Information</p>
-                  <p onClick={() => setAgentType("creative")}>Creative</p>
+                  {[
+                    "none",
+                    "productivity",
+                    "entertainment",
+                    "onchain",
+                    "information",
+                    "creative",
+                  ].map((type) => (
+                    <p
+                      key={type}
+                      onClick={() => handleInputChange("agentType", type)}
+                    >
+                      {type}
+                    </p>
+                  ))}
                 </div>
               }
               trigger='click'
             >
               <div className='select'>
-                <p>{agentType}</p>
+                <p>{formData.agentType}</p>
                 <FaChevronDown />
               </div>
             </Popover>
@@ -265,6 +462,8 @@ export default function CreateAgent() {
               </label>
               <textarea
                 rows={5}
+                value={formData.greeting}
+                onChange={(e) => handleInputChange("greeting", e.target.value)}
                 id='greeting'
                 placeholder='Hello, How are you ?'
               />
@@ -279,6 +478,7 @@ export default function CreateAgent() {
                   <div>
                     {sampleConversations.map((con: IConversation) => (
                       <SampleConversation
+                        key={con.id}
                         handleMsgFor={handleMsgFor}
                         handleSampleMsg={handleSampleMsg}
                         handleRemoveSample={handleRemoveSample}
@@ -304,7 +504,9 @@ export default function CreateAgent() {
               </span>
             </p>
           </div>
-          <Button type='primary'>Create Agent</Button>
+          <Button onClick={handleSubmit} type='primary'>
+            Create Agent
+          </Button>
         </div>
       </div>
     </div>
