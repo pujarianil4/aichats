@@ -90,6 +90,7 @@
           border-radius: 10px;
           color: var(--light);
           resize: none;
+          font-size: 12px;
         }
         .select {
           display: flex;
@@ -150,5 +151,92 @@
     &:hover {
       background-color: var(--primary);
     }
+  }
+}
+.tabs_container {
+  border-radius: 20px;
+  overflow: hidden;
+
+  .tab_content {
+    display: flex;
+    flex-direction: column;
+    margin: 0px;
+    padding: 0px;
+    gap: 5px;
+    .area {
+      display: flex;
+      flex-direction: column;
+      margin: 10px;
+      input,
+      textarea {
+        padding: 5px;
+        background: var(--dark);
+        border: 0;
+        border-radius: 10px;
+        color: var(--light);
+        resize: none;
+        font-size: 12px;
+      }
+    }
+    .divider {
+      border-top: 1px solid var(--primary-bg);
+      margin: 0;
+    }
+  }
+
+  .conversation {
+    ._title {
+      p {
+        font-size: 12px;
+        font-weight: 600;
+        padding: 10px;
+        background: var(--tertiary-bg);
+        color: var(--light-text);
+      }
+    }
+    ._conversation {
+      padding: 10px;
+      background: var(--dark);
+      .btn {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin: 10px;
+        button {
+          width: 120px;
+          font-size: 12px;
+          padding: 10px;
+          margin: auto;
+        }
+      }
+    }
+  }
+}
+
+.cov_sample {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px;
+  p {
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    background: var(--tertiary-bg);
+    width: 100px;
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+    text-transform: capitalize;
+  }
+  input {
+    flex-grow: 1;
+    padding: 5px;
+    background: var(--dark);
+    border: 0;
+    border-radius: 10px;
+    color: var(--light);
+    resize: none;
+    font-size: 12px;
   }
 }
