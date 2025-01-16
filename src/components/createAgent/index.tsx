@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./index.scss";
 import { Button, Select, Popover } from "antd";
 import type { TabsProps } from "antd";
@@ -7,7 +7,9 @@ import { BsDashCircle } from "react-icons/bs";
 
 import { GoArrowSwitch } from "react-icons/go";
 import CustomTabs from "../common/Tabs/Tabs.tsx";
-
+import { useImageNameValidator } from "../../hooks/useImageNameValidator.tsx";
+import { createAgent, uploadSingleFile } from "../../services/api.ts";
+export const IMAGE_FILE_TYPES = "image/png, image/jpeg, image/webp, image/jpg";
 interface IConversation {
   id: number;
   msgFor: string;
@@ -24,6 +26,7 @@ type EnvironmentPrompts = {
 type FormData = {
   name: string;
   ticker: string;
+  profile: string;
   contractAddress: string;
   bio: string;
   agentType: string;
@@ -35,13 +38,15 @@ type FormData = {
 export default function CreateAgent() {
   const [isViewMore, setIsViewMore] = useState(false);
   const [tabs, setTabs] = useState("new");
-  const [agentType, setAgentType] = useState("none");
+  const { validateImage, error: err, clearError } = useImageNameValidator();
   const [sampleConversations, setSampleConversation] = useState<
     Array<IConversation>
   >([]);
+  const fileRefs = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState<FormData>({
     name: "",
     ticker: "",
+    profile: "./camera.png",
     contractAddress: "",
     bio: "",
     agentType: "none",
@@ -108,8 +113,44 @@ export default function CreateAgent() {
     handleInputChange("sampleConversations", updated);
   };
 
-  const handleSubmit = () => {
+  const uploadProfile = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      try {
+        const file = event.target.files[0];
+        if (!validateImage(file)) {
+          return;
+        }
+        const imgURL = await uploadSingleFile(file);
+        console.log("image", imgURL);
+        handleInputChange("profile", imgURL);
+
+        //reset value to select same image again
+        event.target.value = "";
+      } catch (error) {
+        event.target.value = "";
+      }
+
+      //setImgSrc(imgURL);
+    }
+  };
+
+  const handleSubmit = async () => {
     console.log("Form Data Submitted:", formData, sampleConversations);
+
+    const data = {
+      name: formData.name,
+      pic: formData.profile,
+      token: {
+        tkr: formData.ticker,
+        tCAddress: "0xAadFC7f9807d2D1D0EB41e3A3836294F503Babc3",
+      },
+      bio: formData.bio,
+      typ: formData.agentType,
+    };
+    const res = await createAgent(data);
+
+    console.log("res", res);
+
     // Handle form submission logic, like sending to an API.
   };
   const items: TabsProps["items"] = [
@@ -298,7 +339,19 @@ export default function CreateAgent() {
         <div className='profile'>
           <h4>Agent Details</h4>
           <div>
-            <img src='./logo.png' alt='logo' />
+            <img
+              onClick={() => fileRefs.current?.click()}
+              src={formData.profile}
+              alt='logo'
+            />
+            <input
+              ref={fileRefs}
+              onChange={uploadProfile}
+              type='file'
+              accept={IMAGE_FILE_TYPES}
+              name='img'
+              style={{ visibility: "hidden", position: "absolute" }}
+            />
             <div>
               <p>AI Agent</p>
               <p className='pic'>
@@ -377,7 +430,7 @@ export default function CreateAgent() {
                     "none",
                     "productivity",
                     "entertainment",
-                    "on-chain",
+                    "onchain",
                     "information",
                     "creative",
                   ].map((type) => (
