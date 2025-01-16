@@ -14,6 +14,24 @@ interface IConversation {
   msg: string;
 }
 
+type EnvironmentPrompts = {
+  forum: { prefix: string; suffix: string };
+  twitter: { prefix: string; suffix: string };
+  telegram: { prefix: string; suffix: string };
+  livestream: { prefix: string; suffix: string };
+};
+
+type FormData = {
+  name: string;
+  ticker: string;
+  contractAddress: string;
+  bio: string;
+  agentType: string;
+  greeting: string;
+  environmentPrompts: EnvironmentPrompts;
+  sampleConversations: IConversation[];
+};
+
 export default function CreateAgent() {
   const [isViewMore, setIsViewMore] = useState(false);
   const [tabs, setTabs] = useState("new");
@@ -21,18 +39,58 @@ export default function CreateAgent() {
   const [sampleConversations, setSampleConversation] = useState<
     Array<IConversation>
   >([]);
+  const [formData, setFormData] = useState<FormData>({
+    name: "",
+    ticker: "",
+    contractAddress: "",
+    bio: "",
+    agentType: "none",
+    greeting: "",
+    environmentPrompts: {
+      forum: { prefix: "", suffix: "" },
+      twitter: { prefix: "", suffix: "" },
+      telegram: { prefix: "", suffix: "" },
+      livestream: { prefix: "", suffix: "" },
+    },
+    sampleConversations: [],
+  });
 
-  const handleAddSampleCov = () => {
-    setSampleConversation([
-      ...sampleConversations,
-      { id: sampleConversations.length + 1, msgFor: "User", msg: "" },
-    ]);
+  const handleInputChange = (key: string, value: string | Array<any>) => {
+    setFormData((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
   };
 
+  const handleAddSampleCov = () => {
+    const added = [
+      ...sampleConversations,
+      { id: sampleConversations.length + 1, msgFor: "User", msg: "" },
+    ];
+    setSampleConversation(added);
+    handleInputChange("sampleConversations", added);
+  };
+  const handleEnvironmentPromptChange = (
+    platform: keyof EnvironmentPrompts,
+    field: string,
+    value: string
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      environmentPrompts: {
+        ...prev.environmentPrompts,
+        [platform]: {
+          ...prev.environmentPrompts[platform],
+          [field]: value,
+        },
+      },
+    }));
+  };
   const handleMsgFor = (id: any, user: string) => {
     const updated = sampleConversations.map((con) =>
       con.id == id ? { ...con, msgFor: user } : con
     );
+    handleInputChange("sampleConversations", updated);
     setSampleConversation(updated);
   };
 
@@ -40,13 +98,20 @@ export default function CreateAgent() {
     const updated = sampleConversations.map((con) =>
       con.id == id ? { ...con, msg: msg } : con
     );
+    handleInputChange("sampleConversations", updated);
     setSampleConversation(updated);
   };
 
   const handleRemoveSample = (id: number) => {
-    setSampleConversation(sampleConversations.filter((con) => con.id != id));
+    const updated = sampleConversations.filter((con) => con.id != id);
+    setSampleConversation(updated);
+    handleInputChange("sampleConversations", updated);
   };
 
+  const handleSubmit = () => {
+    console.log("Form Data Submitted:", formData, sampleConversations);
+    // Handle form submission logic, like sending to an API.
+  };
   const items: TabsProps["items"] = [
     {
       key: "1",
@@ -57,6 +122,10 @@ export default function CreateAgent() {
             <label htmlFor='name'>Environment Prompt Prefix</label>
             <textarea
               rows={5}
+              value={formData.environmentPrompts["forum"].prefix}
+              onChange={(e) =>
+                handleEnvironmentPromptChange("forum", "prefix", e.target.value)
+              }
               id='bio'
               placeholder='This is the short bio that will be shown at your agents profile.'
             />
@@ -67,6 +136,10 @@ export default function CreateAgent() {
             <label htmlFor='name'>Environment Prompt Suffix</label>
             <textarea
               rows={5}
+              value={formData.environmentPrompts["forum"].suffix}
+              onChange={(e) =>
+                handleEnvironmentPromptChange("forum", "suffix", e.target.value)
+              }
               id='bio'
               placeholder='This is the short bio that will be shown at your agents profile.'
             />
@@ -83,6 +156,14 @@ export default function CreateAgent() {
             <label htmlFor='name'>Environment Prompt Prefix</label>
             <textarea
               rows={5}
+              value={formData.environmentPrompts["twitter"].prefix}
+              onChange={(e) =>
+                handleEnvironmentPromptChange(
+                  "twitter",
+                  "prefix",
+                  e.target.value
+                )
+              }
               id='bio'
               placeholder='This is the short bio that will be shown at your agents profile.'
             />
@@ -94,6 +175,14 @@ export default function CreateAgent() {
             <textarea
               rows={5}
               id='bio'
+              value={formData.environmentPrompts["twitter"].suffix}
+              onChange={(e) =>
+                handleEnvironmentPromptChange(
+                  "twitter",
+                  "suffix",
+                  e.target.value
+                )
+              }
               placeholder='This is the short bio that will be shown at your agents profile.'
             />
           </div>
@@ -109,6 +198,14 @@ export default function CreateAgent() {
             <label htmlFor='name'>Environment Prompt Prefix</label>
             <textarea
               rows={5}
+              value={formData.environmentPrompts["telegram"].prefix}
+              onChange={(e) =>
+                handleEnvironmentPromptChange(
+                  "telegram",
+                  "prefix",
+                  e.target.value
+                )
+              }
               id='bio'
               placeholder='This is the short bio that will be shown at your agents profile.'
             />
@@ -119,6 +216,14 @@ export default function CreateAgent() {
             <label htmlFor='name'>Environment Prompt Suffix</label>
             <textarea
               rows={5}
+              value={formData.environmentPrompts["telegram"].suffix}
+              onChange={(e) =>
+                handleEnvironmentPromptChange(
+                  "telegram",
+                  "suffix",
+                  e.target.value
+                )
+              }
               id='bio'
               placeholder='This is the short bio that will be shown at your agents profile.'
             />
@@ -135,6 +240,14 @@ export default function CreateAgent() {
             <label htmlFor='name'>Environment Prompt Prefix</label>
             <textarea
               rows={5}
+              value={formData.environmentPrompts["livestream"].prefix}
+              onChange={(e) =>
+                handleEnvironmentPromptChange(
+                  "livestream",
+                  "prefix",
+                  e.target.value
+                )
+              }
               id='bio'
               placeholder='This is the short bio that will be shown at your agents profile.'
             />
@@ -145,6 +258,14 @@ export default function CreateAgent() {
             <label htmlFor='name'>Environment Prompt Suffix</label>
             <textarea
               rows={5}
+              value={formData.environmentPrompts["livestream"].suffix}
+              onChange={(e) =>
+                handleEnvironmentPromptChange(
+                  "livestream",
+                  "suffix",
+                  e.target.value
+                )
+              }
               id='bio'
               placeholder='This is the short bio that will be shown at your agents profile.'
             />
@@ -192,14 +313,26 @@ export default function CreateAgent() {
             <label htmlFor='name'>
               AI Agent Name <span className='required'>*</span>{" "}
             </label>
-            <input id='name' type='text' placeholder='Agent Name' />
+            <input
+              value={formData.name}
+              onChange={(e) => handleInputChange("name", e.target.value)}
+              id='name'
+              type='text'
+              placeholder='Agent Name'
+            />
           </div>
           {tabs == "new" && (
             <div className='input_container'>
               <label htmlFor='ticker'>
                 Ticker <span className='required'>*</span>{" "}
               </label>
-              <input id='ticker' type='text' placeholder='$' />
+              <input
+                value={formData.ticker}
+                onChange={(e) => handleInputChange("ticker", e.target.value)}
+                id='ticker'
+                type='text'
+                placeholder='$'
+              />
             </div>
           )}
           {tabs == "existing" && (
@@ -210,6 +343,10 @@ export default function CreateAgent() {
               </label>
               <input
                 id='contract_address'
+                value={formData.contractAddress}
+                onChange={(e) =>
+                  handleInputChange("contractAddress", e.target.value)
+                }
                 type='text'
                 placeholder=' Token Contract Address'
               />
@@ -221,6 +358,8 @@ export default function CreateAgent() {
               <span className='required'>*</span>{" "}
             </label>
             <textarea
+              value={formData.bio}
+              onChange={(e) => handleInputChange("bio", e.target.value)}
               rows={10}
               id='bio'
               placeholder='This is the short bio that will be shown at your agents profile.'
@@ -234,22 +373,27 @@ export default function CreateAgent() {
             <Popover
               content={
                 <div className='popover_select'>
-                  <p onClick={() => setAgentType("none")}>None</p>
-                  <p onClick={() => setAgentType("productivity")}>
-                    Productivity
-                  </p>
-                  <p onClick={() => setAgentType("entertaintment")}>
-                    Entertaintment
-                  </p>
-                  <p onClick={() => setAgentType("on-chain")}>On-Chain</p>
-                  <p onClick={() => setAgentType("information")}>Information</p>
-                  <p onClick={() => setAgentType("creative")}>Creative</p>
+                  {[
+                    "none",
+                    "productivity",
+                    "entertainment",
+                    "on-chain",
+                    "information",
+                    "creative",
+                  ].map((type) => (
+                    <p
+                      key={type}
+                      onClick={() => handleInputChange("agentType", type)}
+                    >
+                      {type}
+                    </p>
+                  ))}
                 </div>
               }
               trigger='click'
             >
               <div className='select'>
-                <p>{agentType}</p>
+                <p>{formData.agentType}</p>
                 <FaChevronDown />
               </div>
             </Popover>
@@ -265,6 +409,8 @@ export default function CreateAgent() {
               </label>
               <textarea
                 rows={5}
+                value={formData.greeting}
+                onChange={(e) => handleInputChange("greeting", e.target.value)}
                 id='greeting'
                 placeholder='Hello, How are you ?'
               />
@@ -279,6 +425,7 @@ export default function CreateAgent() {
                   <div>
                     {sampleConversations.map((con: IConversation) => (
                       <SampleConversation
+                        key={con.id}
                         handleMsgFor={handleMsgFor}
                         handleSampleMsg={handleSampleMsg}
                         handleRemoveSample={handleRemoveSample}
@@ -304,7 +451,9 @@ export default function CreateAgent() {
               </span>
             </p>
           </div>
-          <Button type='primary'>Create Agent</Button>
+          <Button onClick={handleSubmit} type='primary'>
+            Create Agent
+          </Button>
         </div>
       </div>
     </div>
