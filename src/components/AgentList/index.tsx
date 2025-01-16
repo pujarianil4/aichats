@@ -23,6 +23,7 @@ export default function AgentList() {
     twentyfourhr: 5678 + index * 100, // Incrementing 24hr data
     fdv: 5678 + index * 50, // Incrementing FDV
     marketcap: 45678 + index * 1000, // Incrementing marketcap
+    link: "create-agent", //`/item/${index + 1}`,
   }));
 
   const columns = [
@@ -67,6 +68,11 @@ export default function AgentList() {
         columns={columns}
         bordered={false}
         size='small'
+        onRow={(record) => ({
+          onClick: () => {
+            window.open(record.link, "_blank");
+          },
+        })}
       />
     </div>
   );
