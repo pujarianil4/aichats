@@ -1,25 +1,86 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ChatFeed from "./chatfeed/ChatFeed.js";
 import ChatInput from "./chatInput/ChatInput.js";
 import "./index.scss";
 import closeIcon from "../../assets/close.svg";
 import YoutubeVideo from "./youtubeVideo/index.tsx";
+import { useAccount } from "wagmi";
+import socket from "../../services/socket.ts";
+import {
+  connectAddress,
+  getChatInstanceWithAgentId,
+} from "../../services/api.ts";
+import { useParams } from "react-router-dom";
 
-interface IProps {
-  youtubeLink: string;
+interface InstanceData {
+  id: number;
+  name: string;
   adminAddress: string;
+  moderators: string[];
   tokenAddress: string;
-  chatInstanceId: number;
+  streamUrl: string;
+  aId: string;
+  minTokenValue: string;
+  createdAt: string;
 }
-export default function AiChats({
-  youtubeLink,
-  adminAddress,
-  tokenAddress,
-  chatInstanceId,
-}: IProps) {
+export default function AiChats() {
+  // const navigate = useNavigate();
+  const { agentId } = useParams();
+
+  const { address, isConnected } = useAccount();
   const [viewSize, setViewSize] = useState(0);
   const [direction, setDirection] = useState<"up" | "down">("up");
-  const apiKey = import.meta.env;
+  // const apiKey = import.meta.env;
+  const wasConnected = useRef(false);
+  const [instanceData, setInstanceData] = useState<InstanceData>();
+
+  useEffect(() => {
+    if (instanceData?.id) {
+      if (!wasConnected.current && isConnected) {
+        handleWalletConnected(address!);
+      }
+      wasConnected.current = isConnected;
+      if (!isConnected) {
+        sessionStorage.setItem("isAdmin", "false");
+      }
+    }
+  }, [isConnected, address, instanceData?.id]);
+
+  useEffect(() => {
+    if (isConnected && instanceData?.id) {
+      socket.on("connect", () => {
+        console.log("Connected:", socket.id);
+        socket.emit("join", {
+          walletAddress: address,
+          instanceId: instanceData?.id,
+        });
+      });
+    }
+  }, [isConnected, instanceData?.id]);
+
+  const handleWalletConnected = async (connectedAddress: string) => {
+    try {
+      await connectAddress(connectedAddress, instanceData?.id);
+      const isAdmin = instanceData?.adminAddress === connectedAddress;
+      sessionStorage.setItem("isAdmin", JSON.stringify(isAdmin));
+    } catch (error) {
+      console.error("Connect Address Error", error);
+    }
+  };
+
+  const getInstanceData = async () => {
+    try {
+      const data = await getChatInstanceWithAgentId(agentId as string);
+      setInstanceData(data);
+    } catch (error) {
+      console.error("Chat Instance Error", error);
+    }
+  };
+
+  useEffect(() => {
+    getInstanceData();
+  }, []);
+
   const handleViewSizeChange = () => {
     setViewSize((prev: number) => {
       if (direction === "up") {
@@ -45,28 +106,29 @@ export default function AiChats({
       ? { width: "446px" }
       : { width: "200px", height: "300px" };
 
+  if (!instanceData?.id) {
+    return null;
+  }
+
   return (
     <div style={dynamicStyles} className='aichats'>
       <div className='actions' onClick={handleViewSizeChange}>
-        {/* <button className='expand_btn' onClick={handleViewSizeChange}> */}
         <img src={closeIcon} />
-        {/* </button> */}
       </div>
 
       <div
         style={viewSize == 2 ? { width: "100%" } : { width: "446px" }}
         className='live'
       >
-        {/* Uncomment the next line if you want to display the YouTube video */}
-        <YoutubeVideo youtubeLink={youtubeLink} />
+        <YoutubeVideo youtubeLink={instanceData?.streamUrl} />
       </div>
 
       <div className='chatfeed'>
-        <ChatFeed chatInstanceId={chatInstanceId} />
+        <ChatFeed chatInstanceId={instanceData?.id} />
         <ChatInput
-          adminAddress={adminAddress}
-          tokenAddress={tokenAddress}
-          chatInstanceId={chatInstanceId}
+          adminAddress={instanceData?.adminAddress}
+          tokenAddress={instanceData?.tokenAddress}
+          chatInstanceId={instanceData?.id}
         />
       </div>
     </div>
