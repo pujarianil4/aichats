@@ -168,9 +168,7 @@ export const uploadSingleFile = async (file: File) => {
 
 export const createAgent = async (data: any)=> {
   try {
-    const response = await axios.post("https://ai-agent-r139.onrender.com/agent", data, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+    const response = await axios.post("https://ai-agent-r139.onrender.com/agent", data);
     return response.data;
   } catch (error) {
     console.error("Error", error);
