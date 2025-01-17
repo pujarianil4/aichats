@@ -75,20 +75,6 @@ export default function UserMessage({
   return (
     <>
       {data?.amnt ? (
-        // <div className='admin'>
-        //   <img
-        //     src={userIcon}
-        //     alt={`${data.senderAddress}'s icon`}
-        //     className='user-message__icon'
-        //   />
-        //   <div className='admin__content'>
-        //     <span className='admin__name'>
-        //       {shortenAddress(data.senderAddress)}:
-        //     </span>
-        //     <span className='admin__value'> ${data.amnt} </span>
-        //     <div className='admin__text'>{data.content}</div>
-        //   </div>
-        // </div>
         <SuerChatMessage ensName={ensName} data={data} />
       ) : (
         <div className='user-message-container'>

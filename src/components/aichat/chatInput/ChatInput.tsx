@@ -4,18 +4,11 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import "./chatinput.scss";
 
 import socket from "../../../services/socket.ts";
-import { BsEmojiSmile } from "react-icons/bs";
 import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { erc20Abi } from "../../../helpers/contracts/abi.ts";
 import { parseUnits } from "viem";
 import TipPopup from "./TipPanel.tsx";
 import EmojiPicker from "../emoji/EmojiPicker.tsx";
-// import { connectAddress } from "../../../services/api.ts";
-// import EmojiPicker from "../emoji/EmojiPicker.tsx";
-
-// adminAddress={adminAddress}
-//           tokenAddress={tokenAddress}
-//           chatInstanceId={chatInstanceId}
 
 interface IProps {
   adminAddress: string;
@@ -67,11 +60,17 @@ export default function ChatInput({
     if (address)
       if (customAmount) {
         console.log("Sending tip...");
+
+        //{symbol: "", decimals: ""}
+        const decimals = JSON.parse(
+          localStorage?.getItem("tokenData") || ""
+        )?.decimals;
+
         await writeContract({
           address: tokenAddress,
           abi: erc20Abi,
           functionName: "transfer",
-          args: [adminAddress, parseUnits(customAmount, 6)], // TODO: Update later
+          args: [adminAddress, parseUnits(customAmount, decimals)], // TODO: Update later
         });
       } else if (message.trim() !== "") {
         socket.emit("message", { content: message });

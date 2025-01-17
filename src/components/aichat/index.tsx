@@ -11,13 +11,16 @@ import {
   getChatInstanceWithAgentId,
 } from "../../services/api.ts";
 import { useParams } from "react-router-dom";
+import { erc20Abi } from "../../helpers/contracts/abi.ts";
+import { multicall } from "wagmi/actions";
+import { wagmiConfig } from "../../main.tsx";
 
 interface InstanceData {
   id: number;
   name: string;
-  adminAddress: string;
+  adminAddress: string | `0x${string}`;
   moderators: string[];
-  tokenAddress: string;
+  tokenAddress: string | `0x${string}`;
   streamUrl: string;
   aId: string;
   minTokenValue: string;
@@ -27,7 +30,7 @@ export default function AiChats() {
   // const navigate = useNavigate();
   const { agentId } = useParams();
 
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, chainId } = useAccount();
   const [viewSize, setViewSize] = useState(0);
   const [direction, setDirection] = useState<"up" | "down">("up");
   // const apiKey = import.meta.env;
@@ -46,6 +49,42 @@ export default function AiChats() {
     }
   }, [isConnected, address, instanceData?.id]);
 
+  const getTokenDetails = async () => {
+    // Fetch token symbol
+    // const symbol = await readContract({
+    //   address: instanceData?.tokenAddress,
+    //   abi: erc20Abi,
+    //   functionName: "symbol",
+    //   chainId: 1,
+    // });
+
+    // // Fetch token decimals
+    // const decimals = await readContract({
+    //   address: instanceData?.tokenAddress,
+    //   abi: erc20Abi,
+    //   functionName: "decimals",
+    // });
+    const results = await multicall(wagmiConfig, {
+      contracts: [
+        {
+          address: instanceData?.tokenAddress,
+          abi: erc20Abi,
+          functionName: "symbol",
+        },
+        {
+          address: instanceData?.tokenAddress,
+          abi: erc20Abi,
+          functionName: "decimals",
+        },
+      ],
+      chainId: chainId,
+    });
+    localStorage.setItem(
+      "tokenData",
+      JSON.stringify({ symbol: results[0].result, decimals: results[1].result })
+    );
+  };
+
   useEffect(() => {
     if (isConnected && instanceData?.id) {
       socket.on("connect", () => {
@@ -55,6 +94,7 @@ export default function AiChats() {
           instanceId: instanceData?.id,
         });
       });
+      getTokenDetails();
     }
   }, [isConnected, instanceData?.id]);
 
@@ -104,7 +144,7 @@ export default function AiChats() {
       ? { width: "892px" }
       : viewSize === 1
       ? { width: "446px" }
-      : { width: "200px", height: "300px" };
+      : { width: "164px", height: "288px" };
 
   if (!instanceData?.id) {
     return null;

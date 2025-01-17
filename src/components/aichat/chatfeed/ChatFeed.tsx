@@ -95,7 +95,6 @@ export default function ChatFeed({ chatInstanceId }: IProps) {
     const newSuperChatHandler = (data: any) => {
       const newData = data.messages;
       console.log("New super chat received:", newData);
-      // TODO: update it skey from BE
       setSuperChat((prevChat) => [...prevChat, newData[0]]);
 
       // setSuperChat(newData);
