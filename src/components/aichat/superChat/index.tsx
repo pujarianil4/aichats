@@ -8,7 +8,7 @@ interface UserMessageProps {
 
 export default function SuperChatMessage({ ensName, data }: UserMessageProps) {
   return (
-    <>
+    <div>
       <div className='super_container'>
         <img
           src={`https://effigy.im/a/${data.senderAddress}.svg`}
@@ -23,6 +23,7 @@ export default function SuperChatMessage({ ensName, data }: UserMessageProps) {
           <div className='admin__text'>{data.content}</div>
         </div>
       </div>
-    </>
+      {/* <div>:</div> */}
+    </div>
   );
 }

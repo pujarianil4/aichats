@@ -38,10 +38,14 @@
   }
   .actions {
     position: absolute;
-    right: 10px;
-    top: 10px;
+    right: 16px;
+    top: 18px;
     z-index: 2;
     display: flex;
+
+    img {
+      width: 24px;
+    }
   }
   // .live,
   // .chatfeed {

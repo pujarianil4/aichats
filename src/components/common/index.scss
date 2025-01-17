@@ -6,3 +6,25 @@
   //   margin-top: -15px;
   // }
 }
+
+.notification_class {
+  // margin-top: 35px;
+  height: 5rem;
+  $border: 1px;
+  background-clip: padding-box;
+  // border: 1px solid $border var(--primary-border);
+  border-radius: 12px;
+  color: var(--black) !important;
+  // background-color: var(--primary-bg);
+  border-radius: 11px;
+  padding: 8px 5px;
+}
+@media (max-width: 768px) {
+  .notification_class {
+    padding: 3px;
+  }
+}
+
+.ant-notification-notice {
+  height: fit-content !important;
+}
