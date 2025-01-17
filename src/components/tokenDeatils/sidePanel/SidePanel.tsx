@@ -2,6 +2,7 @@ import React from "react";
 import "./sidePanel.scss";
 import TwitterFeed from "../twitterFeed/index.tsx";
 import Cowswap from "../cowSwap/index.tsx";
+import BondingCurve from "./bondingCurve/index.tsx";
 type prop = {
   tokenDetails: any;
 };
@@ -16,6 +17,9 @@ export default function SidePanel({ tokenDetails }: prop) {
       <div className='swap'>
         <Cowswap />
       </div>
+
+      <BondingCurve />
+
       <div className='analytics'>
         <div className='analytics__title'>
           <h3>Token Data</h3>
