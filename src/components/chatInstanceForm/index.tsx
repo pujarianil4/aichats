@@ -8,6 +8,7 @@ interface FormData {
   name: string;
   adminAddress: string;
   agentId: string;
+  streamUrl: string;
   moderators: string[];
   tokenAddress: string;
   minTokenValue: number;
@@ -20,6 +21,7 @@ const ChatInstanceForm: React.FC = () => {
     name: "",
     adminAddress: "",
     agentId: "",
+    streamUrl: "",
     moderators: [],
     tokenAddress: "",
     minTokenValue: 0,
@@ -138,9 +140,19 @@ const ChatInstanceForm: React.FC = () => {
           onChange={handleInputChange}
           required
         />
-        {errors.adminAddress && (
-          <p style={{ color: "red" }}>{errors.adminAddress}</p>
-        )}
+      </div>
+
+      <div>
+        <label>
+          Stream Link<span>*</span>
+        </label>
+        <input
+          type='text'
+          name='streamUrl'
+          value={formData.streamUrl}
+          onChange={handleInputChange}
+          required
+        />
       </div>
 
       {/* <div>

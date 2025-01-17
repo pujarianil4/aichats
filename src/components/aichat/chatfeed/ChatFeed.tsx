@@ -83,7 +83,8 @@ export default function ChatFeed({ chatInstanceId }: IProps) {
       console.log("New message received:", data);
       setChat((prevChat) => [
         ...prevChat,
-        { id: prevChat.length + 1, ...data },
+        data,
+        // { id: prevChat.length + 1, ...data },
       ]);
       setIsInitialLoad(true);
     };
@@ -95,12 +96,9 @@ export default function ChatFeed({ chatInstanceId }: IProps) {
       const newData = data.messages;
       console.log("New super chat received:", newData);
       // TODO: update it skey from BE
-      // setSuperChat((prevChat) => [
-      //   ...prevChat,
-      //   { id: prevChat.length + 1, ...newData },
-      // ]);
+      setSuperChat((prevChat) => [...prevChat, newData[0]]);
 
-      setSuperChat(newData);
+      // setSuperChat(newData);
     };
 
     const errorHandler = (err: any) => {
@@ -129,11 +127,11 @@ export default function ChatFeed({ chatInstanceId }: IProps) {
           />
         </div>
         <span className='holder'>Super Chat</span>
-        {chat.length > 0 && (
+        {superChat?.length > 0 && (
           <>
             <div className='super_chat_container'>
-              {[chat[0]].map((item) => (
-                <div className='s_chat_bx' key={item.id}>
+              {superChat?.slice(0, 3).map((item) => (
+                <div className='s_chat_bx' key={item?.id}>
                   <img
                     src={`https://effigy.im/a/${item?.senderAddress}.svg`}
                     alt={`'s icon`}
