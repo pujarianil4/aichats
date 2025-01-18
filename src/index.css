@@ -47,6 +47,9 @@ button {
   transition: border-color 0.25s;
   color: var(--light);
 }
+button:disabled {
+  opacity: 0.5;
+}
 button:hover {
   border-color: #646cff;
 }

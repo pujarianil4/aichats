@@ -98,6 +98,10 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                   Pagination: {
                     itemActiveBg: "var(--primary)",
                   },
+                  Button: {
+                    colorBgContainerDisabled: "gray",
+                    colorTextDisabled: "black",
+                  },
                 },
               }}
             >
