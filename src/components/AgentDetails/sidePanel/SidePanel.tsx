@@ -34,8 +34,8 @@ export default function SidePanel({ tokenDetails }: prop) {
             <p>${tokenDetails.marketCapUsd}</p>
           </div>
           <div>
-            <p className='label'>Liquidity </p>
-            <p>${tokenDetails.liquidity}</p>
+            <p className='label'>TVL </p>
+            <p>${tokenDetails.tvl}</p>
           </div>
           {/* <div>
             <p className='label'>MC Rank</p>

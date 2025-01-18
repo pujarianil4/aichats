@@ -8,6 +8,7 @@ import {
 } from "../../services/api.ts";
 import { useAccount } from "wagmi";
 import socket from "../../services/socket.ts";
+import { AgentDetails } from "../../components/AgentDetails/index.tsx";
 
 interface InstanceData {
   id: number;
@@ -78,11 +79,12 @@ export default function AgentPage() {
 
   useEffect(() => {
     getInstanceData();
-  }, []);
+  }, [agentId]);
   return (
     <main>
-      AgentPage
       <button onClick={handleSetChat}>Set Live Chat</button>
+      <AgentDetails />
+
       {instanceData?.id && (
         <AiChats
           youtubeLink={instanceData?.streamUrl}
