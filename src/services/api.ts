@@ -78,7 +78,7 @@ function extractPoolData(data: any) {
     volume: toFixedNumber(pool.attributes.volume_usd.h24),
     volume24hChange: pool.attributes.price_change_percentage.h24,
     priceChange24h: pool.attributes.price_change_percentage.h24,
-    liquidity: toFixedNumber(tokenData.total_reserve_in_usd),
+    tvl: toFixedNumber(tokenData.total_reserve_in_usd),
     marketCapUsd: toFixedNumber(pool.attributes.market_cap_usd),
     pairAddress: pool.id,
     imageUrl: tokenData.image_url,

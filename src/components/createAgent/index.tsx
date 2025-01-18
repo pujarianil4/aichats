@@ -4,7 +4,7 @@ import { Button, Select, Popover } from "antd";
 import type { TabsProps } from "antd";
 import { FaCaretUp, FaChevronDown } from "react-icons/fa";
 import { BsDashCircle } from "react-icons/bs";
-
+import Camera from "../../assets/camera.png";
 import { GoArrowSwitch } from "react-icons/go";
 import CustomTabs from "../common/Tabs/Tabs.tsx";
 import { useImageNameValidator } from "../../hooks/useImageNameValidator.tsx";
@@ -46,7 +46,7 @@ export default function CreateAgent() {
   const [formData, setFormData] = useState<FormData>({
     name: "",
     ticker: "",
-    profile: "./camera.png",
+    profile: "",
     contractAddress: "",
     bio: "",
     agentType: "none",
@@ -60,6 +60,16 @@ export default function CreateAgent() {
     sampleConversations: [],
   });
 
+  const isCreateAgentDisable =
+    formData.name &&
+    formData.bio &&
+    formData.profile &&
+    (tabs == "new" ? formData.ticker : formData.contractAddress);
+  const setFallbackURL = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    console.log("error", e);
+
+    e.currentTarget.src = Camera;
+  };
   const handleInputChange = (key: string, value: string | Array<any>) => {
     setFormData((prev) => ({
       ...prev,
@@ -341,7 +351,8 @@ export default function CreateAgent() {
           <div>
             <img
               onClick={() => fileRefs.current?.click()}
-              src={formData.profile}
+              src={formData.profile || Camera}
+              onError={setFallbackURL}
               alt='logo'
             />
             <input
@@ -504,7 +515,11 @@ export default function CreateAgent() {
               </span>
             </p>
           </div>
-          <Button onClick={handleSubmit} type='primary'>
+          <Button
+            disabled={!isCreateAgentDisable}
+            onClick={handleSubmit}
+            type='primary'
+          >
             Create Agent
           </Button>
         </div>
