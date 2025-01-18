@@ -1,8 +1,11 @@
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { ConnectButton, useConnectModal } from "@rainbow-me/rainbowkit";
 import "./index.scss";
 import { Button } from "antd";
 import { Link } from "react-router-dom";
+import { useAccount } from "wagmi";
 function Navbar() {
+  const { address, isConnected } = useAccount();
+  const { openConnectModal } = useConnectModal();
   return (
     <div className='navbar_container'>
       <div className='navigation'>
@@ -32,8 +35,14 @@ function Navbar() {
           {" "}
           <Button> Create New Agent </Button>
         </Link>
-        {/* <Button type='primary'> Connect Wallet</Button> */}
-        <ConnectButton />
+        {isConnected ? (
+          <ConnectButton />
+        ) : (
+          <Button onClick={openConnectModal} type='primary'>
+            {" "}
+            Connect Wallet
+          </Button>
+        )}
       </div>
     </div>
   );

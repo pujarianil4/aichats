@@ -1,7 +1,20 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./index.scss";
 import { Button, Table } from "antd";
+import { getAllAgents } from "../../services/api.ts";
 export default function AgentList() {
+  const [allAgents, setAllAgents] = useState([]);
+
+  const getAgents = async () => {
+    const agents = await getAllAgents();
+
+    console.log("agents", agents);
+  };
+
+  useEffect(() => {
+    getAgents();
+  }, []);
+
   const dataSource = Array.from({ length: 30 }, (_, index) => ({
     key: (index + 1).toString(),
     aiagent: (
