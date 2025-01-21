@@ -49,6 +49,7 @@ function index() {
     enabledTradeTypes: [
       // TradeType.SWAP, TradeType.LIMIT and/or TradeType.ADVANCED
       TradeType.SWAP,
+      // we can active this later
       // TradeType.LIMIT,
       // TradeType.ADVANCED,
       // TradeType.YIELD,
@@ -57,8 +58,8 @@ function index() {
       baseTheme: "dark",
       primary: "#7100c7",
       background: "#000000",
-      paper: "var(--primary-bg)",
-      text: "var(--light)",
+      paper: "#1c1c1c",
+      text: "#ffffff",
     },
     standaloneMode: false,
     disableToastMessages: false,
