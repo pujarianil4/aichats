@@ -4,6 +4,7 @@ import { Button, Modal } from "antd";
 import { Link } from "react-router-dom";
 import { useAccount } from "wagmi";
 import { useState } from "react";
+import LammaLogo from "./../../assets/logo.png";
 function Navbar() {
   const { address, isConnected } = useAccount();
   const { openConnectModal } = useConnectModal();
@@ -29,7 +30,7 @@ function Navbar() {
         <div className='navigation'>
           <a href='/'>
             {" "}
-            <img src='./logo.png' alt='logo' />
+            <img src={LammaLogo} alt='logo' />
           </a>
           <nav>
             <ul>
@@ -53,7 +54,7 @@ function Navbar() {
           <Button onClick={showModal}> Create New Agent </Button>
           {/* </Link> */}
           {isConnected ? (
-            <ConnectButton />
+            <ConnectButton showBalance={false} />
           ) : (
             <Button onClick={openConnectModal} type='primary'>
               {" "}
