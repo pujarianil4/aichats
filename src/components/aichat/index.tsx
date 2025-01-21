@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import ChatFeed from "./chatfeed/ChatFeed.js";
 import ChatInput from "./chatInput/ChatInput.js";
+import { Modal, Input, Button } from "antd";
 import "./index.scss";
 import closeIcon from "../../assets/close.svg";
 import YoutubeVideo from "./youtubeVideo/index.tsx";
@@ -9,11 +10,13 @@ import socket from "../../services/socket.ts";
 import {
   connectAddress,
   getChatInstanceWithAgentId,
+  updateInstanceStreamLink,
 } from "../../services/api.ts";
 import { useParams } from "react-router-dom";
 import { erc20Abi } from "../../helpers/contracts/abi.ts";
 import { multicall } from "wagmi/actions";
 import { wagmiConfig } from "../../main.tsx";
+import NotificationMessage from "../common/notificationMessage.tsx";
 
 interface InstanceData {
   id: number;
@@ -36,6 +39,9 @@ export default function AiChats() {
   // const apiKey = import.meta.env;
   const wasConnected = useRef(false);
   const [instanceData, setInstanceData] = useState<InstanceData>();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [youtubeLink, setYoutubeLink] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     if (instanceData?.id) {
@@ -45,6 +51,7 @@ export default function AiChats() {
       wasConnected.current = isConnected;
       if (!isConnected) {
         sessionStorage.setItem("isAdmin", "false");
+        setIsAdmin(false);
       }
     }
   }, [isConnected, address, instanceData?.id]);
@@ -103,6 +110,7 @@ export default function AiChats() {
       await connectAddress(connectedAddress, instanceData?.id);
       const isAdmin = instanceData?.adminAddress === connectedAddress;
       sessionStorage.setItem("isAdmin", JSON.stringify(isAdmin));
+      setIsAdmin(true);
     } catch (error) {
       console.error("Connect Address Error", error);
     }
@@ -139,6 +147,30 @@ export default function AiChats() {
     });
   };
 
+  const updateStreamUrl = async () => {
+    try {
+      await updateInstanceStreamLink(youtubeLink, instanceData?.id as number);
+      NotificationMessage("success", "Stream URL updated successfully!");
+      setInstanceData((prev) => ({
+        ...prev,
+        streamUrl: youtubeLink,
+      }));
+      setIsModalOpen(false);
+    } catch (error: any) {
+      console.error("Stream URL update error", error);
+      NotificationMessage("error", error?.message);
+    }
+  };
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setYoutubeLink("");
+  };
+
   const dynamicStyles =
     viewSize === 0
       ? { width: "892px" }
@@ -161,16 +193,49 @@ export default function AiChats() {
         className='live'
       >
         <YoutubeVideo youtubeLink={instanceData?.streamUrl} />
+        {isAdmin && (
+          <div onClick={handleOpenModal} className='update'>
+            update
+          </div>
+        )}
       </div>
 
       <div className='chatfeed'>
-        <ChatFeed chatInstanceId={instanceData?.id} />
+        <ChatFeed
+          chatInstanceId={instanceData?.id}
+          adminAddress={instanceData?.adminAddress}
+        />
         <ChatInput
           adminAddress={instanceData?.adminAddress}
           tokenAddress={instanceData?.tokenAddress}
           chatInstanceId={instanceData?.id}
         />
       </div>
+      <Modal
+        title='Update YouTube Live Link'
+        open={isModalOpen}
+        onCancel={handleCloseModal}
+        footer={[
+          <Button key='cancel' onClick={handleCloseModal}>
+            Cancel
+          </Button>,
+          <Button
+            key='submit'
+            type='primary'
+            onClick={updateStreamUrl}
+            disabled={!youtubeLink}
+          >
+            Update
+          </Button>,
+        ]}
+      >
+        <Input
+          style={{ backgroundColor: "transparent" }}
+          placeholder='Enter YouTube video link'
+          value={youtubeLink}
+          onChange={(e) => setYoutubeLink(e.target.value)}
+        />
+      </Modal>
     </div>
   );
 }

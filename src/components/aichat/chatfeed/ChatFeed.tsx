@@ -13,9 +13,10 @@ import NotificationMessage from "../../common/notificationMessage.tsx";
 
 interface IProps {
   chatInstanceId: number;
+  adminAddress: string;
 }
-export default function ChatFeed({ chatInstanceId }: IProps) {
-  const { isConnected } = useAccount();
+export default function ChatFeed({ chatInstanceId, adminAddress }: IProps) {
+  const { isConnected, address } = useAccount();
   const [page, setPage] = useState<number>(1);
   const [chat, setChat] = useState<any[]>([]);
   const [superChat, setSuperChat] = useState<any[]>([]);
@@ -25,6 +26,11 @@ export default function ChatFeed({ chatInstanceId }: IProps) {
   const [isInitialLoad, setIsInitialLoad] = useState(false);
   const [firstItemIndex, setFirstItemIndex] = useState(0);
   const loadingArray = Array(10).fill(() => 0);
+
+  const tempMuteList = [
+    // "0xD5b26AC46d2F43F4d82889f4C7BBc975564859e3",
+    // "0x79821a0F47e0c9598413b12FE4882b33326B0cF8",
+  ];
 
   useEffect(() => {
     if (isConnected) {
@@ -79,25 +85,43 @@ export default function ChatFeed({ chatInstanceId }: IProps) {
   };
 
   useEffect(() => {
+    let isNewMessageProcessed: boolean = false;
     const newMessageHandler = (data: any) => {
       console.log("New message received:", data);
+      if (tempMuteList.includes(data?.senderAddress as string)) {
+        throw new Error("You are muted");
+      }
       setChat((prevChat) => [
         ...prevChat,
         data,
         // { id: prevChat.length + 1, ...data },
       ]);
       setIsInitialLoad(true);
+      isNewMessageProcessed = true;
     };
 
     //socket.on('filteredMessages', (data) => {
     // console.log('filtered message ', data);
 
     const newSuperChatHandler = (data: any) => {
-      const newData = data.messages;
-      console.log("New super chat received:", newData);
-      setSuperChat((prevChat) => [...prevChat, newData[0]]);
-
-      // setSuperChat(newData);
+      if (!isNewMessageProcessed) {
+        console.log("Waiting for new message to be processed...");
+        return;
+      }
+      // const newData = data.messages;
+      // console.log("New super chat received:", newData);
+      // setSuperChat((prevChat) => [...prevChat, newData[0]]);
+      if (tempMuteList.includes(data?.senderAddress as string)) {
+        throw new Error("You are muted");
+      }
+      try {
+        const newData = data.messages;
+        console.log("NEW_MESSAGE", newData);
+        // setSuperChat((prevChat) => [...prevChat, newData[0]]);
+        setSuperChat(newData);
+      } catch (error: any) {
+        NotificationMessage("error", error.message);
+      }
     };
 
     const errorHandler = (err: any) => {
@@ -105,7 +129,18 @@ export default function ChatFeed({ chatInstanceId }: IProps) {
     };
 
     socket.on("newMessage", newMessageHandler);
-    socket.on("filteredMessages", newSuperChatHandler);
+    // setTimeout(() => {
+    //   socket.on("filteredMessages", newSuperChatHandler);
+    // }, 300);
+    socket.on("filteredMessages", async (data) => {
+      if (isNewMessageProcessed) {
+        newSuperChatHandler(data);
+      } else {
+        console.log(
+          "filteredMessages skipped because newMessage is not processed yet."
+        );
+      }
+    });
     socket.on("error", errorHandler);
     return () => {
       socket.off("newMessage");
@@ -119,12 +154,14 @@ export default function ChatFeed({ chatInstanceId }: IProps) {
       className={`feedContainer ${isFullHeight ? "fullHeight" : "splitView"}`}
     >
       <div className='feed_header'>
-        <div className='close_icon' onClick={handleView}>
-          <img
-            className={`${!isFullHeight ? "down" : ""}`}
-            src={dropdownIcon}
-          />
-        </div>
+        {superChat?.length > 0 && (
+          <div className='close_icon' onClick={handleView}>
+            <img
+              className={`${isFullHeight ? "down" : ""}`}
+              src={dropdownIcon}
+            />
+          </div>
+        )}
         <span className='holder'>Super Chat</span>
         {superChat?.length > 0 && (
           <>
@@ -214,6 +251,7 @@ export default function ChatFeed({ chatInstanceId }: IProps) {
                   key={index}
                   data={chat}
                   instance={chatInstanceId}
+                  adminAddress={adminAddress}
                   isAdmin={isAdmin}
                   onDeleteMessage={handleDeleteMessage}
                 />

@@ -9,6 +9,7 @@ import { erc20Abi } from "../../../helpers/contracts/abi.ts";
 import { parseUnits } from "viem";
 import TipPopup from "./TipPanel.tsx";
 import EmojiPicker from "../emoji/EmojiPicker.tsx";
+import NotificationMessage from "../../common/notificationMessage.tsx";
 
 interface IProps {
   adminAddress: string;
@@ -35,6 +36,20 @@ export default function ChatInput({
     hash,
   });
 
+  // socket.emit(
+  //   "deleteMessage",
+  //   { messageId: data?.id, instanceId: instance },
+  //   (response: any) => {
+  //     if (response.success) {
+  //       onDeleteMessage(data?.id);
+  //     } else {
+  //       console.error("Failed to delete message:", response.error);
+  //       NotificationMessage("error", response.error.message);
+  //     }
+  //   }
+  // );
+
+  // TODO: if user is muted then don't emmit the message
   useEffect(() => {
     if (isConfirmed && message.trim() !== "") {
       const updateText = `Send 10 UFT Token ${message}`;
@@ -43,12 +58,30 @@ export default function ChatInput({
         //   message: updateText,
         //   timestamp: new Date().toISOString(),
         // });
-        socket.emit("message", {
-          content: message,
-          hash: hash,
-          amnt: customAmount,
-        });
-        socket.emit("getSuperChat", { instanceId: chatInstanceId });
+        socket.emit(
+          "message",
+          {
+            content: message,
+            hash: hash,
+            amnt: customAmount,
+          },
+          (response: any) => {
+            if (!response.success) {
+              console.error("Failed to message:", response.error);
+              NotificationMessage("error", response.error.message);
+            }
+          }
+        );
+        socket.emit(
+          "getSuperChat",
+          { instanceId: chatInstanceId },
+          (response: any) => {
+            if (!response.success) {
+              console.error("Failed to message:", response.error);
+              NotificationMessage("error", response.error.message);
+            }
+          }
+        );
         setMessage("");
         setCustomAmount("");
         setShowTipPopup(false);

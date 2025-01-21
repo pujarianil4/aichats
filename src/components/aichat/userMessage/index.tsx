@@ -10,6 +10,7 @@ import NotificationMessage from "../../common/notificationMessage.tsx";
 interface UserMessageProps {
   data: any;
   instance: number;
+  adminAddress: string;
   isAdmin: boolean;
   onDeleteMessage: (messageId: number) => void;
 }
@@ -21,6 +22,7 @@ export const shortenAddress = (address: string, chars: number = 5) =>
 export default function UserMessage({
   data,
   instance,
+  adminAddress,
   isAdmin,
   onDeleteMessage,
 }: UserMessageProps) {
@@ -28,6 +30,19 @@ export default function UserMessage({
     address: data.senderAddress,
   });
   const [isMuted, setIsMuted] = useState(false);
+  const [isPopoverVisible, setIsPopoverVisible] = useState(false);
+
+  const tempMuteList = [
+    "0xD5b26AC46d2F43F4d82889f4C7BBc975564859e3",
+    "0x79821a0F47e0c9598413b12FE4882b33326B0cF8",
+  ];
+
+  const handlePopoverVisibleChange = (visible: boolean) => {
+    setIsPopoverVisible(visible);
+    if (visible) {
+      setIsMuted(tempMuteList.includes(data.senderAddress));
+    }
+  };
 
   const handleMute = () => {
     if (isMuted) {
@@ -64,7 +79,7 @@ export default function UserMessage({
   const content = (
     <section className='popover_content'>
       <div onClick={handleMute} className='popover_item'>
-        Mute
+        {isMuted ? "Unmute" : "Mute"}
       </div>
       <div onClick={handleDelete} className='popover_item'>
         Delete
@@ -85,27 +100,25 @@ export default function UserMessage({
               className='user-message__icon'
             />
             <div className='user-message__content'>
-              {isAdmin && (
-                <span style={{ cursor: "pointer" }} onClick={handleMute}>
-                  {isMuted ? "unmute" : "mute"}
-                </span>
-              )}
               <span
-                className={`user-message__name ${isAdmin ? "adminUser" : ""}`}
+                className={`user-message__name ${
+                  adminAddress === data.senderAddress ? "adminUser" : ""
+                }`}
               >
                 {!ensName ? shortenAddress(data.senderAddress) : ensName}:
               </span>
               <span className='user-message__text'>{data.content}</span>
             </div>
           </div>
-          {isAdmin && (
+          {adminAddress != data.senderAddress && isAdmin && (
             <div className='more'>
               <Popover
                 content={content}
                 placement='bottomRight'
-                // title='Title'
                 trigger='click'
                 arrow={false}
+                open={isPopoverVisible}
+                onOpenChange={handlePopoverVisibleChange}
               >
                 <img src={moreIcon} alt='more' />
               </Popover>

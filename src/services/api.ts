@@ -140,6 +140,24 @@ export const createInstance = async (payload: any) => {
   }
 };
 
+export const updateInstanceStreamLink = async (
+  link: string,
+  instanceId: number
+) => {
+  try {
+    const { data } = await axios.patch(
+      `${BASE_URL_BALANCE}/address/instance/${instanceId}`,
+      {
+        streamUrl: link,
+      }
+    );
+    return data;
+  } catch (error) {
+    console.log("ADD_ADDRESS_Error", error);
+    throw error;
+  }
+};
+
 export const getChatInstanceAdmin = async (instance: number = 1) => {
   try {
     const { data } = await axios.get(
@@ -183,8 +201,10 @@ export const uploadSingleFile = async (file: File) => {
 
 export const createAgent = async (data: any) => {
   try {
-
-    const response = await axios.post("https://ai-agent-r139.onrender.com/agent", data);
+    const response = await axios.post(
+      "https://ai-agent-r139.onrender.com/agent",
+      data
+    );
 
     return response.data;
   } catch (error) {
