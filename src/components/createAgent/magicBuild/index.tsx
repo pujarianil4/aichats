@@ -25,14 +25,14 @@ export default function MagicBuild() {
         <div className='form_inputs'>
           <div className='input_container flex_grow'>
             <label>
-              Name
+              Token Address
               <span className='required'>*</span>{" "}
             </label>
             <input
               value={formData.name}
               onChange={(e) => handleInputChange("name", e.target.value)}
               type='text'
-              placeholder='Enter Agent Name'
+              placeholder='Enter Token Address '
             />
           </div>
           <div className='input_container'>

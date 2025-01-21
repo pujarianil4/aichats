@@ -1,4 +1,3 @@
-import React from "react";
 import "./sidePanel.scss";
 import TwitterFeed from "../twitterFeed/index.tsx";
 import Cowswap from "../cowSwap/index.tsx";
@@ -6,7 +5,6 @@ import BondingCurve from "./bondingCurve/index.tsx";
 type prop = {
   tokenDetails: any;
 };
-const USD = "usd";
 
 export function getColorForValue(value: number): string {
   return value < 0 ? "#D40000" : "#00e832";
