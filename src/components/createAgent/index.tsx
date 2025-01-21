@@ -9,6 +9,7 @@ import { GoArrowSwitch } from "react-icons/go";
 import CustomTabs from "../common/Tabs/Tabs.tsx";
 import { useImageNameValidator } from "../../hooks/useImageNameValidator.tsx";
 import { createAgent, uploadSingleFile } from "../../services/api.ts";
+import { isAddress } from "viem";
 export const IMAGE_FILE_TYPES = "image/png, image/jpeg, image/webp, image/jpg";
 interface IConversation {
   id: number;
@@ -28,11 +29,13 @@ type FormData = {
   ticker: string;
   profile: string;
   contractAddress: string;
-  bio: string;
+  desc: string;
+  instructions: string;
+  personality: string;
   agentType: string;
-  greeting: string;
-  environmentPrompts: EnvironmentPrompts;
-  sampleConversations: IConversation[];
+  // greeting: string;
+  // environmentPrompts: EnvironmentPrompts;
+  // sampleConversations: IConversation[];
 };
 
 export default function CreateAgent() {
@@ -42,86 +45,105 @@ export default function CreateAgent() {
   const [sampleConversations, setSampleConversation] = useState<
     Array<IConversation>
   >([]);
+  const [errorMsg, setErrorMsg] = useState({
+    desc: "",
+    contractAddress: "",
+    personality: "",
+  });
   const fileRefs = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState<FormData>({
     name: "",
     ticker: "",
     profile: "",
     contractAddress: "",
-    bio: "",
+    desc: "",
+    instructions: "",
+    personality: "",
     agentType: "none",
-    greeting: "",
-    environmentPrompts: {
-      forum: { prefix: "", suffix: "" },
-      twitter: { prefix: "", suffix: "" },
-      telegram: { prefix: "", suffix: "" },
-      livestream: { prefix: "", suffix: "" },
-    },
-    sampleConversations: [],
+    // greeting: "",
+    // environmentPrompts: {
+    //   forum: { prefix: "", suffix: "" },
+    //   twitter: { prefix: "", suffix: "" },
+    //   telegram: { prefix: "", suffix: "" },
+    //   livestream: { prefix: "", suffix: "" },
+    // },
+    // sampleConversations: [],
   });
 
   const isCreateAgentDisable =
     formData.name &&
-    formData.bio &&
+    formData.desc &&
     formData.profile &&
-    (tabs == "new" ? formData.ticker : formData.contractAddress);
+    formData.ticker &&
+    formData.contractAddress &&
+    formData.instructions &&
+    formData.personality;
+  // (tabs == "new" ? formData.ticker : formData.contractAddress);
   const setFallbackURL = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     console.log("error", e);
 
     e.currentTarget.src = Camera;
   };
-  const handleInputChange = (key: string, value: string | Array<any>) => {
-    setFormData((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
+  const handleInputChange = (key: string, value: string) => {
+    if (key == "instructions") {
+      const formattedValue = enforceBulletFormat(value);
+      setFormData((prev) => ({
+        ...prev,
+        [key]: formattedValue,
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [key]: value,
+      }));
+    }
   };
 
-  const handleAddSampleCov = () => {
-    const added = [
-      ...sampleConversations,
-      { id: sampleConversations.length + 1, msgFor: "User", msg: "" },
-    ];
-    setSampleConversation(added);
-    handleInputChange("sampleConversations", added);
-  };
-  const handleEnvironmentPromptChange = (
-    platform: keyof EnvironmentPrompts,
-    field: string,
-    value: string
-  ) => {
-    setFormData((prev) => ({
-      ...prev,
-      environmentPrompts: {
-        ...prev.environmentPrompts,
-        [platform]: {
-          ...prev.environmentPrompts[platform],
-          [field]: value,
-        },
-      },
-    }));
-  };
-  const handleMsgFor = (id: any, user: string) => {
-    const updated = sampleConversations.map((con) =>
-      con.id == id ? { ...con, msgFor: user } : con
-    );
-    handleInputChange("sampleConversations", updated);
-    setSampleConversation(updated);
-  };
+  // const handleAddSampleCov = () => {
+  //   const added = [
+  //     ...sampleConversations,
+  //     { id: sampleConversations.length + 1, msgFor: "User", msg: "" },
+  //   ];
+  //   setSampleConversation(added);
+  //   handleInputChange("sampleConversations", added);
+  // };
+  // const handleEnvironmentPromptChange = (
+  //   platform: keyof EnvironmentPrompts,
+  //   field: string,
+  //   value: string
+  // ) => {
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     environmentPrompts: {
+  //       ...prev.environmentPrompts,
+  //       [platform]: {
+  //         ...prev.environmentPrompts[platform],
+  //         [field]: value,
+  //       },
+  //     },
+  //   }));
+  // };
+  // const handleMsgFor = (id: any, user: string) => {
+  //   const updated = sampleConversations.map((con) =>
+  //     con.id == id ? { ...con, msgFor: user } : con
+  //   );
+  //   handleInputChange("sampleConversations", updated);
+  //   setSampleConversation(updated);
+  // };
 
-  const handleSampleMsg = (id: any, msg: string) => {
-    const updated = sampleConversations.map((con) =>
-      con.id == id ? { ...con, msg: msg } : con
-    );
-    handleInputChange("sampleConversations", updated);
-    setSampleConversation(updated);
-  };
+  // const handleSampleMsg = (id: any, msg: string) => {
+  //   const updated = sampleConversations.map((con) =>
+  //     con.id == id ? { ...con, msg: msg } : con
+  //   );
+  //   handleInputChange("sampleConversations", updated);
+  //   setSampleConversation(updated);
+  // };
 
-  const handleRemoveSample = (id: number) => {
-    const updated = sampleConversations.filter((con) => con.id != id);
-    setSampleConversation(updated);
-    handleInputChange("sampleConversations", updated);
-  };
+  // const handleRemoveSample = (id: number) => {
+  //   const updated = sampleConversations.filter((con) => con.id != id);
+  //   setSampleConversation(updated);
+  //   handleInputChange("sampleConversations", updated);
+  // };
 
   const uploadProfile = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -144,187 +166,253 @@ export default function CreateAgent() {
     }
   };
 
-  const handleSubmit = async () => {
-    console.log("Form Data Submitted:", formData, sampleConversations);
+  const formValidation = () => {
+    const { desc, contractAddress, instructions, personality } = formData;
 
-    const data = {
-      name: formData.name,
-      pic: formData.profile,
-      token: {
-        tkr: formData.ticker,
-        tCAddress: "0xAadFC7f9807d2D1D0EB41e3A3836294F503Babc3",
+    const validations = [
+      {
+        condition: () => {
+          const charLength = String(desc).split(" ").join("").length;
+          return charLength >= 150 && charLength <= 500;
+        },
+        field: "desc",
+        errorMsg:
+          "Description must be between 150 and 500 characters (excluding spaces).",
       },
-      bio: formData.bio,
-      typ: formData.agentType,
-    };
-    const res = await createAgent(data);
+      {
+        condition: () => {
+          const charLength = String(personality).split(" ").join("").length;
+          return charLength >= 150 && charLength <= 500; // Example validation range
+        },
+        field: "personality",
+        errorMsg:
+          "Personality must be between 150 and 500 characters (excluding spaces).",
+      },
+      {
+        condition: () => isAddress(contractAddress),
+        field: "contractAddress",
+        errorMsg:
+          "Invalid contract address. Please enter a valid Ethereum address.",
+      },
+    ];
 
-    console.log("res", res);
+    let isValidate = true;
+
+    // Loop through validations and update errors
+    validations.forEach(({ condition, field, errorMsg }) => {
+      if (!condition()) {
+        setErrorMsg((prev) => ({ ...prev, [field]: errorMsg }));
+        isValidate = false;
+      } else {
+        setErrorMsg((prev) => ({ ...prev, [field]: "" }));
+      }
+    });
+
+    return isValidate;
+  };
+
+  const handleSubmit = async () => {
+    console.log("Form Data Submitted:", formData);
+
+    if (formValidation()) {
+      const data = {
+        name: formData.name,
+        pic: formData.profile,
+        token: {
+          tkr: formData.ticker,
+          tCAddress: formData.contractAddress,
+        },
+        desc: formData.desc,
+        personality: formData.personality,
+        instructions: formData.instructions
+          .split("\n")
+          .map((line) => line.replace(/^-\s*/, "").trim()),
+        typ: formData.agentType,
+      };
+      console.log("Form Data Submitted:", data);
+      // const res = await createAgent(data);
+    }
 
     // Handle form submission logic, like sending to an API.
   };
-  const items: TabsProps["items"] = [
-    {
-      key: "1",
-      label: "Forum Prompt",
-      children: (
-        <div className='tab_content'>
-          <div className='area'>
-            <label htmlFor='name'>Environment Prompt Prefix</label>
-            <textarea
-              rows={5}
-              value={formData.environmentPrompts["forum"].prefix}
-              onChange={(e) =>
-                handleEnvironmentPromptChange("forum", "prefix", e.target.value)
-              }
-              id='bio'
-              placeholder='This is the short bio that will be shown at your agents profile.'
-            />
-          </div>
 
-          <div className='divider'></div>
-          <div className='area'>
-            <label htmlFor='name'>Environment Prompt Suffix</label>
-            <textarea
-              rows={5}
-              value={formData.environmentPrompts["forum"].suffix}
-              onChange={(e) =>
-                handleEnvironmentPromptChange("forum", "suffix", e.target.value)
-              }
-              id='bio'
-              placeholder='This is the short bio that will be shown at your agents profile.'
-            />
-          </div>
-        </div>
-      ),
-    },
-    {
-      key: "2",
-      label: "X(twitter) Prompt",
-      children: (
-        <div className='tab_content'>
-          <div className='area'>
-            <label htmlFor='name'>Environment Prompt Prefix</label>
-            <textarea
-              rows={5}
-              value={formData.environmentPrompts["twitter"].prefix}
-              onChange={(e) =>
-                handleEnvironmentPromptChange(
-                  "twitter",
-                  "prefix",
-                  e.target.value
-                )
-              }
-              id='bio'
-              placeholder='This is the short bio that will be shown at your agents profile.'
-            />
-          </div>
+  const enforceBulletFormat = (value: string) => {
+    // Split input into lines and force each line to start with a bullet point
+    const lines = value.split("\n");
+    const bulletPointRegex = /^-\s+/;
+    const formattedLines = lines.map((line: string) => {
+      if (line.trim() && !bulletPointRegex.test(line)) {
+        // If the line doesn't start with bullet, prepend '- ' to it
+        return `- ${line.trim()}`;
+      }
+      return line; // Keep lines that are already valid
+    });
 
-          <div className='divider'></div>
-          <div className='area'>
-            <label htmlFor='name'>Environment Prompt Suffix</label>
-            <textarea
-              rows={5}
-              id='bio'
-              value={formData.environmentPrompts["twitter"].suffix}
-              onChange={(e) =>
-                handleEnvironmentPromptChange(
-                  "twitter",
-                  "suffix",
-                  e.target.value
-                )
-              }
-              placeholder='This is the short bio that will be shown at your agents profile.'
-            />
-          </div>
-        </div>
-      ),
-    },
-    {
-      key: "3",
-      label: "Telegram Prompt",
-      children: (
-        <div className='tab_content'>
-          <div className='area'>
-            <label htmlFor='name'>Environment Prompt Prefix</label>
-            <textarea
-              rows={5}
-              value={formData.environmentPrompts["telegram"].prefix}
-              onChange={(e) =>
-                handleEnvironmentPromptChange(
-                  "telegram",
-                  "prefix",
-                  e.target.value
-                )
-              }
-              id='bio'
-              placeholder='This is the short bio that will be shown at your agents profile.'
-            />
-          </div>
+    // Join the lines back together with newlines
+    return formattedLines.join("\n");
+  };
+  // const items: TabsProps["items"] = [
+  //   {
+  //     key: "1",
+  //     label: "Forum Prompt",
+  //     children: (
+  //       <div className='tab_content'>
+  //         <div className='area'>
+  //           <label htmlFor='name'>Environment Prompt Prefix</label>
+  //           <textarea
+  //             rows={5}
+  //             value={formData.environmentPrompts["forum"].prefix}
+  //             onChange={(e) =>
+  //               handleEnvironmentPromptChange("forum", "prefix", e.target.value)
+  //             }
+  //             id='bio'
+  //             placeholder='This is the short bio that will be shown at your agents profile.'
+  //           />
+  //         </div>
 
-          <div className='divider'></div>
-          <div className='area'>
-            <label htmlFor='name'>Environment Prompt Suffix</label>
-            <textarea
-              rows={5}
-              value={formData.environmentPrompts["telegram"].suffix}
-              onChange={(e) =>
-                handleEnvironmentPromptChange(
-                  "telegram",
-                  "suffix",
-                  e.target.value
-                )
-              }
-              id='bio'
-              placeholder='This is the short bio that will be shown at your agents profile.'
-            />
-          </div>
-        </div>
-      ),
-    },
-    {
-      key: "4",
-      label: "Livestream Prompt",
-      children: (
-        <div className='tab_content'>
-          <div className='area'>
-            <label htmlFor='name'>Environment Prompt Prefix</label>
-            <textarea
-              rows={5}
-              value={formData.environmentPrompts["livestream"].prefix}
-              onChange={(e) =>
-                handleEnvironmentPromptChange(
-                  "livestream",
-                  "prefix",
-                  e.target.value
-                )
-              }
-              id='bio'
-              placeholder='This is the short bio that will be shown at your agents profile.'
-            />
-          </div>
+  //         <div className='divider'></div>
+  //         <div className='area'>
+  //           <label htmlFor='name'>Environment Prompt Suffix</label>
+  //           <textarea
+  //             rows={5}
+  //             value={formData.environmentPrompts["forum"].suffix}
+  //             onChange={(e) =>
+  //               handleEnvironmentPromptChange("forum", "suffix", e.target.value)
+  //             }
+  //             id='bio'
+  //             placeholder='This is the short bio that will be shown at your agents profile.'
+  //           />
+  //         </div>
+  //       </div>
+  //     ),
+  //   },
+  //   {
+  //     key: "2",
+  //     label: "X(twitter) Prompt",
+  //     children: (
+  //       <div className='tab_content'>
+  //         <div className='area'>
+  //           <label htmlFor='name'>Environment Prompt Prefix</label>
+  //           <textarea
+  //             rows={5}
+  //             value={formData.environmentPrompts["twitter"].prefix}
+  //             onChange={(e) =>
+  //               handleEnvironmentPromptChange(
+  //                 "twitter",
+  //                 "prefix",
+  //                 e.target.value
+  //               )
+  //             }
+  //             id='bio'
+  //             placeholder='This is the short bio that will be shown at your agents profile.'
+  //           />
+  //         </div>
 
-          <div className='divider'></div>
-          <div className='area'>
-            <label htmlFor='name'>Environment Prompt Suffix</label>
-            <textarea
-              rows={5}
-              value={formData.environmentPrompts["livestream"].suffix}
-              onChange={(e) =>
-                handleEnvironmentPromptChange(
-                  "livestream",
-                  "suffix",
-                  e.target.value
-                )
-              }
-              id='bio'
-              placeholder='This is the short bio that will be shown at your agents profile.'
-            />
-          </div>
-        </div>
-      ),
-    },
-  ];
+  //         <div className='divider'></div>
+  //         <div className='area'>
+  //           <label htmlFor='name'>Environment Prompt Suffix</label>
+  //           <textarea
+  //             rows={5}
+  //             id='bio'
+  //             value={formData.environmentPrompts["twitter"].suffix}
+  //             onChange={(e) =>
+  //               handleEnvironmentPromptChange(
+  //                 "twitter",
+  //                 "suffix",
+  //                 e.target.value
+  //               )
+  //             }
+  //             placeholder='This is the short bio that will be shown at your agents profile.'
+  //           />
+  //         </div>
+  //       </div>
+  //     ),
+  //   },
+  //   {
+  //     key: "3",
+  //     label: "Telegram Prompt",
+  //     children: (
+  //       <div className='tab_content'>
+  //         <div className='area'>
+  //           <label htmlFor='name'>Environment Prompt Prefix</label>
+  //           <textarea
+  //             rows={5}
+  //             value={formData.environmentPrompts["telegram"].prefix}
+  //             onChange={(e) =>
+  //               handleEnvironmentPromptChange(
+  //                 "telegram",
+  //                 "prefix",
+  //                 e.target.value
+  //               )
+  //             }
+  //             id='bio'
+  //             placeholder='This is the short bio that will be shown at your agents profile.'
+  //           />
+  //         </div>
+
+  //         <div className='divider'></div>
+  //         <div className='area'>
+  //           <label htmlFor='name'>Environment Prompt Suffix</label>
+  //           <textarea
+  //             rows={5}
+  //             value={formData.environmentPrompts["telegram"].suffix}
+  //             onChange={(e) =>
+  //               handleEnvironmentPromptChange(
+  //                 "telegram",
+  //                 "suffix",
+  //                 e.target.value
+  //               )
+  //             }
+  //             id='bio'
+  //             placeholder='This is the short bio that will be shown at your agents profile.'
+  //           />
+  //         </div>
+  //       </div>
+  //     ),
+  //   },
+  //   {
+  //     key: "4",
+  //     label: "Livestream Prompt",
+  //     children: (
+  //       <div className='tab_content'>
+  //         <div className='area'>
+  //           <label htmlFor='name'>Environment Prompt Prefix</label>
+  //           <textarea
+  //             rows={5}
+  //             value={formData.environmentPrompts["livestream"].prefix}
+  //             onChange={(e) =>
+  //               handleEnvironmentPromptChange(
+  //                 "livestream",
+  //                 "prefix",
+  //                 e.target.value
+  //               )
+  //             }
+  //             id='bio'
+  //             placeholder='This is the short bio that will be shown at your agents profile.'
+  //           />
+  //         </div>
+
+  //         <div className='divider'></div>
+  //         <div className='area'>
+  //           <label htmlFor='name'>Environment Prompt Suffix</label>
+  //           <textarea
+  //             rows={5}
+  //             value={formData.environmentPrompts["livestream"].suffix}
+  //             onChange={(e) =>
+  //               handleEnvironmentPromptChange(
+  //                 "livestream",
+  //                 "suffix",
+  //                 e.target.value
+  //               )
+  //             }
+  //             id='bio'
+  //             placeholder='This is the short bio that will be shown at your agents profile.'
+  //           />
+  //         </div>
+  //       </div>
+  //     ),
+  //   },
+  // ];
 
   return (
     <div className='create_agent_container'>
@@ -385,7 +473,7 @@ export default function CreateAgent() {
               placeholder='Agent Name'
             />
           </div>
-          {tabs == "new" && (
+          {true && (
             <div className='input_container'>
               <label htmlFor='ticker'>
                 Ticker <span className='required'>*</span>{" "}
@@ -399,7 +487,7 @@ export default function CreateAgent() {
               />
             </div>
           )}
-          {tabs == "existing" && (
+          {true && (
             <div className='input_container'>
               <label htmlFor='contract_address'>
                 Token Contract Address on BASE Chain{" "}
@@ -414,20 +502,59 @@ export default function CreateAgent() {
                 type='text'
                 placeholder=' Token Contract Address'
               />
+              <span className='errormsg'>{errorMsg.contractAddress}</span>
             </div>
           )}
           <div className='input_container'>
             <label htmlFor='bio'>
-              AI Agent Biography
+              AI Agent Description
               <span className='required'>*</span>{" "}
             </label>
             <textarea
-              value={formData.bio}
-              onChange={(e) => handleInputChange("bio", e.target.value)}
+              value={formData.desc}
+              onChange={(e) => handleInputChange("desc", e.target.value)}
               rows={10}
               id='bio'
               placeholder='This is the short bio that will be shown at your agents profile.'
             />
+            <span className='errormsg'>{errorMsg.desc}</span>
+          </div>
+          <div className='input_container'>
+            <label htmlFor='personality'>
+              Personality
+              <span className='required'>*</span>{" "}
+            </label>
+            <textarea
+              value={formData.personality}
+              onChange={(e) => handleInputChange("personality", e.target.value)}
+              rows={10}
+              id='personality'
+              placeholder='Short information about agent personality'
+            />
+            <span className='errormsg'>{errorMsg.desc}</span>
+          </div>
+          <div className='input_container'>
+            <label htmlFor='instructions'>
+              Instructions
+              <span className='required'>*</span>{" "}
+            </label>
+            <textarea
+              value={formData.instructions}
+              onChange={(e) =>
+                handleInputChange("instructions", e.target.value)
+              }
+              rows={10}
+              id='instructions'
+              placeholder={`- Always stretch certain words with multiple 'o's or 's's
+- Start or end messages with location updates from different parts of your body
+- Use phrases like "speaking from my middle section" or "my tail end agrees"
+- Make frequent references to your length being both a blessing and a curse
+- Include spatial references like "while my head is in Miami, my tail is still in New York"
+- Use elongated emojis when possible: 🌭 🐍 📏 
+- Occasionally mention the challenges of being so long (taking forever to turn corners, getting tangled in crypto charts)
+- Speaking style example: "Loooooong time no seeeee! My front end is bullish on $LOG while my back end is still reading yesterday's charts! That's the greeeeat thing about being this long - I can monitor multiple exchanges at onccccce! 🌭"`}
+            />
+            <span className='errormsg'>{errorMsg.desc}</span>
           </div>
           <div className='input_container'>
             <label htmlFor='agenttype'>
@@ -462,7 +589,7 @@ export default function CreateAgent() {
               </div>
             </Popover>
           </div>
-          <div
+          {/* <div
             className='viewmore'
             style={isViewMore ? { height: "max-content" } : { height: "0px" }}
           >
@@ -505,18 +632,19 @@ export default function CreateAgent() {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
 
-          <div className='more_options'>
+          {/* <div className='more_options'>
             <p onClick={() => setIsViewMore(!isViewMore)}>
               {!isViewMore ? "Advance Settings" : "Show less options"}
               <span>
                 <FaCaretUp />
               </span>
             </p>
-          </div>
+          </div> */}
+
           <Button
-            disabled={!isCreateAgentDisable}
+            // disabled={!isCreateAgentDisable}
             onClick={handleSubmit}
             type='primary'
           >
