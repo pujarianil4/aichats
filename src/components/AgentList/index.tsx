@@ -1,7 +1,51 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./index.scss";
 import { Button, Table } from "antd";
+import { getAllAgents } from "../../services/api.ts";
 export default function AgentList() {
+  const [allAgents, setAllAgents] = useState<Array<any>>([]);
+  const setFallbackURL = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    e.currentTarget.src =
+      "https://img.freepik.com/free-photo/3d-rendering-animal-illustration_23-2151888074.jpg";
+  };
+
+  const getAgents = async () => {
+    const agents: Array<any> = await getAllAgents();
+
+    console.log("agents", agents);
+    const dataSource = agents.map((agent, index) => {
+      return {
+        key: (index + 1).toString(),
+        aiagent: (
+          <div className='table_aiagent'>
+            <img src={agent.pic} alt='logo' onError={setFallbackURL} />
+            <div>
+              <h2>
+                {agent.name} <span>${agent.token.tkr}</span>{" "}
+              </h2>
+              <div>
+                <p>AI Agent</p>
+                <p>{agent.typ}</p>
+              </div>
+            </div>
+          </div>
+        ),
+        price: 32 + index, // Incrementing price for diversity
+        onehr: 56 + index, // Incrementing onehr for diversity
+        twentyfourhr: 5678 + index * 100, // Incrementing 24hr data
+        fdv: 5678 + index * 50, // Incrementing FDV
+        marketcap: 45678 + index * 1000, // Incrementing marketcap
+        link: `agent/${agent.id}`, //`/item/${index + 1}`,
+      };
+    });
+
+    setAllAgents(dataSource);
+  };
+
+  useEffect(() => {
+    getAgents();
+  }, []);
+
   const dataSource = Array.from({ length: 30 }, (_, index) => ({
     key: (index + 1).toString(),
     aiagent: (
@@ -64,7 +108,7 @@ export default function AgentList() {
       <Table
         className='antd_table'
         pagination={{ position: ["bottomCenter"], pageSize: 10 }}
-        dataSource={dataSource}
+        dataSource={allAgents}
         columns={columns}
         bordered={false}
         size='small'

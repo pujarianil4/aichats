@@ -8,8 +8,8 @@ export default function AgentPage() {
   };
   return (
     <main>
-      AgentPage
       <button onClick={handleSetChat}>Set Live Chat</button>
+   
       <AiChats />
     </main>
   );
