@@ -49,6 +49,7 @@ function index() {
     enabledTradeTypes: [
       // TradeType.SWAP, TradeType.LIMIT and/or TradeType.ADVANCED
       TradeType.SWAP,
+      // we can active this later
       // TradeType.LIMIT,
       // TradeType.ADVANCED,
       // TradeType.YIELD,
