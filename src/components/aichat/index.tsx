@@ -113,6 +113,7 @@ export default function AiChats() {
       setIsAdmin(true);
     } catch (error) {
       console.error("Connect Address Error", error);
+      setIsAdmin(false);
     }
   };
 
@@ -193,7 +194,7 @@ export default function AiChats() {
         className='live'
       >
         <YoutubeVideo youtubeLink={instanceData?.streamUrl} />
-        {isAdmin && (
+        {instanceData?.adminAddress === address && (
           <div onClick={handleOpenModal} className='update'>
             update
           </div>
