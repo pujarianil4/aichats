@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 import "./chatinput.scss";
 
 import socket from "../../../services/socket.ts";
@@ -26,6 +26,7 @@ export default function ChatInput({
   const [message, setMessage] = useState("");
   const [showTipPopup, setShowTipPopup] = useState(false);
   const [customAmount, setCustomAmount] = useState("");
+  const { openConnectModal } = useConnectModal();
   // const sushiTokenAddress = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"; // USDC - BASE
   // const superChatAdminAddress = "0x79821a0F47e0c9598413b12FE4882b33326B0cF8";
 
@@ -176,28 +177,27 @@ export default function ChatInput({
             <EmojiPicker setEmoji={(emoji) => handleEmoji(emoji)} />
           </div>
 
-          {isConnected ? (
-            <div className='send_btn' onClick={() => handleSend()}>
-              <svg
-                width='16'
-                height='15'
-                viewBox='0 0 16 15'
-                fill='none'
-                xmlns='http://www.w3.org/2000/svg'
-                className='send-icon'
-              >
-                <path
-                  d='M14.3419 7.64462L0.95119 14.092L3.43095 7.64462L0.95119 1.19725L14.3419 7.64462Z'
-                  stroke='white'
-                  strokeWidth='1.40276'
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                />
-              </svg>
-            </div>
-          ) : (
-            <ConnectButton />
-          )}
+          <div
+            className='send_btn'
+            onClick={isConnected ? handleSend : openConnectModal}
+          >
+            <svg
+              width='16'
+              height='15'
+              viewBox='0 0 16 15'
+              fill='none'
+              xmlns='http://www.w3.org/2000/svg'
+              className='send-icon'
+            >
+              <path
+                d='M14.3419 7.64462L0.95119 14.092L3.43095 7.64462L0.95119 1.19725L14.3419 7.64462Z'
+                stroke='white'
+                strokeWidth='1.40276'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+              />
+            </svg>
+          </div>
         </div>
       </div>
     </div>
