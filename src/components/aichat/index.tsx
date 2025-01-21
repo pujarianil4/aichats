@@ -34,7 +34,7 @@ export default function AiChats() {
   const { agentId } = useParams();
 
   const { address, isConnected, chainId } = useAccount();
-  const [viewSize, setViewSize] = useState(0);
+  const [viewSize, setViewSize] = useState(2);
   const [direction, setDirection] = useState<"up" | "down">("up");
   // const apiKey = import.meta.env;
   const wasConnected = useRef(false);
