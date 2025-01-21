@@ -76,6 +76,76 @@
   }
 }
 
+// .social_tabs {
+//   background: var(--dark);
+
+//   .ant-tabs-nav {
+//     &:before {
+//       border-bottom: none;
+//     }
+//   }
+
+//   .ant-tabs-nav-wrap {
+//     border-bottom: 2px solid var(--primary-bg);
+//   }
+//   .ant-tabs-tab {
+//     border: 1px solid var(--primary-bg) !important;
+//     outline: none !important;
+//     margin: 0px !important;
+//     color: var(--light-text);
+//   }
+//   .ant-tabs-tab-active {
+//     background: var(--tertiary-bg) !important;
+//   }
+// }
+.social_tabs {
+  .ant-tabs-nav {
+    border: none;
+    display: flex;
+    justify-content: center;
+    &:before {
+      border-bottom: none;
+    }
+    .ant-tabs-nav-list {
+      border: 1px solid var(--primary) !important;
+      border-radius: 10px;
+
+      .ant-tabs-tab {
+        border: none;
+
+        &:hover {
+          color: #fff;
+        }
+
+        &.ant-tabs-tab-active {
+          background: var(--primary) !important;
+          color: var(--dark) !important;
+
+          border-radius: 10px;
+
+          .ant-tabs-tab-btn {
+            color: var(--light);
+          }
+        }
+
+        .tab-label {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 5px;
+
+          &.active {
+            font-weight: regular;
+          }
+
+          svg {
+            font-size: 20px;
+          }
+        }
+      }
+    }
+  }
+}
 // .ant-select {
 //   &:focus-visible {
 //     border: none !important;

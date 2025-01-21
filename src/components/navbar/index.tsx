@@ -35,6 +35,9 @@ function Navbar() {
           {" "}
           <Button> Create New Agent </Button>
         </Link>
+        <Link to={"/my-agent"}>
+          <Button>My Agents </Button>
+        </Link>
         {isConnected ? (
           <ConnectButton />
         ) : (
