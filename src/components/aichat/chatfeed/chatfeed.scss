@@ -1,10 +1,11 @@
 .feedContainer {
   max-height: 712px;
-  height: 95%;
+  height: calc(100% - 74px);
   background-color: var(--chat-bg);
   &.fullHeight {
     .listContainer {
-      height: 612px;
+      max-height: 612px;
+      height: calc(100% - 68px);
     }
     .feed_header {
       .super_listContainer {
@@ -15,22 +16,23 @@
 
   &.splitView {
     .listContainer {
-      height: 306px;
+      max-height: 308px;
+      height: calc(100% / 2);
       overflow: auto;
     }
     .feed_header {
       .super_listContainer {
-        height: 306px;
+        max-height: 308px;
+        height: calc(100% / 2);
+        min-height: 200px;
         overflow: auto;
         margin-top: 5px;
       }
     }
   }
   .feed_header {
-    /* margin-bottom: 7px; */
     padding: 10px;
-    background-color: var(--primary);
-    // height: 58px;
+    background-color: var(--chat-primary);
     border-radius: 10px;
     margin: 10px;
     position: relative;
@@ -87,7 +89,8 @@
         gap: 5px;
         padding: 4px 10px;
         border-radius: 16px;
-        background-color: var(--secondary);
+        background-color: var(--chat-primary);
+        border: 1px solid var(--primary);
 
         .icon {
           width: 15px;

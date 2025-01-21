@@ -103,7 +103,6 @@ export const getMessages = async (
     const { data } = await axios.get(
       `${BASE_URL_CHAT}/messages/${instanceId}?limit=${limit}&offset=${page}`
     );
-    console.log("DATA", data);
     return data;
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -132,6 +131,24 @@ export const createInstance = async (payload: any) => {
     const { data } = await axios.post(
       `${BASE_URL_BALANCE}/address/instance`,
       payload
+    );
+    return data;
+  } catch (error) {
+    console.log("ADD_ADDRESS_Error", error);
+    throw error;
+  }
+};
+
+export const updateInstanceStreamLink = async (
+  link: string,
+  instanceId: number
+) => {
+  try {
+    const { data } = await axios.patch(
+      `${BASE_URL_BALANCE}/address/instance/${instanceId}`,
+      {
+        streamUrl: link,
+      }
     );
     return data;
   } catch (error) {
@@ -183,8 +200,10 @@ export const uploadSingleFile = async (file: File) => {
 
 export const createAgent = async (data: any) => {
   try {
-
-    const response = await axios.post("https://ai-agent-r139.onrender.com/agent", data);
+    const response = await axios.post(
+      "https://ai-agent-r139.onrender.com/agent",
+      data
+    );
 
     return response.data;
   } catch (error) {

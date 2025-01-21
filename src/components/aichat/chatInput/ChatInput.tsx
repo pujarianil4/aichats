@@ -4,18 +4,12 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import "./chatinput.scss";
 
 import socket from "../../../services/socket.ts";
-import { BsEmojiSmile } from "react-icons/bs";
 import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { erc20Abi } from "../../../helpers/contracts/abi.ts";
 import { parseUnits } from "viem";
 import TipPopup from "./TipPanel.tsx";
 import EmojiPicker from "../emoji/EmojiPicker.tsx";
-// import { connectAddress } from "../../../services/api.ts";
-// import EmojiPicker from "../emoji/EmojiPicker.tsx";
-
-// adminAddress={adminAddress}
-//           tokenAddress={tokenAddress}
-//           chatInstanceId={chatInstanceId}
+import NotificationMessage from "../../common/notificationMessage.tsx";
 
 interface IProps {
   adminAddress: string;
@@ -42,6 +36,20 @@ export default function ChatInput({
     hash,
   });
 
+  // socket.emit(
+  //   "deleteMessage",
+  //   { messageId: data?.id, instanceId: instance },
+  //   (response: any) => {
+  //     if (response.success) {
+  //       onDeleteMessage(data?.id);
+  //     } else {
+  //       console.error("Failed to delete message:", response.error);
+  //       NotificationMessage("error", response.error.message);
+  //     }
+  //   }
+  // );
+
+  // TODO: if user is muted then don't emmit the message
   useEffect(() => {
     if (isConfirmed && message.trim() !== "") {
       const updateText = `Send 10 UFT Token ${message}`;
@@ -50,12 +58,30 @@ export default function ChatInput({
         //   message: updateText,
         //   timestamp: new Date().toISOString(),
         // });
-        socket.emit("message", {
-          content: message,
-          hash: hash,
-          amnt: customAmount,
-        });
-        socket.emit("getSuperChat", { instanceId: chatInstanceId });
+        socket.emit(
+          "message",
+          {
+            content: message,
+            hash: hash,
+            amnt: customAmount,
+          },
+          (response: any) => {
+            if (!response.success) {
+              console.error("Failed to message:", response.error);
+              NotificationMessage("error", response.error.message);
+            }
+          }
+        );
+        socket.emit(
+          "getSuperChat",
+          { instanceId: chatInstanceId },
+          (response: any) => {
+            if (!response.success) {
+              console.error("Failed to message:", response.error);
+              NotificationMessage("error", response.error.message);
+            }
+          }
+        );
         setMessage("");
         setCustomAmount("");
         setShowTipPopup(false);
@@ -67,11 +93,17 @@ export default function ChatInput({
     if (address)
       if (customAmount) {
         console.log("Sending tip...");
+
+        //{symbol: "", decimals: ""}
+        const decimals = JSON.parse(
+          localStorage?.getItem("tokenData") || ""
+        )?.decimals;
+
         await writeContract({
           address: tokenAddress,
           abi: erc20Abi,
           functionName: "transfer",
-          args: [adminAddress, parseUnits(customAmount, 6)], // TODO: Update later
+          args: [adminAddress, parseUnits(customAmount, decimals)], // TODO: Update later
         });
       } else if (message.trim() !== "") {
         socket.emit("message", { content: message });
