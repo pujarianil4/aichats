@@ -7,6 +7,7 @@ export default function YoutubeVideo({ youtubeLink }: { youtubeLink: string }) {
       <iframe
         src={`${youtubeLink}?autoplay=1&mute=1&rel=0&modestbranding`}
         title='YouTube video player'
+        className='ytIframe'
         frameBorder='0'
         allow='autoplay; encrypted-media'
         referrerPolicy='strict-origin-when-cross-origin'
