@@ -16,6 +16,13 @@ export const ROUTES = [
     isPrivate: false,
   },
   {
+    path: "/magic-build",
+    exact: true,
+    component: lazy(() => import("../pages/magicbuild/index.tsx")),
+    name: "magicbuild",
+    isPrivate: false,
+  },
+  {
     path: "/agent/:agentId",
     exact: true,
     component: lazy(() => import("../pages/agentPage/index.tsx")),

@@ -63,3 +63,41 @@
     }
   }
 }
+
+.modal_content {
+  display: flex;
+  justify-content: space-around;
+  gap: 20px;
+  div {
+    width: 200px;
+    background: var(--primary-bg);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    margin: 20px;
+    justify-content: center;
+    text-align: center;
+
+    h3 {
+      font-size: 1.2rem;
+    }
+    p {
+      font-size: 0.7rem;
+      color: var(--light-text);
+    }
+    button {
+      // border-radius: 15px;
+      // border-color: var(--primary);
+      // padding-block: 15px;
+      // padding: 10px 20px;
+    }
+  }
+  .magic {
+    h3 {
+      color: var(--primary);
+    }
+  }
+}
