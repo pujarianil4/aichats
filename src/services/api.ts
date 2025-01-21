@@ -103,7 +103,6 @@ export const getMessages = async (
     const { data } = await axios.get(
       `${BASE_URL_CHAT}/messages/${instanceId}?limit=${limit}&offset=${page}`
     );
-    console.log("DATA", data);
     return data;
   } catch (error) {
     console.error("Error fetching data:", error);
