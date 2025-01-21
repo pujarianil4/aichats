@@ -1,4 +1,3 @@
-import React from "react";
 import "./tokeninfo.scss";
 import GeckoChart from "../../Charts/GeckoChart.tsx";
 import { shortenAddress, timeAgo } from "../../../utils/index.ts";
@@ -6,7 +5,7 @@ import { shortenAddress, timeAgo } from "../../../utils/index.ts";
 type prop = {
   tokenDetails: any;
 };
-const USD = "usd";
+
 export default function TokenInfo({ tokenDetails }: prop) {
   return (
     <div className='tokeninfo'>

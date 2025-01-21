@@ -28,3 +28,6 @@ package-lock.json
 # local env files
 .env*.local
 .env
+
+# Local Netlify folder
+.netlify
