@@ -9,7 +9,9 @@ import { GoArrowSwitch } from "react-icons/go";
 import CustomTabs from "../common/Tabs/Tabs.tsx";
 import { useImageNameValidator } from "../../hooks/useImageNameValidator.tsx";
 import { createAgent, uploadSingleFile } from "../../services/api.ts";
-import { isAddress } from "viem";
+import { Address, erc20Abi, isAddress } from "viem";
+import { getToken, readContract } from "wagmi/actions";
+import { wagmiConfig } from "../../main.tsx";
 export const IMAGE_FILE_TYPES = "image/png, image/jpeg, image/webp, image/jpg";
 interface IConversation {
   id: number;
@@ -84,17 +86,82 @@ export default function CreateAgent() {
 
     e.currentTarget.src = Camera;
   };
-  const handleInputChange = (key: string, value: string) => {
+
+  const enforceBulletFormat = (value: string) => {
+    // Split input into lines and force each line to start with a bullet point
+    const lines = value.split("\n");
+    const bulletPointRegex = /^-\s+/;
+    const formattedLines = lines.map((line: string) => {
+      if (line.trim() && !bulletPointRegex.test(line)) {
+        // If the line doesn't start with bullet, prepend '- ' to it
+        return `- ${line.trim()}`;
+      }
+      return line; // Keep lines that are already valid
+    });
+
+    // Join the lines back together with newlines
+    console.log("instructions", formattedLines, formattedLines.join("\n"));
+    return formattedLines.join("\n");
+  };
+  const handleInputChange = async (key: string, value: string) => {
     if (key == "instructions") {
       const formattedValue = enforceBulletFormat(value);
+
       setFormData((prev) => ({
         ...prev,
         [key]: formattedValue,
       }));
+    } else if (key == "contractAddress") {
+      if (value == "") {
+        setErrorMsg((prev) => ({
+          ...prev,
+          contractAddress: "",
+        }));
+      }
+
+      setFormData((prev) => ({
+        ...prev,
+        [key]: value,
+      }));
+      if (isAddress(value)) {
+        await getTokenDetails(value);
+      } else if (value) {
+        setErrorMsg((prev) => ({
+          ...prev,
+          contractAddress:
+            "Invalid contract address. Please enter a valid Ethereum address.",
+        }));
+      }
     } else {
       setFormData((prev) => ({
         ...prev,
         [key]: value,
+      }));
+    }
+  };
+
+  const getTokenDetails = async (addr: Address) => {
+    try {
+      const token = await readContract(wagmiConfig, {
+        abi: erc20Abi,
+        address: addr,
+        functionName: "symbol",
+      });
+      console.log("Token", token);
+      setFormData((prev) => ({
+        ...prev,
+        ["ticker"]: token,
+      }));
+      setErrorMsg((prev) => ({
+        ...prev,
+        contractAddress: "",
+      }));
+    } catch (error) {
+      console.log(error);
+      setErrorMsg((prev) => ({
+        ...prev,
+        contractAddress:
+          "Invalid contract address. Please enter a valid Ethereum address.",
       }));
     }
   };
@@ -236,21 +303,6 @@ export default function CreateAgent() {
     // Handle form submission logic, like sending to an API.
   };
 
-  const enforceBulletFormat = (value: string) => {
-    // Split input into lines and force each line to start with a bullet point
-    const lines = value.split("\n");
-    const bulletPointRegex = /^-\s+/;
-    const formattedLines = lines.map((line: string) => {
-      if (line.trim() && !bulletPointRegex.test(line)) {
-        // If the line doesn't start with bullet, prepend '- ' to it
-        return `- ${line.trim()}`;
-      }
-      return line; // Keep lines that are already valid
-    });
-
-    // Join the lines back together with newlines
-    return formattedLines.join("\n");
-  };
   // const items: TabsProps["items"] = [
   //   {
   //     key: "1",
@@ -480,10 +532,10 @@ export default function CreateAgent() {
               </label>
               <input
                 value={formData.ticker}
-                onChange={(e) => handleInputChange("ticker", e.target.value)}
                 id='ticker'
                 type='text'
                 placeholder='$'
+                disabled
               />
             </div>
           )}
@@ -549,10 +601,7 @@ export default function CreateAgent() {
 - Start or end messages with location updates from different parts of your body
 - Use phrases like "speaking from my middle section" or "my tail end agrees"
 - Make frequent references to your length being both a blessing and a curse
-- Include spatial references like "while my head is in Miami, my tail is still in New York"
-- Use elongated emojis when possible: 🌭 🐍 📏 
-- Occasionally mention the challenges of being so long (taking forever to turn corners, getting tangled in crypto charts)
-- Speaking style example: "Loooooong time no seeeee! My front end is bullish on $LOG while my back end is still reading yesterday's charts! That's the greeeeat thing about being this long - I can monitor multiple exchanges at onccccce! 🌭"`}
+`}
             />
             <span className='errormsg'>{errorMsg.desc}</span>
           </div>
@@ -644,7 +693,7 @@ export default function CreateAgent() {
           </div> */}
 
           <Button
-            // disabled={!isCreateAgentDisable}
+            disabled={!isCreateAgentDisable}
             onClick={handleSubmit}
             type='primary'
           >
