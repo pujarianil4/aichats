@@ -34,7 +34,7 @@ const { wallets } = getDefaultWallets();
 export const wagmiConfig = getDefaultConfig({
   appName: "Super chat",
   projectId: "project_id",
-  chains: [mainnet, base, arbitrum, polygon],
+  chains: [base],
   wallets: [
     ...wallets,
     {
