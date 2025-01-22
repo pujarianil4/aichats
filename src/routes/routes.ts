@@ -30,6 +30,20 @@ export const ROUTES = [
     isPrivate: false,
   },
   {
+    path: "/myagent",
+    exact: true,
+    component: lazy(() => import("../pages/myagents/index.tsx")),
+    name: "myagents",
+    isPrivate: false,
+  },
+  {
+    path: "/myagent/:agentId",
+    exact: true,
+    component: lazy(() => import("../pages/myagents/agent/Agent.tsx")),
+    name: "myagent",
+    isPrivate: false,
+  },
+  {
     path: "/agent/create-chat-instance",
     exact: true,
     component: lazy(() => import("../pages/createChatInstance/index.tsx")),
