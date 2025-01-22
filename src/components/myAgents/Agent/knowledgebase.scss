@@ -19,6 +19,11 @@
       &:hover {
         background-color: var(--primary);
       }
+      p {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
     }
     .allcheckbox {
       width: 15px;
@@ -47,6 +52,7 @@
     align-items: center;
     justify-content: start;
     gap: 10px;
+    cursor: pointer;
     .icon {
       width: 40px;
       height: 40px;

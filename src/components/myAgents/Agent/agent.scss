@@ -1,11 +1,11 @@
 .agent_container {
-  width: 65%;
+  flex-grow: 1;
   min-height: 500px;
   background-color: var(--primary-bg);
   border-radius: 15px;
   padding: 20px;
-  margin: auto;
-  min-width: 500px;
+  // margin: auto;
+  min-width: 900px;
   .basic {
     display: flex;
     justify-content: space-between;

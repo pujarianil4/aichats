@@ -7,6 +7,7 @@ import type { CollapseProps } from "antd";
 import SocialModal from "./socialModal.tsx";
 import { FaCopy } from "react-icons/fa";
 import KnowledgeBase from "./KnowledgeBase.tsx";
+import Capabilities from "./Capabilities.tsx";
 
 export default function Agent() {
   const onChange = (key: string | string[]) => {
@@ -44,6 +45,11 @@ export default function Agent() {
       key: "3",
       label: "Knowledge Base",
       children: <KnowledgeBase />,
+    },
+    {
+      key: "4",
+      label: "Capabilities",
+      children: <Capabilities />,
     },
   ];
 

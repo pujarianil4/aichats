@@ -35,6 +35,15 @@ interface IKBData {
   data: any;
 }
 
+const icons: any = {
+  richtext: <RxText size={25} />,
+  website: <IoIosGlobe size={25} />,
+  table: <BsTable size={25} />,
+  documents: <IoDocumentTextOutline size={25} />,
+  search: <IoIosSearch size={25} />,
+  upload: <MdOutlineUploadFile size={25} />,
+};
+
 export default function KnowledgeBase() {
   const [checkedList, setCheckedList] = useState<number[]>([]);
 
@@ -71,27 +80,27 @@ export default function KnowledgeBase() {
         ) : (
           <>
             <div className='item'>
-              <IoIosGlobe />
+              <IoIosGlobe size={18} />
               <p>Website</p>
             </div>
             <div className='item'>
-              <BsTable />
+              <BsTable size={18} />
               <p>Table</p>
             </div>
             <div className='item'>
-              <RxText />
+              <RxText size={18} />
               <p>Rich Text</p>
             </div>
             <div className='item'>
-              <IoDocumentTextOutline />
+              <IoDocumentTextOutline size={18} />
               <p>Documents</p>
             </div>
             <div className='item'>
-              <IoIosSearch />
+              <IoIosSearch size={18} />
               <p>Web Search</p>
             </div>
             <div className='item'>
-              <MdOutlineUploadFile />
+              <MdOutlineUploadFile size={18} />
               <p>Upload From Api</p>
             </div>
           </>
@@ -133,9 +142,7 @@ const KBList = ({
         />
       </div>
       <div className='item'>
-        <div className='icon'>
-          <MdOutlineUploadFile size={25} />
-        </div>
+        <div className='icon'>{icons[item.type]}</div>
         <div className='content'>
           <p>{item.type}</p>
           <span>Created 6 hours ago</span>
