@@ -6,6 +6,7 @@ import type { CollapseProps } from "antd";
 
 import SocialModal from "./socialModal.tsx";
 import { FaCopy } from "react-icons/fa";
+import KnowledgeBase from "./KnowledgeBase.tsx";
 
 export default function Agent() {
   const onChange = (key: string | string[]) => {
@@ -39,6 +40,11 @@ export default function Agent() {
         </div>
       ),
     },
+    {
+      key: "3",
+      label: "Knowledge Base",
+      children: <KnowledgeBase />,
+    },
   ];
 
   return (
@@ -69,7 +75,7 @@ export default function Agent() {
       </div>
       <div className='form'>
         <Collapse
-          defaultActiveKey={["1"]}
+          defaultActiveKey={["3"]}
           onChange={onChange}
           expandIconPosition={"end"}
           items={items}
