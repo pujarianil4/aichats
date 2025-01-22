@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import "./agent.scss";
 import { FaXTwitter } from "react-icons/fa6";
 import { Collapse, Select } from "antd";
 import type { CollapseProps } from "antd";
+
+import SocialModal from "./socialModal.tsx";
+import { FaCopy } from "react-icons/fa";
+
 export default function Agent() {
   const onChange = (key: string | string[]) => {
     console.log(key);
@@ -54,19 +58,11 @@ export default function Agent() {
               Name <span>@Symbol</span>
             </h2>
 
-            <div>
+            <div className='social_tab'>
               <p>
-                <span>0x456789</span> <FaXTwitter />
+                <span>0x1232....45679</span> <FaCopy />
               </p>
-              <p>
-                <FaXTwitter /> <span>Twiiter</span>
-              </p>
-              <p>
-                <FaXTwitter /> <span>Twiiter</span>
-              </p>
-              <p>
-                <FaXTwitter /> <span>Twiiter</span>
-              </p>
+              <SocialModal />
             </div>
           </div>
         </div>
