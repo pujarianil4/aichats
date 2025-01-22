@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./index.scss";
-import { Button, Select, Popover } from "antd";
+import { Button, Select, Popover, message } from "antd";
 import type { TabsProps } from "antd";
 import { FaCaretUp, FaChevronDown } from "react-icons/fa";
 import { BsDashCircle } from "react-icons/bs";
@@ -44,6 +44,7 @@ export default function CreateAgent() {
   const [isViewMore, setIsViewMore] = useState(false);
   const [tabs, setTabs] = useState("new");
   const { validateImage, error: err, clearError } = useImageNameValidator();
+  const [loading, setLoading] = useState(false);
   const [sampleConversations, setSampleConversation] = useState<
     Array<IConversation>
   >([]);
@@ -85,6 +86,19 @@ export default function CreateAgent() {
     console.log("error", e);
 
     e.currentTarget.src = Camera;
+  };
+
+  const resetForm = () => {
+    setFormData({
+      name: "",
+      ticker: "",
+      profile: "",
+      contractAddress: "",
+      desc: "",
+      instructions: "",
+      personality: "",
+      agentType: "none",
+    });
   };
 
   const enforceBulletFormat = (value: string) => {
@@ -249,11 +263,11 @@ export default function CreateAgent() {
       {
         condition: () => {
           const charLength = String(personality).split(" ").join("").length;
-          return charLength >= 150 && charLength <= 500; // Example validation range
+          return charLength >= 50 && charLength <= 300; // Example validation range
         },
         field: "personality",
         errorMsg:
-          "Personality must be between 150 and 500 characters (excluding spaces).",
+          "Personality must be between 50 and 300 characters (excluding spaces).",
       },
       {
         condition: () => isAddress(contractAddress),
@@ -281,23 +295,32 @@ export default function CreateAgent() {
   const handleSubmit = async () => {
     console.log("Form Data Submitted:", formData);
 
-    if (formValidation()) {
-      const data = {
-        name: formData.name,
-        pic: formData.profile,
-        token: {
-          tkr: formData.ticker,
-          tCAddress: formData.contractAddress,
-        },
-        desc: formData.desc,
-        personality: formData.personality,
-        instructions: formData.instructions
-          .split("\n")
-          .map((line) => line.replace(/^-\s*/, "").trim()),
-        typ: formData.agentType,
-      };
-      console.log("Form Data Submitted:", data);
-      // const res = await createAgent(data);
+    try {
+      if (formValidation()) {
+        const data = {
+          name: formData.name,
+          pic: formData.profile,
+          token: {
+            tkr: formData.ticker,
+            tCAddress: formData.contractAddress,
+          },
+          desc: formData.desc,
+          personality: formData.personality,
+          instructions: formData.instructions
+            .split("\n")
+            .map((line) => line.replace(/^-\s*/, "").trim()),
+          typ: formData.agentType,
+        };
+        console.log("Form Data Submitted:", data);
+        setLoading(true);
+        const res = await createAgent(data);
+        resetForm();
+        message.success("Agent Created Successfully!");
+      }
+    } catch (error) {
+      message.error("Failed to Create Agent. Try Again");
+    } finally {
+      setLoading(false);
     }
 
     // Handle form submission logic, like sending to an API.
@@ -693,9 +716,10 @@ export default function CreateAgent() {
           </div> */}
 
           <Button
-            disabled={!isCreateAgentDisable}
+            // disabled={!isCreateAgentDisable}
             onClick={handleSubmit}
             type='primary'
+            loading={loading}
           >
             Create Agent
           </Button>

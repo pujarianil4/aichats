@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import "./index.scss";
-import { Button, Table } from "antd";
+import { Table } from "antd";
 import { getAllAgents } from "../../services/api.ts";
+import { useNavigate } from "react-router-dom";
 export default function AgentList() {
   const [allAgents, setAllAgents] = useState<Array<any>>([]);
+  const navigate = useNavigate();
   const setFallbackURL = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     e.currentTarget.src =
       "https://img.freepik.com/free-photo/3d-rendering-animal-illustration_23-2151888074.jpg";
@@ -114,7 +116,7 @@ export default function AgentList() {
         size='small'
         onRow={(record) => ({
           onClick: () => {
-            window.open(record.link, "_blank");
+            navigate(record.link);
           },
         })}
       />
