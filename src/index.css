@@ -58,6 +58,10 @@ button:hover {
   border-color: var(--primary);
   color: var(--primary);
 }
+
+button[data-testid="rk-account-button"] {
+  white-space: pre;
+}
 input:focus,
 input:focus-visible,
 textarea:focus,
