@@ -1,0 +1,36 @@
+.cap_container {
+  padding: 10px 0px;
+  .cap_header {
+    display: flex;
+    gap: 20px;
+    margin: 20px;
+    align-items: center;
+    .item {
+      display: flex;
+      align-items: center;
+      justify-content: start;
+      gap: 10px;
+      padding: 10px 15px;
+      font-size: 15px;
+      border-radius: 10px;
+      border: 1px solid var(--primary) !important;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: var(--light-text);
+      &:hover {
+        background-color: var(--primary);
+        color: var(--light);
+      }
+    }
+    .allcheckbox {
+      width: 15px;
+      height: 15px;
+      border-radius: 5px;
+      background: var(--dark);
+      &:checked {
+        background: var(--primary);
+        color: var(--primary);
+      }
+    }
+  }
+}
