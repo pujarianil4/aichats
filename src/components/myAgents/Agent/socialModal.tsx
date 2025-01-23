@@ -31,7 +31,7 @@ const SocialModal: React.FC = () => {
   ) => {
     setConnectedAccounts((prev) => ({
       ...prev,
-      [platform]: username,
+      [platform]: username || null,
     }));
     setLoading(false);
     setModalVisible(true);
@@ -59,6 +59,7 @@ const SocialModal: React.FC = () => {
               handleConnectionSuccess("Telegram", username)
             }
             onFailure={handleConnectionFailure}
+            initialUsername={connectedAccounts.Telegram || undefined}
           />
         );
       case "Discord":
@@ -68,6 +69,7 @@ const SocialModal: React.FC = () => {
               handleConnectionSuccess("Discord", username)
             }
             onFailure={handleConnectionFailure}
+            initialUsername={connectedAccounts.Discord || undefined}
           />
         );
       default:

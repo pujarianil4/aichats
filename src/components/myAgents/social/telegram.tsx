@@ -5,6 +5,7 @@ const Telegram: React.FC<{
   onFailure: () => void;
   initialUsername?: string;
 }> = ({ onSuccess, onFailure, initialUsername }) => {
+  const [botToken, setBotToken] = useState("");
   const [isUserConnected, setIsUserConnected] = useState(false);
   const [telegramUsername, setTelegramUsername] = useState<string | null>(
     initialUsername || null
@@ -12,14 +13,30 @@ const Telegram: React.FC<{
 
   const handleConnect = async () => {
     try {
-      // api call
-      const username = "@sandeepTelegram";
-      setTelegramUsername(username);
-      setIsUserConnected(true);
-      onSuccess(username);
+      if (!botToken) {
+        alert("Please enter a valid Bot Access Token.");
+        return;
+      }
+
+      const response = await fetch(
+        `https://api.telegram.org/bot${botToken}/getMe`
+      );
+      const data = await response.json();
+      console.log("Telegram Bot Data", data);
+      console.group("data", data);
+      if (data.ok) {
+        const username = `@${data.result.username}`;
+        setTelegramUsername(username);
+        setIsUserConnected(true);
+        onSuccess(username);
+      } else {
+        throw new Error("Invalid Bot Token.");
+      }
     } catch (error) {
       setIsUserConnected(false);
       onFailure();
+      console.error("Error connecting bot:", error);
+      alert("Failed to connect bot. Please check the token and try again.");
     }
   };
 
@@ -27,6 +44,8 @@ const Telegram: React.FC<{
 
   const handleDisconnect = () => {
     setTelegramUsername(null);
+    onSuccess("");
+    setBotToken("");
   };
 
   const handleCopy = () => {
@@ -128,9 +147,10 @@ const Telegram: React.FC<{
                     <span className='required'>*</span>
                   </label>
                   <input
-                    id='token-input'
                     type='text'
                     placeholder='Enter your Token'
+                    value={botToken}
+                    onChange={(e) => setBotToken(e.target.value)}
                   />
                 </div>
               </div>
