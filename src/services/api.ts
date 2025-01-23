@@ -180,6 +180,31 @@ export const getChatInstanceWithAgentId = async (agentId: string) => {
     throw error;
   }
 };
+
+export const getSuperChatsWithInstanceId = async (instanceId: number) => {
+  try {
+    const { data } = await axios.get(
+      `${BASE_URL_CHAT}/messages/superchat/${instanceId}`
+    );
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const getMutedUsersWithInstanceId = async (instanceId: number) => {
+  try {
+    const { data } = await axios.get(
+      `${BASE_URL_CHAT}/messages/mute/${instanceId}`
+    );
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
 export const uploadSingleFile = async (file: File) => {
   try {
     const formData = new FormData();
@@ -210,14 +235,16 @@ export const createAgent = async (data: any) => {
     console.error("Error", error);
     throw error;
   }
-}
+};
 
-export const getAllAgents = async ()=> {
+export const getAllAgents = async () => {
   try {
-    const response = await axios.get("https://ai-agent-r139.onrender.com/agent");
+    const response = await axios.get(
+      "https://ai-agent-r139.onrender.com/agent"
+    );
     return response.data;
   } catch (error) {
     console.error("Error", error);
     throw error;
   }
-}
+};

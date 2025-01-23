@@ -211,32 +211,32 @@ export default function AiChats() {
           tokenAddress={instanceData?.tokenAddress}
           chatInstanceId={instanceData?.id}
         />
+        <Modal
+          title='Update YouTube Live Link'
+          open={isModalOpen}
+          onCancel={handleCloseModal}
+          footer={[
+            <Button key='cancel' onClick={handleCloseModal}>
+              Cancel
+            </Button>,
+            <Button
+              key='submit'
+              type='primary'
+              onClick={updateStreamUrl}
+              disabled={!youtubeLink}
+            >
+              Update
+            </Button>,
+          ]}
+        >
+          <Input
+            style={{ backgroundColor: "transparent" }}
+            placeholder='Enter YouTube video link'
+            value={youtubeLink}
+            onChange={(e) => setYoutubeLink(e.target.value)}
+          />
+        </Modal>
       </div>
-      <Modal
-        title='Update YouTube Live Link'
-        open={isModalOpen}
-        onCancel={handleCloseModal}
-        footer={[
-          <Button key='cancel' onClick={handleCloseModal}>
-            Cancel
-          </Button>,
-          <Button
-            key='submit'
-            type='primary'
-            onClick={updateStreamUrl}
-            disabled={!youtubeLink}
-          >
-            Update
-          </Button>,
-        ]}
-      >
-        <Input
-          style={{ backgroundColor: "transparent" }}
-          placeholder='Enter YouTube video link'
-          value={youtubeLink}
-          onChange={(e) => setYoutubeLink(e.target.value)}
-        />
-      </Modal>
     </div>
   );
 }
