@@ -139,8 +139,9 @@ export const createInstance = async (payload: any) => {
   }
 };
 
-export const updateInstanceStreamLink = async (
+export const updateChatInstance = async (
   link: string,
+  minTokenValue: string,
   instanceId: number
 ) => {
   try {
@@ -148,11 +149,12 @@ export const updateInstanceStreamLink = async (
       `${BASE_URL_BALANCE}/address/instance/${instanceId}`,
       {
         streamUrl: link,
+        minTokenValue: Number(minTokenValue),
       }
     );
     return data;
   } catch (error) {
-    console.log("ADD_ADDRESS_Error", error);
+    console.log("Update_Instance_Error", error);
     throw error;
   }
 };
@@ -197,6 +199,18 @@ export const getMutedUsersWithInstanceId = async (instanceId: number) => {
   try {
     const { data } = await axios.get(
       `${BASE_URL_CHAT}/messages/mute/${instanceId}`
+    );
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const getAllUsersbyInstanceId = async (instanceId: number) => {
+  try {
+    const { data } = await axios.get(
+      `${BASE_URL_BALANCE}/address/${instanceId}`
     );
     return data;
   } catch (error) {

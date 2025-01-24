@@ -1,0 +1,193 @@
+.chatSettingsContainer {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+
+  .backButton {
+    margin: 8px 0 0 0px;
+    cursor: pointer;
+  }
+
+  .noUserFound {
+    height: 90%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      width: 98%;
+    }
+  }
+
+  .listSetting,
+  .tipSetting,
+  .youtubeSetting,
+  .listItems {
+    box-sizing: border-box;
+    width: 100%;
+    border-radius: 8px;
+    background-color: var(--chat-secondary-bg);
+    margin: 16px auto;
+    padding: 8px;
+  }
+
+  .listSetting {
+    margin-top: 2.75rem !important;
+
+    .menuItem {
+      display: flex;
+      gap: 1rem;
+      padding: 8px 0;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      &:not(:last-child) {
+        border-bottom: 1px solid rgb(183, 182, 182);
+      }
+
+      svg {
+        margin-left: auto;
+      }
+      &:hover {
+        transform: scale(1.005);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+
+  h4,
+  p {
+    font-size: 14px;
+    color: var(--dark);
+  }
+
+  .listItems {
+    h4 {
+      margin-bottom: 12px;
+    }
+    .listItem {
+      display: flex;
+      // justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 0;
+
+      &:not(:last-child) {
+        border-bottom: 1px solid rgb(183, 182, 182);
+      }
+
+      img {
+        width: 24px;
+        height: 24px;
+        border-radius: 16px;
+      }
+
+      p {
+        margin-top: 0;
+      }
+
+      .address {
+        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .type {
+        margin-left: auto;
+      }
+
+      button {
+        padding: 4px 8px;
+        border-radius: 8px;
+        background-color: var(--primary);
+        outline: none;
+        border: none;
+        transition: transform 0.3s ease;
+        margin-left: auto;
+
+        &:hover {
+          color: var(--light);
+          scale: 1.01;
+        }
+      }
+
+      .copyIcon {
+        transition: color 0.2s ease;
+        &:hover {
+          color: var(--primary);
+        }
+
+        &.checked {
+          color: green;
+        }
+      }
+    }
+    .muteTime {
+      font-size: 12px;
+      color: var(--light-text);
+      // margin-left: 2rem;
+      // margin-top: -4px;
+    }
+  }
+
+  .tipSetting {
+    .tipItem {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+
+      input {
+        width: 172px;
+        height: 20px;
+        outline: none;
+        border: none;
+        padding: 4px;
+        border-radius: 4px;
+        margin-left: auto;
+      }
+      svg {
+        padding-left: 8px;
+        cursor: pointer;
+      }
+
+      div {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+  }
+
+  .youtubeSetting {
+    input {
+      height: 20px;
+      outline: none;
+      border: none;
+      padding: 4px;
+      border-radius: 4px;
+      width: calc(100% - 8px);
+      margin-top: 12px;
+    }
+
+    button {
+      width: calc(100% - 0px);
+      background-color: var(--primary);
+      padding: 4px 8px;
+      border-radius: 8px;
+      margin-top: 12px;
+
+      &:hover {
+        color: var(--light);
+      }
+    }
+  }
+
+  .messageLoader {
+    width: 100%;
+    height: 50px;
+    margin: 1rem auto;
+    border-radius: 10px;
+  }
+}
