@@ -77,20 +77,20 @@
 }
 
 .ant-modal-mask {
-  background-color: var(--primary-bg) !important;
+  background-color: var(--dark) !important;
 
-  opacity: 0.8 !important;
+  opacity: 0.5 !important;
   // filter: blur(10px);
 }
 .ant-modal {
   width: max-content !important;
   .ant-modal-content {
-    background-color: var(--dark);
+    background-color: var(--primary-bg);
     border-radius: 10px;
     width: max-content !important;
 
     .ant-modal-title {
-      background: var(--dark);
+      background: var(--primary-bg);
       color: var(--primary);
       text-align: center;
       font-size: 20px;
@@ -134,6 +134,27 @@
       border-radius: 50px !important;
       // border-radius: 20px !important;
     }
+  }
+}
+
+.ant-upload-wrapper {
+  .ant-upload-list-item-done {
+    color: var(--success) !important;
+    .ant-upload-icon {
+      span {
+        color: var(--success) !important;
+      }
+    }
+
+    .ant-btn-icon {
+      color: var(--error) !important;
+      span {
+        color: var(--error) !important;
+      }
+    }
+  }
+  .ant-tooltip {
+    display: none;
   }
 }
 // .ant-select {
