@@ -77,3 +77,71 @@
     }
   }
 }
+
+// .kb_modal {
+//   .ant-modal-content {
+//     background: var(--primary-bg) !important;
+//   }
+// }
+
+.add_website_modal,
+.add_doc_modal,
+.add_table_modal,
+.add_richtext_modal {
+  width: 600px;
+  // background: var(--primary-bg);
+  h2 {
+    font-size: 18px;
+  }
+  p {
+    font-size: 13px;
+    color: var(--light-text);
+  }
+  .input_box {
+    display: flex;
+    flex-direction: column;
+    margin: 20px 0px;
+    gap: 5px;
+    input,
+    textarea {
+      padding: 15px;
+      background: var(--dark);
+      border: 0;
+      border-radius: 10px;
+      color: var(--light);
+      resize: none;
+      font-size: 12px;
+      flex-grow: 1;
+    }
+
+    // textarea {
+    //   width: 93%;
+    // }
+    .select {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 120px;
+      background-color: var(--dark);
+      font-size: 13px;
+      padding: 8px 20px;
+      border-radius: 10px;
+      margin: 10px;
+      text-transform: capitalize;
+      cursor: pointer;
+    }
+    .errormsg {
+      font-size: 12px;
+      color: var(--error);
+    }
+  }
+
+  .btn {
+    display: flex;
+    justify-content: end;
+  }
+}
+
+.show_doc_modal {
+  max-width: 700px;
+}

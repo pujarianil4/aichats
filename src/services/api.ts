@@ -34,37 +34,6 @@ export async function getTokenDetails(tokenAddress: string) {
   }
 }
 
-const createObjectFromPair = (pair: any) => {
-  const baseToken = pair.baseToken;
-  const quoteToken = pair.quoteToken;
-  const priceChange24h = pair.priceChange.h24;
-
-  // console.log(pair);
-
-  return {
-    name: baseToken.name,
-
-    symbol: baseToken.symbol,
-    priceInUsd: pair.priceUsd,
-    volume: pair.volume.h24,
-    volume24hChange: priceChange24h,
-    priceChange24h: priceChange24h,
-    liquidity: pair.liquidity.usd,
-    marketCapUsd: pair.marketCap,
-    pairAddress: pair.pairAddress,
-    imageUrl: pair?.info?.imageUrl || "",
-    header: pair?.info?.header || "",
-    website:
-      pair?.info?.websites.find((site: any) => site.label === "Website")?.url ||
-      "",
-    twitter:
-      pair?.info?.socials.find((social: any) => social.type === "twitter")
-        ?.url || "",
-    telegram:
-      pair?.info?.socials.find((social: any) => social.type === "telegram")
-        ?.url || "",
-  };
-};
 
 function extractPoolData(data: any) {
   const tokenData = data.data.attributes;
@@ -90,7 +59,7 @@ import axios from "axios";
 
 const BASE_URL_BALANCE = "https://balance-servie.onrender.com";
 const BASE_URL_CHAT = "https://chat-service-rq16.onrender.com";
-
+const BASE_URL_APP = "https://ai-agent-r139.onrender.com"
 export const getMessages = async (
   page: number = 1,
   limit = 20,
@@ -221,3 +190,14 @@ export const getAllAgents = async ()=> {
     throw error;
   }
 }
+
+export const getKBbyAgentID = async ()=> {
+  try {
+    const response = await axios.get(`${BASE_URL_APP}/upload/kb/017d7ac6e29ce69c`);
+    return response.data;
+  } catch (error) {
+    console.error("Error", error);
+    throw error;
+  }
+}
+
