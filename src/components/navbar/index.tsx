@@ -2,13 +2,24 @@ import { ConnectButton, useConnectModal } from "@rainbow-me/rainbowkit";
 import "./index.scss";
 import { Button, Modal } from "antd";
 import { Link } from "react-router-dom";
-import { useAccount } from "wagmi";
-import { useState } from "react";
+import { useAccount, useSignMessage, useDisconnect } from "wagmi";
+import { useEffect, useState } from "react";
 import LammaLogo from "./../../assets/logo.png";
+import {
+  handleAuthConnect,
+  handleAuthDisconnect,
+} from "../../services/auth.ts";
+import { authSignMsg } from "../../utils/contants.ts";
+import { useAppSelector } from "../../hooks/reduxHooks.tsx";
+import { shortenAddress } from "../../utils/index.ts";
 function Navbar() {
   const { address, isConnected } = useAccount();
+  const sign = useSignMessage();
+  const { disconnect } = useDisconnect();
+  const [isSigned, setIsSigned] = useState(false);
   const { openConnectModal } = useConnectModal();
   const [openModal, setOpenModal] = useState(false);
+  const { isLoading, profile } = useAppSelector((state) => state.user);
 
   const showModal = () => {
     setOpenModal(true);
@@ -22,6 +33,34 @@ function Navbar() {
 
   const handleCancel = () => {
     setOpenModal(false);
+  };
+
+  const handleMsgSign = async () => {
+    const hash = sign.signMessage(
+      { message: authSignMsg },
+      {
+        onSuccess(data, variables, context) {
+          console.log(data);
+          setIsSigned(true);
+          handleAuthConnect({ sig: data, msg: authSignMsg, typ: "EVM" });
+        },
+      }
+    );
+    console.log(hash, sign);
+  };
+
+  useEffect(() => {
+    if (isConnected && !profile.token) {
+      handleMsgSign();
+    }
+  }, [isConnected, profile.token]);
+
+  const handleDisconnect = async () => {
+    try {
+      await handleAuthDisconnect();
+
+      disconnect();
+    } catch (error) {}
   };
 
   return (
@@ -54,7 +93,9 @@ function Navbar() {
           <Button onClick={showModal}> Create New Agent </Button>
           {/* </Link> */}
           {isConnected ? (
-            <ConnectButton showBalance={false} />
+            <Button onClick={handleDisconnect} type='primary'>
+              {address && shortenAddress(address)}
+            </Button>
           ) : (
             <Button onClick={openConnectModal} type='primary'>
               {" "}
