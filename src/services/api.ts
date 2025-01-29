@@ -34,7 +34,6 @@ export async function getTokenDetails(tokenAddress: string) {
   }
 }
 
-
 function extractPoolData(data: any) {
   const tokenData = data.data.attributes;
 
@@ -56,10 +55,10 @@ function extractPoolData(data: any) {
 }
 
 import axios from "axios";
+import { api } from "./apiconfig.ts";
 
 const BASE_URL_BALANCE = "https://balance-servie.onrender.com";
 const BASE_URL_CHAT = "https://chat-service-rq16.onrender.com";
-const BASE_URL_APP = "https://ai-agent-r139.onrender.com"
 export const getMessages = async (
   page: number = 1,
   limit = 20,
@@ -153,13 +152,9 @@ export const uploadSingleFile = async (file: File) => {
   try {
     const formData = new FormData();
     formData.append("file", file);
-    const response = await axios.post(
-      "https://ai-agent-r139.onrender.com/upload/single",
-      formData,
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-      }
-    );
+    const response = await api.post("/upload/single", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
     return response.data.url;
   } catch (error) {
     console.error("Error uploading file", error);
@@ -169,35 +164,41 @@ export const uploadSingleFile = async (file: File) => {
 
 export const createAgent = async (data: any) => {
   try {
-    const response = await axios.post(
-      "https://ai-agent-r139.onrender.com/agent",
-      data
-    );
+    const response = await api.post("/agent", data);
 
     return response.data;
   } catch (error) {
     console.error("Error", error);
     throw error;
   }
-}
+};
 
-export const getAllAgents = async ()=> {
+export const getAllAgents = async () => {
   try {
-    const response = await axios.get("https://ai-agent-r139.onrender.com/agent");
+    const response = await api.get("/agent");
     return response.data;
   } catch (error) {
     console.error("Error", error);
     throw error;
   }
-}
+};
 
-export const getKBbyAgentID = async ()=> {
+export const getKBbyAgentID = async () => {
   try {
-    const response = await axios.get(`${BASE_URL_APP}/upload/kb/017d7ac6e29ce69c`);
+    const response = await api.get(`/upload/kb/017d7ac6e29ce69c`);
     return response.data;
   } catch (error) {
     console.error("Error", error);
     throw error;
   }
-}
+};
 
+export const getAllAgentByUser = async () => {
+  try {
+    const { data } = await api.get("/agent");
+    return data;
+  } catch (error) {
+    console.error("Error", error);
+    throw error;
+  }
+};
