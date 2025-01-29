@@ -4,6 +4,7 @@
   background-color: var(--primary-bg);
   border-radius: 15px;
   padding: 20px;
+  min-width: 700px;
   .basic {
     display: flex;
     justify-content: space-between;
@@ -54,6 +55,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
             height: 20px;
+            text-transform: capitalize;
           }
         }
       }
