@@ -1,0 +1,1 @@
+export const authSignMsg = `Sign this message to prove you have access to this wallet in order to sign in. This won't cost you any Gas. Date: ${Date.now()}`;

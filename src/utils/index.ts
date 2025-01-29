@@ -1,5 +1,7 @@
+import { Address } from 'viem';
+
 export function shortenAddress(
-  address: string,
+  address: Address,
   startLength: number = 6,
   endLength: number = 4
 ): string {
