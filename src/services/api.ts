@@ -1,9 +1,12 @@
 import { toFixedNumber } from "../utils/index.ts";
 
-export async function getTokenDetails(tokenAddress: string) {
+import axios from "axios";
+import { api } from "./apiconfig.ts";
+
+export async function getTokenDetails(network : string, tokenAddress: string) {
   const eth_key = import.meta.env.VITE_ETHERSCAN_API_KEY;
   const apiUrl = `https://api.dexscreener.com/latest/dex/tokens/${tokenAddress}`;
-  const geckoApi = `https://api.geckoterminal.com/api/v2/networks/eth/tokens/${tokenAddress}?include=top_pools
+  const geckoApi = `https://api.geckoterminal.com/api/v2/networks/${network}/tokens/${tokenAddress}?include=top_pools
 `;
   const creationUrl = `https://api.etherscan.io/v2/api?chainid=1&module=contract&action=getcontractcreation&contractaddresses=${tokenAddress}&apikey=${eth_key}`;
   const holdersUrl = `https://api.etherscan.io/v2/api?chainid=1&module=token&action=tokenholdercount&contractaddress=${tokenAddress}&apikey=${eth_key}`;
@@ -21,7 +24,7 @@ export async function getTokenDetails(tokenAddress: string) {
     const creationData = await creationResponse.json();
     // const holdersData = await holdersResponse.json();
 
-    console.log("Token Details:", tokenData, extractPoolData(tokenData));
+    // console.log("Token Details:", tokenData, extractPoolData(tokenData));
 
     return {
       ...extractPoolData(tokenData),
@@ -51,11 +54,11 @@ function extractPoolData(data: any) {
     pairAddress: pool.id,
     imageUrl: tokenData.image_url,
     fdvInusd: tokenData.fdv_usd,
+    pools: data.included
+
   };
 }
 
-import axios from "axios";
-import { api } from "./apiconfig.ts";
 
 const BASE_URL_BALANCE = "https://balance-servie.onrender.com";
 const BASE_URL_CHAT = "https://chat-service-rq16.onrender.com";

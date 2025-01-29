@@ -1,16 +1,16 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import "./index.scss";
-import { Button, Select, Popover, message } from "antd";
-import type { TabsProps } from "antd";
-import { FaCaretUp, FaChevronDown } from "react-icons/fa";
+import { Button, Popover, message } from "antd";
+
+import { FaChevronDown } from "react-icons/fa";
 import { BsDashCircle } from "react-icons/bs";
 import Camera from "../../assets/camera.png";
 import { GoArrowSwitch } from "react-icons/go";
-import CustomTabs from "../common/Tabs/Tabs.tsx";
+
 import { useImageNameValidator } from "../../hooks/useImageNameValidator.tsx";
 import { createAgent, uploadSingleFile } from "../../services/api.ts";
 import { Address, erc20Abi, isAddress } from "viem";
-import { getToken, readContract } from "wagmi/actions";
+import { readContract } from "wagmi/actions";
 import { wagmiConfig } from "../../main.tsx";
 export const IMAGE_FILE_TYPES = "image/png, image/jpeg, image/webp, image/jpg";
 interface IConversation {
@@ -253,7 +253,7 @@ export default function CreateAgent() {
     const validations = [
       {
         condition: () => {
-          const charLength = String(desc).split(" ").join("").length;
+          const charLength = String(desc).split("").length;
           return charLength >= 150 && charLength <= 500;
         },
         field: "desc",
@@ -262,7 +262,13 @@ export default function CreateAgent() {
       },
       {
         condition: () => {
-          const charLength = String(personality).split(" ").join("").length;
+          const charLength = String(personality).split("").length;
+          console.log(
+            "charLength",
+            charLength,
+            charLength >= 50 && charLength <= 300
+          );
+
           return charLength >= 50 && charLength <= 300; // Example validation range
         },
         field: "personality",
@@ -281,6 +287,8 @@ export default function CreateAgent() {
 
     // Loop through validations and update errors
     validations.forEach(({ condition, field, errorMsg }) => {
+      console.log("!condition()", field, !condition());
+
       if (!condition()) {
         setErrorMsg((prev) => ({ ...prev, [field]: errorMsg }));
         isValidate = false;
@@ -606,7 +614,7 @@ export default function CreateAgent() {
               id='personality'
               placeholder='Short information about agent personality'
             />
-            <span className='errormsg'>{errorMsg.desc}</span>
+            <span className='errormsg'>{errorMsg.personality}</span>
           </div>
           <div className='input_container'>
             <label htmlFor='instructions'>
@@ -716,7 +724,7 @@ export default function CreateAgent() {
           </div> */}
 
           <Button
-            // disabled={!isCreateAgentDisable}
+            disabled={!isCreateAgentDisable}
             onClick={handleSubmit}
             type='primary'
             loading={loading}

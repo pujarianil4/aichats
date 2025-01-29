@@ -2,23 +2,26 @@ import React, { useEffect } from "react";
 import "./index.scss";
 import TokenInfo from "./tokeninfo/tokeninfo.tsx";
 import SidePanel from "./sidePanel/SidePanel.tsx";
-import { getTokenDetails } from "../../services/api.ts";
+
+import { useParams } from "react-router-dom";
+import { getAgentByID } from "../../services/agent.ts";
 
 export const AgentDetails = () => {
   const [tokenDetails, setTokenDetails] = React.useState<any>(null);
+  const { agentId } = useParams();
 
-  const getToken = async () => {
-    const data = await getTokenDetails(
-      "0x0202be363b8a4820f3f4de7faf5224ff05943ab1"
-    );
+  const getAgentDetails = async (agentID: string) => {
+    const data = await getAgentByID(agentID);
 
     setTokenDetails(data);
     console.log("Data", data);
   };
 
   useEffect(() => {
-    getToken();
-  }, []);
+    console.log("params", agentId);
+
+    agentId && getAgentDetails(agentId);
+  }, [agentId]);
   return (
     <div className='tokendetails_container'>
       {tokenDetails && (
