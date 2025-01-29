@@ -88,7 +88,6 @@ export default function VirtualizedContainer({
     startReached: () => {
       if (!isLoading) {
         setPage((prevPage) => prevPage + 1);
-        console.log("START_REACHED");
       }
     },
     itemContent: renderComponent,
