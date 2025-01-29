@@ -15,20 +15,20 @@ interface IProps {
   adminAddress: string;
   tokenAddress: string;
   chatInstanceId: number;
+  mutedUsers: string[];
 }
 
 export default function ChatInput({
   adminAddress,
   tokenAddress,
   chatInstanceId,
+  mutedUsers,
 }: IProps) {
   const { isConnected, address } = useAccount();
   const [message, setMessage] = useState("");
   const [showTipPopup, setShowTipPopup] = useState(false);
   const [customAmount, setCustomAmount] = useState("");
   const { openConnectModal } = useConnectModal();
-  // const sushiTokenAddress = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"; // USDC - BASE
-  // const superChatAdminAddress = "0x79821a0F47e0c9598413b12FE4882b33326B0cF8";
 
   // Transaction hash and status
   const { data: hash, isPending, writeContract } = useWriteContract();
@@ -90,6 +90,14 @@ export default function ChatInput({
     }
   }, [isConfirmed]);
 
+  const handleTipPopup = () => {
+    if (!mutedUsers?.includes(address as string)) {
+      setShowTipPopup((prev) => !prev);
+    } else {
+      NotificationMessage("error", "You are muted by admin");
+    }
+  };
+
   const handleSend = async () => {
     if (address)
       if (customAmount) {
@@ -101,7 +109,7 @@ export default function ChatInput({
         )?.decimals;
 
         await writeContract({
-          address: tokenAddress,
+          address: tokenAddress as `0x${string}`,
           abi: erc20Abi,
           functionName: "transfer",
           args: [adminAddress, parseUnits(customAmount, decimals)], // TODO: Update later
@@ -147,7 +155,8 @@ export default function ChatInput({
 
           <div
             className={`tip_btn ${customAmount ? "active" : ""}`}
-            onClick={() => setShowTipPopup((prev) => !prev)}
+            // onClick={() => setShowTipPopup((prev) => !prev)}
+            onClick={handleTipPopup}
           >
             <span>
               <svg

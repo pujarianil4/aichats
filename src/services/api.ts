@@ -219,6 +219,48 @@ export const getAllUsersbyInstanceId = async (instanceId: number) => {
   }
 };
 
+export const addModeratorToChatInstance = async (payload: {
+  admin: string;
+  moderators: string;
+  instanceId: number;
+}) => {
+  const { admin, moderators, instanceId } = payload;
+  try {
+    const { data } = await axios.patch(
+      `${BASE_URL_BALANCE}/address/instance/add/${instanceId}`,
+      {
+        admin,
+        moderators,
+      }
+    );
+    return data;
+  } catch (error) {
+    console.error("Add Moderator Error", error);
+    throw error;
+  }
+};
+
+export const removeModeratorFromChatInstance = async (payload: {
+  admin: string;
+  moderators: string;
+  instanceId: number;
+}) => {
+  const { admin, moderators, instanceId } = payload;
+  try {
+    const { data } = await axios.patch(
+      `${BASE_URL_BALANCE}/address/instance/remove/${instanceId}`,
+      {
+        admin,
+        moderators,
+      }
+    );
+    return data;
+  } catch (error) {
+    console.error("Remove Moderator Error", error);
+    throw error;
+  }
+};
+
 export const uploadSingleFile = async (file: File) => {
   try {
     const formData = new FormData();

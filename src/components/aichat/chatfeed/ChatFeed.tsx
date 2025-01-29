@@ -8,7 +8,6 @@ import socket from "../../../services/socket.ts";
 import UserMessage, { shortenAddress } from "../userMessage/index.tsx";
 import {
   getMessages,
-  getMutedUsersWithInstanceId,
   getSuperChatsWithInstanceId,
 } from "../../../services/api.ts";
 import SuperChatMessage from "../superChat/index.tsx";
@@ -18,15 +17,21 @@ import NotificationMessage from "../../common/notificationMessage.tsx";
 interface IProps {
   chatInstanceId: number;
   adminAddress: string;
+  mutedUsers: string[];
+  isModerator: boolean;
 }
-export default function ChatFeed({ chatInstanceId, adminAddress }: IProps) {
+export default function ChatFeed({
+  chatInstanceId,
+  adminAddress,
+  mutedUsers,
+  isModerator,
+}: IProps) {
   const { isConnected, address } = useAccount();
   const [page, setPage] = useState<number>(1);
   const [chat, setChat] = useState<any[]>([]);
   const [superChat, setSuperChat] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [mutedUsers, setMutedUsers] = useState<string[]>([]);
   const limit = 50;
   const [isInitialLoad, setIsInitialLoad] = useState(false);
   const [firstItemIndex, setFirstItemIndex] = useState(0);
@@ -73,20 +78,9 @@ export default function ChatFeed({ chatInstanceId, adminAddress }: IProps) {
     }
   };
 
-  const getMutedUsers = async () => {
-    try {
-      const data = await getMutedUsersWithInstanceId(chatInstanceId);
-      // TODO: Update this later
-      setMutedUsers([data?.walletAddress]);
-    } catch (error) {
-      console.log("Muted List Error", error);
-    }
-  };
-
   useEffect(() => {
     fetchData(1, limit);
     getSuperChats();
-    getMutedUsers();
   }, []);
   useEffect(() => {
     if (page > 1 && chat?.length >= limit) {
@@ -144,8 +138,11 @@ export default function ChatFeed({ chatInstanceId, adminAddress }: IProps) {
 
   return (
     <div
-      className={`feedContainer ${isFullHeight ? "fullHeight" : "splitView"}`}
+      className={`feedContainer ${isFullHeight ? "fullHeight" : "splitView"} ${
+        isModerator || isAdmin ? "adminfeedContainer" : ""
+      }`}
     >
+      {/* <div className='feed_controls'></div> */}
       <div className='feed_header'>
         {superChat?.length > 0 && (
           <div className='close_icon' onClick={handleView}>
@@ -248,6 +245,7 @@ export default function ChatFeed({ chatInstanceId, adminAddress }: IProps) {
                   instance={chatInstanceId}
                   adminAddress={adminAddress}
                   isAdmin={isAdmin}
+                  isModerator={isModerator}
                   mutedUsers={mutedUsers}
                   onDeleteMessage={handleDeleteMessage}
                   // onDeleteMessage={(id: number) =>

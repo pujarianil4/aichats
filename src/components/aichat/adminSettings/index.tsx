@@ -1,25 +1,22 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import "./index.scss";
 import adminLogo from "../../../assets/admin.svg";
 import membersLogo from "../../../assets/members.svg";
 import muteLogo from "../../../assets/mutedUsers.svg";
 import { MdKeyboardArrowRight } from "react-icons/md";
-import { GrUpdate } from "react-icons/gr";
 import { InstanceData } from "../index.tsx";
 import {
   getAllUsersbyInstanceId,
   getMutedUsersWithInstanceId,
 } from "../../../services/api.ts";
-import { IoIosArrowRoundBack, IoMdCheckmark, IoMdCopy } from "react-icons/io";
-import { formatTimeDifference, shortenAddress } from "../../../utils/index.ts";
-import socket from "../../../services/socket.ts";
-import NotificationMessage from "../../common/notificationMessage.tsx";
-import { Flex, Spin, Tooltip } from "antd";
+import { IoIosArrowRoundBack } from "react-icons/io";
+import { Flex, Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
+import { useAccount } from "wagmi";
 
-// if muted then not allow to super chat
-// update moderator status.
-// handle logic for moderator
+import MutedList from "./MutedList.tsx";
+import ListItems from "./ListItems.tsx";
+
 // handle delete user bug
 // handle responsiveness for mobile and tab
 
@@ -31,20 +28,25 @@ interface CachedData {
 interface IProps {
   instanceData: InstanceData;
   updateStreamUrl: (youtubeLink: string, minTokenValue: string) => void;
+  setIsSettings: (value: boolean) => void;
 }
 export default function ChatAdminSettings({
   instanceData,
   updateStreamUrl,
+  setIsSettings,
 }: IProps) {
+  const { address } = useAccount();
   const [minAmount, setMinAmount] = useState("");
   const [youtubeLink, setYoutubeLink] = useState("");
   const [currentView, setCurrentView] = useState<
-    "menu" | "admin" | "members" | "muted"
+    "menu" | "admin" | "members" | "muted" | "chats"
   >("menu");
-  const [listData, setListData] = useState<string[]>([]);
+  const [listData, setListData] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
-
+  const isAdmin = useMemo(() => {
+    return address === instanceData?.adminAddress;
+  }, []);
   const cache: Record<string, CachedData> = {};
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,16 +72,8 @@ export default function ChatAdminSettings({
     setYoutubeLink("");
   };
 
-  const copyToClipboard = (address: string, index: number) => {
-    navigator.clipboard.writeText(address).then(() => {
-      setCopiedIndex(index);
-      setTimeout(() => setCopiedIndex(null), 2000);
-    });
-  };
-
   const fetchData = async (type: string) => {
     const currentTime = Date.now();
-
     // Check if data is already cached and within the 2-minute interval
     if (cache[type] && currentTime - cache[type].lastFetched < 2 * 60 * 1000) {
       setListData(cache[type].data);
@@ -104,7 +98,13 @@ export default function ChatAdminSettings({
           address: item?.address,
           type: "Member",
         }));
-        response = [...admins, ...memberData];
+        const adminAddresses = admins.map((admin) => admin.address);
+        response = [
+          ...admins,
+          ...memberData.filter(
+            (member: any) => !adminAddresses.includes(member.address)
+          ),
+        ];
         console.log("MEMBERS_RES", response);
       } else if (type === "muted") {
         const res = await getMutedUsersWithInstanceId(instanceData?.id);
@@ -128,29 +128,17 @@ export default function ChatAdminSettings({
   };
 
   const handleBack = () => {
-    setCurrentView("menu");
+    if (currentView === "menu") {
+      setCurrentView("chats");
+      setIsSettings(false);
+    } else {
+      setCurrentView("menu");
+    }
   };
 
-  const handleUnmute = (address: string) => {
-    socket.emit(
-      "unmuteUser",
-      {
-        walletAddress: address,
-        instanceId: instanceData?.id,
-      },
-      (response: any) => {
-        if (response.success) {
-          listData?.filter((item) => item != address);
-        } else {
-          console.error("Failed to unmute:", response.error);
-          NotificationMessage("error", response.error.message);
-        }
-      }
-    );
-  };
   return (
     <div className='chatSettingsContainer'>
-      {currentView !== "menu" && (
+      {currentView !== "chats" && (
         <div onClick={handleBack} className='backButton'>
           <IoIosArrowRoundBack size={32} />
         </div>
@@ -205,94 +193,26 @@ export default function ChatAdminSettings({
         </div>
       )}
 
-      {/* {isLoading && (
-        <div className='noUserFound'>
-          <img src={noUserFound} alt='No chat found' loading='lazy' />
-        </div>
-      )} */}
-
-      {/* {listData?.length == 0 && (
-        <div className='noUserFound'>
-          <img src={noUserFound} alt='No chat found' loading='lazy' />
-        </div>
-      )} */}
-
       {(currentView === "admin" || currentView === "members") && !isLoading && (
-        <div className='listItems'>
-          <h4>{currentView.charAt(0).toUpperCase() + currentView.slice(1)}</h4>
-
-          {isLoading
-            ? [1, 2, 3, 4].map((_: any, i: number) => (
-                <div className='messageLoader skeleton' key={i}></div>
-              ))
-            : listData?.map((item: any, index) => (
-                <div className='listItem' key={index}>
-                  <img
-                    src={`https://effigy.im/a/${item?.address}.svg`}
-                    alt={`icon`}
-                    className='userIcon'
-                  />
-                  <p>{shortenAddress(item?.address)} </p>
-                  <Tooltip
-                    placement='top'
-                    title={copiedIndex === index ? "Copied!" : "Copy Address"}
-                  >
-                    {copiedIndex === index ? (
-                      <IoMdCheckmark size={16} className='copyIcon checked' />
-                    ) : (
-                      <IoMdCopy
-                        style={{ cursor: "pointer" }}
-                        size={16}
-                        onClick={() => copyToClipboard(item?.address, index)}
-                        className='copyIcon'
-                      />
-                    )}
-                  </Tooltip>
-                  <p className='type'>{item?.type}</p>
-                </div>
-              ))}
-        </div>
+        <ListItems
+          currentView={currentView}
+          listData={listData}
+          setListData={setListData}
+          isLoading={isLoading}
+          copiedIndex={copiedIndex}
+          setCopiedIndex={setCopiedIndex}
+          instanceData={instanceData}
+          address={address as string}
+        />
       )}
 
       {currentView === "muted" && !isLoading && (
-        <div className='listItems'>
-          <h4>{currentView.charAt(0).toUpperCase() + currentView.slice(1)}</h4>
-          {[...listData, ...listData]?.map((item: any, index) => (
-            <div className='listItem' key={index}>
-              <img
-                src={`https://effigy.im/a/${item?.address}.svg`}
-                alt={`icon`}
-                className='userIcon'
-              />
-              <div>
-                <div className='address'>
-                  <p>{shortenAddress(item?.address)}</p>
-                  <Tooltip
-                    placement='top'
-                    title={copiedIndex === index ? "Copied!" : "Copy Address"}
-                  >
-                    {copiedIndex === index ? (
-                      <IoMdCheckmark size={16} className='copyIcon checked' />
-                    ) : (
-                      <IoMdCopy
-                        style={{ cursor: "pointer" }}
-                        size={16}
-                        onClick={() => copyToClipboard(item?.address, index)}
-                        className='copyIcon'
-                      />
-                    )}
-                  </Tooltip>
-                </div>
-                <p className='muteTime'>
-                  Muted at: {formatTimeDifference(item?.mutedAt)}{" "}
-                </p>
-              </div>
-              <button onClick={() => handleUnmute(item?.address)}>
-                unmute
-              </button>
-            </div>
-          ))}
-        </div>
+        <MutedList
+          listData={listData}
+          copiedIndex={copiedIndex}
+          setCopiedIndex={setCopiedIndex}
+          instanceData={instanceData}
+        />
       )}
 
       {currentView === "menu" && (
@@ -306,9 +226,7 @@ export default function ChatAdminSettings({
                 value={minAmount}
                 onChange={handleChange}
               />
-              <div role='button' onClick={updateChatInstance}>
-                <GrUpdate />
-              </div>
+              <button onClick={updateChatInstance}>update</button>
             </div>
           </div>
           <div className='youtubeSetting'>

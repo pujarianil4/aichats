@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import ChatFeed from "./chatfeed/ChatFeed.js";
 import ChatInput from "./chatInput/ChatInput.js";
 import { Modal, Input, Button, Switch } from "antd";
@@ -9,6 +9,7 @@ import socket from "../../services/socket.ts";
 import {
   connectAddress,
   getChatInstanceWithAgentId,
+  getMutedUsersWithInstanceId,
   updateChatInstance,
 } from "../../services/api.ts";
 import { useParams } from "react-router-dom";
@@ -18,6 +19,7 @@ import { wagmiConfig } from "../../main.tsx";
 import NotificationMessage from "../common/notificationMessage.tsx";
 import { MdOutlineFeaturedVideo } from "react-icons/md";
 import ChatAdminSettings from "./adminSettings/index.tsx";
+import { IoSettingsOutline } from "react-icons/io5";
 
 export interface InstanceData {
   id: number;
@@ -41,7 +43,25 @@ export default function AiChats() {
   const [instanceData, setInstanceData] = useState<InstanceData>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [youtubeLink, setYoutubeLink] = useState("");
-  const [isSetting, setIsSettings] = useState(true);
+  const [isSetting, setIsSettings] = useState(false);
+  const [mutedUsers, setMutedUsers] = useState<string[]>([]);
+
+  const isModerator = useMemo(
+    () => instanceData?.moderators?.includes(address as string) || false,
+    [instanceData?.moderators, address]
+  );
+
+  const getMutedUsers = async () => {
+    try {
+      const data = await getMutedUsersWithInstanceId(
+        instanceData?.id as number
+      );
+      const mutedAddress = data?.map((item: any) => item?.walletAddress);
+      setMutedUsers(mutedAddress);
+    } catch (error) {
+      console.log("Muted List Error", error);
+    }
+  };
 
   useEffect(() => {
     if (instanceData?.id) {
@@ -101,6 +121,7 @@ export default function AiChats() {
         });
       });
       getTokenDetails();
+      getMutedUsers();
     }
   }, [isConnected, instanceData?.id]);
 
@@ -193,7 +214,7 @@ export default function AiChats() {
         className={`actions ${viewSize === 0 ? "full" : "half"}`}
         onClick={handleViewSizeChange}
       >
-        <MdOutlineFeaturedVideo size={20} color='#ffffff' />
+        <MdOutlineFeaturedVideo size={24} color='#ffffff' />
       </div>
 
       <div
@@ -201,48 +222,65 @@ export default function AiChats() {
         className='live'
       >
         <YoutubeVideo youtubeLink={instanceData?.streamUrl} />
-        {instanceData?.adminAddress === address && (
-          <div onClick={handleOpenModal} className='update'>
-            update
-          </div>
-        )}
+        {/* {isModerator ||
+          (instanceData?.adminAddress === address && (
+            <div onClick={handleOpenModal} className='update'>
+              update
+            </div>
+          ))} */}
       </div>
 
       <div className='chatfeed'>
-        <div>
-          <Switch
+        {(isModerator || instanceData?.adminAddress === address) && (
+          <div className='feedControls'>
+            {/* <Switch
             className='adminSettings'
             defaultChecked
             onChange={(checked) => setIsSettings(checked)}
-          />
-        </div>
+          /> */}
+
+            <button onClick={handleOpenModal}>update link</button>
+
+            <button
+              className={`${isSetting ? "active" : ""}`}
+              onClick={() => setIsSettings(!isSetting)}
+            >
+              settings&nbsp;
+              <IoSettingsOutline color='#ffffff' />
+            </button>
+          </div>
+        )}
         {isSetting ? (
           <ChatAdminSettings
             instanceData={instanceData}
             updateStreamUrl={updateStreamUrl}
+            setIsSettings={setIsSettings}
           />
         ) : (
           <>
             <ChatFeed
               chatInstanceId={instanceData?.id}
               adminAddress={instanceData?.adminAddress}
+              mutedUsers={mutedUsers}
+              isModerator={isModerator}
             />
             <ChatInput
               adminAddress={instanceData?.adminAddress}
               tokenAddress={instanceData?.tokenAddress}
               chatInstanceId={instanceData?.id}
+              mutedUsers={mutedUsers}
             />
           </>
         )}
       </div>
       <Modal
-        title='Update YouTube Live Link'
+        title='Update Stream Link'
         open={isModalOpen}
         onCancel={handleCloseModal}
         footer={[
-          <Button key='cancel' onClick={handleCloseModal}>
-            Cancel
-          </Button>,
+          // <Button key='cancel' onClick={handleCloseModal}>
+          //   Cancel
+          // </Button>,
           <Button
             key='submit'
             type='primary'
@@ -256,8 +294,8 @@ export default function AiChats() {
         ]}
       >
         <Input
-          style={{ backgroundColor: "transparent" }}
-          placeholder='Enter YouTube video link'
+          style={{ backgroundColor: "white" }}
+          placeholder='Enter stream video link'
           value={youtubeLink}
           onChange={(e) => setYoutubeLink(e.target.value)}
         />

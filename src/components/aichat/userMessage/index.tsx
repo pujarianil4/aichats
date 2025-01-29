@@ -13,6 +13,7 @@ interface UserMessageProps {
   adminAddress: string;
   isAdmin: boolean;
   mutedUsers: string[];
+  isModerator: boolean;
   onDeleteMessage: (messageId: number) => void;
 }
 
@@ -26,6 +27,7 @@ export default function UserMessage({
   adminAddress,
   isAdmin,
   mutedUsers,
+  isModerator,
   onDeleteMessage,
 }: UserMessageProps) {
   const { data: ensName, isLoading: isEnsNameLoading } = useEnsName({
@@ -109,7 +111,7 @@ export default function UserMessage({
               <span className='user-message__text'>{data.content}</span>
             </div>
           </div>
-          {adminAddress != data.senderAddress && isAdmin && (
+          {adminAddress != data.senderAddress && (isAdmin || isModerator) && (
             <div className='more'>
               <Popover
                 content={content}
