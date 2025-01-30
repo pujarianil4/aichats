@@ -3,10 +3,11 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 
 
 export interface User {
-  sts: number,
-  token: string,
-  uid: string
-  ip: string
+  sts: number | null,
+  token: string | null,
+  uid: string | null,
+
+  ip: string | null
 }
 
 interface state{
@@ -49,7 +50,13 @@ export const userSlice = createSlice({
     setUserError: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
       state.isLoading = false;
-      state.profile= {} as User
+      state.profile= {
+        token: null,
+        sts: null,
+        uid: null,
+        ip: null
+        
+      } as User
     },
   },
 });

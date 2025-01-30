@@ -38,7 +38,7 @@
       flex-direction: row;
       gap: 10px;
       p {
-        padding: 2px 20px;
+        padding: 0px 10px;
         border-radius: 10px;
         border: 1px solid var(--light);
         white-space: nowrap; // Prevents text from wrapping
@@ -50,5 +50,16 @@
         text-align: center;
       }
     }
+  }
+}
+
+.custom-no-data {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 30vh;
+  p {
+    color: var(--light);
   }
 }
