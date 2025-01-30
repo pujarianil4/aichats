@@ -90,6 +90,12 @@ function Navbar() {
         </div>
         <div className='actions'>
           {/* <Link to={"/create-agent"}> */}{" "}
+          {isConnected && (
+            <a href={`/myagent`}>
+              {" "}
+              <Button type='primary'> My Agents</Button>{" "}
+            </a>
+          )}
           <Button onClick={showModal}> Create New Agent </Button>
           {/* </Link> */}
           {isConnected ? (

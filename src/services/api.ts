@@ -198,7 +198,7 @@ export const getKBbyAgentID = async () => {
 
 export const getAllAgentByUser = async () => {
   try {
-    const { data } = await api.get("/agent");
+    const { data } = await api.get("/agent/byuid");
     return data;
   } catch (error) {
     console.error("Error", error);
