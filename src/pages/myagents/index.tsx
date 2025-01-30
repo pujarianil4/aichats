@@ -24,20 +24,18 @@ export default function MyAgentsPage() {
       <div>
         <h1>My Agents</h1>
         <section className='agent_card_container'>
-          {[...myAgents, ...myAgents, ...myAgents, ...myAgents]?.map(
-            (agent: AgentData) => (
-              <div className='agent_card'>
-                <h3>
-                  {agent?.name}{" "}
-                  <span className={`${true ? "active" : "deactive"} `}>
-                    Active
-                  </span>
-                </h3>
-                <p>{agent?.desc}</p>
-                <h2>20</h2>
-              </div>
-            )
-          )}
+          {[...myAgents]?.map((agent: AgentData) => (
+            <div className='agent_card'>
+              <h3>
+                {agent?.name}{" "}
+                <span className={`${true ? "active" : "deactive"} `}>
+                  Active
+                </span>
+              </h3>
+              <p>{agent?.desc}</p>
+              <h2>20</h2>
+            </div>
+          ))}
         </section>
       </div>
     </main>
