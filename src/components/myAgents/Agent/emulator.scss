@@ -50,15 +50,17 @@
   // padding: 10px;
 }
 
-.messages,
-.virtuoso-item-list {
-  // max-height: calc(100% - 100px);
-  flex-grow: 1;
+.messages {
+  height: calc(100% - 108px) !important;
   overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  padding-bottom: 10px;
+  // scrollbar-width: none;
+  // -ms-overflow-style: none;
 }
+
+// .messages::-webkit-scrollbar {
+//   display: none;
+// }
 
 .message {
   padding: 8px 12px;
@@ -75,6 +77,7 @@
   background-color: var(--dark);
   color: white;
   margin-left: auto;
+  margin-right: 8px;
 }
 
 .message.bot {
@@ -85,6 +88,9 @@
 }
 
 .input_container {
+  position: absolute;
+  bottom: 12px;
+  width: calc(100% - 44px);
   display: flex;
   align-items: center;
   padding: 10px;
@@ -114,6 +120,22 @@ input {
   &:hover {
     path {
       stroke: var(--primary);
+    }
+  }
+}
+
+.emulator_popover {
+  width: max-content;
+
+  .popover_item {
+    padding: 4px 8px;
+    border-radius: 4px;
+    color: var(--dark);
+
+    &:hover {
+      cursor: pointer;
+      color: var(--light);
+      background-color: var(--primary);
     }
   }
 }
