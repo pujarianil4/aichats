@@ -1,17 +1,40 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./agent.scss";
 import { FaXTwitter } from "react-icons/fa6";
 import { Collapse, Select } from "antd";
 import type { CollapseProps } from "antd";
-
+import NotificationMessage from "../../common/notificationMessage.tsx";
 import SocialModal from "./socialModal.tsx";
 import { FaCopy } from "react-icons/fa";
 import KnowledgeBase from "./KnowledgeBase.tsx";
 import Capabilities from "./Capabilities.tsx";
 
+import { useParams } from "react-router-dom";
+import { getMyAgentData } from "../../../services/agent.ts";
+import { shortenAddress } from "../../../utils/index.ts";
+import CopyButton from "../../common/copyButton.tsx";
 export default function Agent() {
+  const { agentId } = useParams<{ agentId: string | undefined }>();
+  const [agentData, setAgentData] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const getAgentData = async (agentId: string) => {
+    try {
+      const response = await getMyAgentData(agentId?.toString());
+      setAgentData(response);
+      setLoading(false);
+    } catch (error: any) {
+      NotificationMessage("error", error?.message);
+    }
+  };
+
+  useEffect(() => {
+    agentId && getAgentData(agentId);
+  }, [agentId]);
+
+  console.log("my agent", agentData);
   const onChange = (key: string | string[]) => {
-    console.log(key);
+    // console.log(key);
   };
 
   const items: CollapseProps["items"] = [
@@ -24,6 +47,7 @@ export default function Agent() {
             rows={10}
             id='bio'
             placeholder='This is the short bio that will be shown at your agents profile.'
+            defaultValue={agentData?.desc}
           />
         </div>
       ),
@@ -37,6 +61,7 @@ export default function Agent() {
             rows={10}
             id='bio'
             placeholder='This is the short bio that will be shown at your agents profile.'
+            defaultValue={agentData?.personality}
           />
         </div>
       ),
@@ -53,6 +78,10 @@ export default function Agent() {
     },
   ];
 
+  if (loading) {
+    return <div className='loading'>Loading...</div>;
+  }
+
   return (
     <div className='agent_container'>
       <div className='basic'>
@@ -67,14 +96,22 @@ export default function Agent() {
           </div>
           <div className='info'>
             <h2>
-              Name <span>@Symbol</span>
+              {agentData?.name} <span>@{agentData?.token?.tkr}</span>
             </h2>
 
             <div className='social_tab'>
               <p>
-                <span>0x1232....45679</span> <FaCopy />
+                <span>{shortenAddress(agentData?.token.tCAddress)}</span>{" "}
+                <CopyButton
+                  text={agentData?.token.tCAddress}
+                  className='copy-btn'
+                />
               </p>
-              <SocialModal />
+              <SocialModal
+                discord={agentData?.discord}
+                telegram={agentData?.telegram}
+                x={agentData?.x}
+              />
             </div>
           </div>
         </div>

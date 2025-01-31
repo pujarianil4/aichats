@@ -92,11 +92,15 @@
       // background-color: var(--tertiary-bg);
       min-width: 280px;
       width: fit-content;
+
       min-height: 328px;
       position: relative;
       overflow: hidden;
       border: 1.5px solid #4449a5;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+      cursor: pointer;
+
 
       &:hover {
         cursor: pointer;
