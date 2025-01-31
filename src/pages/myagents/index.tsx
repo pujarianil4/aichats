@@ -3,10 +3,11 @@ import { getAllAgentByUser } from "../../services/api.ts";
 import NotificationMessage from "../../components/common/notificationMessage.tsx";
 import { AgentData } from "../../utils/types.ts";
 import "./index.scss";
+import { useNavigate } from "react-router-dom";
 
 export default function MyAgentsPage() {
   const [myAgents, setMyAgents] = useState<AgentData[]>([]);
-
+  const navigate = useNavigate();
   const fetMyAgent = async () => {
     try {
       const response: AgentData[] = await getAllAgentByUser();
@@ -16,6 +17,7 @@ export default function MyAgentsPage() {
     }
   };
 
+  console.log("myagents", myAgents);
   useEffect(() => {
     fetMyAgent();
   }, []);
@@ -25,9 +27,13 @@ export default function MyAgentsPage() {
         <h1>My Agents</h1>
         <section className='agent_card_container'>
           {[...myAgents]?.map((agent: AgentData) => (
-            <div className='agent_card'>
+            <div
+              key={agent.id}
+              className='agent_card'
+              onClick={() => navigate(`/myagent/${agent.id}`)}
+            >
               <h3>
-                {agent?.name}{" "}
+                {agent?.name}
                 <span className={`${true ? "active" : "deactive"} `}>
                   Active
                 </span>
