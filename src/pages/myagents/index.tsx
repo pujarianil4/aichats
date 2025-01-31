@@ -9,7 +9,7 @@ export default function MyAgentsPage() {
   const navigate = useNavigate();
   const [isLoadingAgent, setIsLoadingAgent] = useState(false);
   const [myAgents, setMyAgents] = useState<AgentData[]>([]);
-  const navigate = useNavigate();
+
   const fetMyAgent = async () => {
     setIsLoadingAgent(true);
     try {
@@ -36,7 +36,6 @@ export default function MyAgentsPage() {
       <div>
         <h1>My Agents</h1>
         <section className='agent_card_container'>
-
           {isLoadingAgent ? (
             Array(10)
               .fill(0)
@@ -80,7 +79,6 @@ export default function MyAgentsPage() {
           ) : (
             <>NO DATA</>
           )}
-
         </section>
       </div>
     </main>
