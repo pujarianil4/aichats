@@ -13,26 +13,14 @@ import { useParams } from "react-router-dom";
 import { getMyAgentData } from "../../../services/agent.ts";
 import { shortenAddress } from "../../../utils/index.ts";
 import CopyButton from "../../common/copyButton.tsx";
-export default function Agent() {
-  const { agentId } = useParams<{ agentId: string | undefined }>();
-  const [agentData, setAgentData] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
 
-  const getAgentData = async (agentId: string) => {
-    try {
-      const response = await getMyAgentData(agentId?.toString());
-      setAgentData(response);
-      setLoading(false);
-    } catch (error: any) {
-      NotificationMessage("error", error?.message);
-    }
-  };
+type prop = {
+  agent: any;
+};
 
-  useEffect(() => {
-    agentId && getAgentData(agentId);
-  }, [agentId]);
+export default function Agent({ agent }: prop) {
+  const { data: agentData, isLoading } = agent;
 
-  console.log("my agent", agentData);
   const onChange = (key: string | string[]) => {
     // console.log(key);
   };
@@ -42,7 +30,7 @@ export default function Agent() {
       key: "1",
       label: "Details",
       children: (
-        <div className='input_container'>
+        <div className='collapse_item'>
           <textarea
             rows={10}
             id='bio'
@@ -56,7 +44,7 @@ export default function Agent() {
       key: "2",
       label: "Personality",
       children: (
-        <div className='input_container'>
+        <div className='collapse_item'>
           <textarea
             rows={10}
             id='bio'
@@ -78,7 +66,7 @@ export default function Agent() {
     },
   ];
 
-  if (loading) {
+  if (isLoading) {
     return <div className='loading'>Loading...</div>;
   }
 
@@ -87,12 +75,7 @@ export default function Agent() {
       <div className='basic'>
         <div className='content'>
           <div className='tokenlogo'>
-            <img
-              src={
-                "https://img.freepik.com/free-photo/3d-rendering-animal-illustration_23-2151888074.jpg"
-              }
-              alt=''
-            />
+            <img src={agentData.pic} alt='' />
           </div>
           <div className='info'>
             <h2>

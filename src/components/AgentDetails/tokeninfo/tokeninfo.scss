@@ -1,5 +1,6 @@
 .tokeninfo {
-  width: 60%;
+  // width: 60%;
+  flex-grow: 1;
   min-height: 500px;
   background-color: var(--primary-bg);
   border-radius: 15px;

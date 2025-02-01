@@ -108,3 +108,32 @@
     }
   }
 }
+
+.collapse_item {
+  display: flex;
+  flex-direction: column;
+  align-items: unset;
+  input,
+  textarea {
+    padding: 15px;
+    background: var(--dark);
+    border: 0;
+    border-radius: 10px;
+    color: var(--light);
+    resize: none;
+    font-size: 12px;
+  }
+  .select {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 120px;
+    background-color: var(--dark);
+    font-size: 13px;
+    padding: 8px 20px;
+    border-radius: 10px;
+    margin: 10px;
+    text-transform: capitalize;
+    cursor: pointer;
+  }
+}

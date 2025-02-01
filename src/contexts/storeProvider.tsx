@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 
 import { store } from "./store.ts";
 import { Provider } from "react-redux";
+import { validateUser } from "../services/apiconfig.ts";
 export default function StoreProvider({
   children,
 }: {
@@ -18,7 +19,7 @@ export default function StoreProvider({
     //   profile && Object.keys(profile).length == 0
     // );
     // Object.keys(profile).length;
-    // const user = getUserProfile().then((user) => {});
+    // const user = validateUser().then((user) => {});
   }, []);
 
   return <Provider store={store}>{children}</Provider>;
