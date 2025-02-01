@@ -17,22 +17,10 @@ export const AgentDetails = () => {
     isError,
   } = useQuery({
     queryKey: ["agent", agentId],
-    queryFn: () => getAgentByID(agentId!), // Use '!' because agentId is string | undefined
-    enabled: !!agentId, // Only run query if agentId exists
+    queryFn: () => getAgentByID(agentId!),
+    enabled: !!agentId,
   });
 
-  // const getAgentDetails = async (agentID: string) => {
-  //   const data = await getAgentByID(agentID);
-
-  //   setTokenDetails(data);
-  //   console.log("Data", data);
-  // };
-
-  // useEffect(() => {
-  //   console.log("params", agentId);
-
-  //   agentId && getAgentDetails(agentId);
-  // }, [agentId]);
   return (
     <div className='tokendetails_container'>
       {isLoading && <PageLoader />}

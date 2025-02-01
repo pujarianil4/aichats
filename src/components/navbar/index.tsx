@@ -1,7 +1,7 @@
 import { ConnectButton, useConnectModal } from "@rainbow-me/rainbowkit";
 import "./index.scss";
 import { Button, Modal } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAccount, useSignMessage, useDisconnect } from "wagmi";
 import { useEffect, useState } from "react";
 import LammaLogo from "./../../assets/logo.png";
@@ -16,8 +16,8 @@ function Navbar() {
   const { address, isConnected } = useAccount();
   const sign = useSignMessage();
   const { disconnect } = useDisconnect();
-  const [isSigned, setIsSigned] = useState(false);
   const { openConnectModal } = useConnectModal();
+  const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
   const { isLoading, profile } = useAppSelector((state) => state.user);
 
@@ -41,7 +41,6 @@ function Navbar() {
       {
         onSuccess(data, variables, context) {
           console.log(data);
-          setIsSigned(true);
           handleAuthConnect({ sig: data, msg: authSignMsg, typ: "EVM" });
         },
       }
@@ -58,7 +57,7 @@ function Navbar() {
   const handleDisconnect = async () => {
     try {
       await handleAuthDisconnect();
-
+      navigate("/");
       disconnect();
     } catch (error) {}
   };

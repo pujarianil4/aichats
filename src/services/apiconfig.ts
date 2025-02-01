@@ -82,7 +82,7 @@ api.interceptors.response.use(
       
        saveTokens(id, token);
 
-       store.dispatch(setUserData({isValidated: true, ...response.data }));
+       store.dispatch(setUserData({isLogedIn: "yes", ...response.data }));
 
       // (async () => {
       //   store.dispatch(setUserLoading());
@@ -118,7 +118,7 @@ api.interceptors.response.use(
     try {
       const user = await api.get("/auth/currentuser");
 
-      store.dispatch(setUserData({isValidated: true, ...user.data }));
+      store.dispatch(setUserData(user.data));
     } catch {
       clearTokens();
       store.dispatch(setUserError("Session expired. Please log in again."));
@@ -126,4 +126,20 @@ api.interceptors.response.use(
   }
 })();
 
-export { api, saveTokens, clearTokens, getTokens };
+const validateUser = async () => {
+  const { token } = getTokens();
+  console.log("validateUser", token);
+  
+  if (token) {
+    try {
+      const user = await api.get("/auth/currentuser");
+
+      store.dispatch(setUserData({isLogedIn: "yes",...user.data}));
+    } catch {
+      clearTokens();
+      store.dispatch(setUserError("Session expired. Please log in again."));
+    }
+  }
+}
+
+export { api, saveTokens, clearTokens, getTokens, validateUser };

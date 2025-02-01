@@ -8,6 +8,7 @@ import Navbar from "../components/navbar/index.tsx";
 import Footer from "../components/footer/index.tsx";
 import PageLoader from "../components/common/PageLoader.tsx";
 import { useAppSelector } from "../hooks/reduxHooks.tsx";
+import { getTokens } from "../services/apiconfig.ts";
 
 interface IRoutesProps {
   children: ReactNode;
@@ -16,17 +17,15 @@ interface IRoutesProps {
 function PrivateRoute({ children }: { children: ReactNode }) {
   const token = useAppSelector((state) => state.user.profile.token);
   const [isHydrated, setIsHydrated] = useState(false);
-
+  const cookies = getTokens();
   useEffect(() => {
-    console.log("token", token);
-
     if (token !== undefined) {
       setIsHydrated(true);
     }
   }, [token]);
 
   if (!isHydrated) {
-    return <PageLoader />;
+    return cookies.token ? <PageLoader /> : <Navigate to='/' replace />;
   }
 
   return token ? (
