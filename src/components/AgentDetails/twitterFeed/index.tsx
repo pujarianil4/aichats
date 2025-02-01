@@ -10,10 +10,14 @@ declare global {
   }
 }
 
-const TwitterFeed: React.FC = () => {
+type props = {
+  username: string;
+};
+
+const TwitterFeed = ({ username }: props) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const account_Url = "https://twitter.com/UniLend_Finance";
+  const account_Url = `https://twitter.com/${username}`;
   useEffect(() => {
     const twitterScriptId = "twitter-wjs";
     if (!document.getElementById(twitterScriptId)) {

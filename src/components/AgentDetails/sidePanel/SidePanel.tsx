@@ -73,9 +73,11 @@ export default function SidePanel({ tokenDetails }: prop) {
         </div>
       </div>
 
-      <div className='developer_profile'>
-        <TwitterFeed />
-      </div>
+      {tokenDetails.x && (
+        <div className='developer_profile'>
+          <TwitterFeed username={tokenDetails.x} />
+        </div>
+      )}
     </div>
   );
 }
