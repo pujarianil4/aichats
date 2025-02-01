@@ -83,21 +83,12 @@ api.interceptors.response.use(
        saveTokens(id, token);
 
        store.dispatch(setUserData({isLogedIn: "yes", ...response.data }));
+    }
+    if (
+      response.config.url === "/auth/disconnect"
+    ) {
 
-      // (async () => {
-      //   store.dispatch(setUserLoading());
-      //   try {
-      //     const user = await api.get("/users/me");
-      //     // const user = await api.get<IUser>(`${BASE_URL}/users/me`, {
-      //     //   headers: {
-      //     //     Authorization: `Bearer ${token}`,
-      //     //   },
-      //     // });
-      //     store.dispatch(setUserData(user.data));
-      //   } catch (error) {
-      //     store.dispatch(setUserError("Failed to get User"));
-      //   }
-      // })();
+      //  store.dispatch(setUserData("disconnected"));
     }
     return response;
   },

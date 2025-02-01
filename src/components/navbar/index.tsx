@@ -10,8 +10,9 @@ import {
   handleAuthDisconnect,
 } from "../../services/auth.ts";
 import { authSignMsg } from "../../utils/contants.ts";
-import { useAppSelector } from "../../hooks/reduxHooks.tsx";
+import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks.tsx";
 import { shortenAddress } from "../../utils/index.ts";
+import { setUserError } from "../../contexts/reducers/index.ts";
 function Navbar() {
   const { address, isConnected } = useAccount();
   const sign = useSignMessage();
@@ -20,9 +21,10 @@ function Navbar() {
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
   const { isLoading, profile } = useAppSelector((state) => state.user);
+  const dispatch = useAppDispatch();
 
   const showModal = () => {
-    setOpenModal(true);
+    isConnected ? setOpenModal(true) : openConnectModal();
   };
 
   const handleOk = () => {
@@ -43,20 +45,26 @@ function Navbar() {
           console.log(data);
           handleAuthConnect({ sig: data, msg: authSignMsg, typ: "EVM" });
         },
+        onError(error, variables, context) {
+          disconnect();
+        },
       }
     );
     console.log(hash, sign);
   };
 
   useEffect(() => {
-    if (isConnected && !profile.token) {
+    if (isConnected && profile.isLogedIn == "no") {
       handleMsgSign();
+    } else if (!isConnected && profile.isLogedIn == "yes") {
+      dispatch(setUserError("Disconnected"));
     }
-  }, [isConnected, profile.token]);
+  }, [isConnected, profile]);
 
   const handleDisconnect = async () => {
     try {
       await handleAuthDisconnect();
+      dispatch(setUserError("Disconnected"));
       navigate("/");
       disconnect();
     } catch (error) {}

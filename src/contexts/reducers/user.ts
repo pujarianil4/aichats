@@ -6,8 +6,8 @@ export interface User {
   sts: number | null,
   token: string | null,
   uid: string | null,
-
-  ip: string | null
+  isLogedIn: "yes" | "no" | null
+   ip: string | null
 }
 
 interface state{
@@ -22,7 +22,9 @@ interface state{
 const initialState: state = {
 
   myagents: [],
-  profile: {} as User,
+  profile: {
+    isLogedIn: "no"
+  } as User,
   isLoading: false,
   error: ""
 
@@ -54,10 +56,10 @@ export const userSlice = createSlice({
         token: null,
         sts: null,
         uid: null,
-        ip: null
-        
+        ip: null,
+        isLogedIn: "no"
       } as User
     },
   },
 });
-console.log("initial User", initialState);
+
