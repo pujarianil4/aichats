@@ -1,9 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import "../../createAgent/index.scss";
+import "./updateAgent.scss";
 import { Button, Popover, message } from "antd";
-
 import Camera from "../../../assets/camera.png";
-
 import { useImageNameValidator } from "../../../hooks/useImageNameValidator.tsx";
 import { uploadSingleFile } from "../../../services/api.ts";
 import { isAddress } from "viem";
@@ -253,7 +251,7 @@ export default function UpdateAgent({
 
   console.log("has chnages", hasChanged);
   return (
-    <div className='create_agent_container'>
+    <div className='update_agent_container'>
       <div className='update_title'>
         <span className='back_button' onClick={() => setIsEditing(false)}>
           <IoArrowBack />
@@ -287,7 +285,7 @@ export default function UpdateAgent({
           </div>
         </div>
 
-        <div className='basic_info'>
+        <div className='update_info'>
           <div className='input_container'>
             <label htmlFor='name'>
               AI Agent Name <span className='required'>*</span>{" "}

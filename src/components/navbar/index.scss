@@ -33,6 +33,12 @@
     }
   }
 
+  .mobile {
+    display: none;
+    @include lessThan(xl) {
+      display: block;
+    }
+  }
   .actions {
     display: flex;
     gap: 1rem;
@@ -40,6 +46,10 @@
 
     button {
       border-radius: 15px;
+    }
+
+    @include lessThan(xl) {
+      display: none;
     }
   }
 }

@@ -13,6 +13,8 @@ import { authSignMsg } from "../../utils/contants.ts";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks.tsx";
 import { shortenAddress } from "../../utils/index.ts";
 import { setUserError } from "../../contexts/reducers/index.ts";
+
+import { RxHamburgerMenu } from "react-icons/rx";
 function Navbar() {
   const { address, isConnected } = useAccount();
   const sign = useSignMessage();
@@ -115,6 +117,9 @@ function Navbar() {
               Connect Wallet
             </Button>
           )}
+        </div>
+        <div className='mobile'>
+          <RxHamburgerMenu color='#ff00b7' />
         </div>
       </div>
       <Modal

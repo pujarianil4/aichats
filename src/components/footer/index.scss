@@ -1,76 +1,141 @@
+@import "/src/styles/breakPoints";
+
 .footer {
-  width: 100%;
-  height: 100px;
-  background-color: var(--primary-bg);
-  margin-top: 50px;
-
+  padding: 20px 40px;
+  background: #131313;
+  color: white;
+  font-size: 14px;
   display: flex;
-  justify-content: space-between;
-
-  .rights {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: end;
+  flex-direction: column;
+  @include lessThan(md) {
+    padding: 20px 10px;
     gap: 5px;
-    img {
-      background: var(--light);
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-    }
-    p {
-      font-size: 12px;
-      opacity: 0.5;
-    }
   }
-
-  .owner {
-    padding: 20px;
+  .logo_div {
     display: flex;
-
-    align-items: flex-end;
-    justify-content: end;
-    gap: 5px;
-    img {
-      height: 15px;
+    justify-content: space-between;
+    align-items: center;
+    @include lessThan(md) {
+      order: 1;
     }
-    p {
-      font-size: 12px;
-      opacity: 0.5;
+    .logo {
+      img {
+        background: var(--light);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        @include lessThan(md) {
+          width: 32px;
+          height: 32px;
+        }
+      }
     }
-  }
-
-  .more {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-
-    .social {
+    .footer_social {
       display: flex;
-      justify-content: end;
-      gap: 10px;
-    }
-
-    .nav {
-      ul {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-
-        li {
-          list-style: none;
-          a {
-            text-decoration: none;
-            color: white;
-            font-family: monospace;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 300;
-            &:hover {
-              color: var(--primary);
-            }
+      align-items: center;
+      gap: 1rem;
+      span {
+        svg {
+          width: 20px;
+          height: auto;
+          @include lessThan(md) {
+            width: 16px;
+            height: auto;
           }
+          @include lessThan(sm) {
+            width: 14px;
+            height: auto;
+          }
+        }
+      }
+    }
+  }
+
+  .copyright_div {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    @include lessThan(md) {
+      flex-direction: row-reverse;
+      order: 3;
+      align-items: center;
+      gap: 1rem;
+    }
+    p {
+      font-size: 14px;
+      @include lessThan(md) {
+        font-size: 12px;
+      }
+      @include lessThan(sm) {
+        font-size: 10px;
+      }
+      @include lessThan(xs) {
+        font-size: 8px;
+      }
+    }
+    .footer_info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      @include lessThan(md) {
+        font-size: 12px;
+      }
+      @include lessThan(sm) {
+        font-size: 10px;
+      }
+      @include lessThan(xs) {
+        font-size: 8px;
+      }
+    }
+  }
+  .disclaimer_div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    @include lessThan(md) {
+      display: none;
+    }
+    .footer_token {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .footer__contract {
+        background: #222;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .social_bx {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    @include lessThan(md) {
+      order: 2;
+      justify-content: center;
+    }
+    .footer_nav {
+      display: flex;
+      gap: 15px;
+      @include lessThan(md) {
+        gap: 2rem;
+      }
+      @include lessThan(sm) {
+        gap: 10px;
+      }
+      a {
+        color: white;
+        text-decoration: none;
+        @include lessThan(md) {
+          font-size: 12px;
+        }
+        @include lessThan(sm) {
+          font-size: 10px;
         }
       }
     }
