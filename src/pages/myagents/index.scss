@@ -9,10 +9,10 @@
   margin: auto;
 
   & > div {
-    // padding: 20px;
-    // background-color: var(--primary-bg);
-    // border-radius: 16px;
-    // height: calc(100vh - 200px);
+    padding: 20px;
+    background-color: var(--primary-bg);
+    border-radius: 16px;
+    min-height: calc(100vh - 200px);
   }
   h1 {
     font-size: 32px;
@@ -37,39 +37,130 @@
       grid-template-columns: repeat(1, 1fr);
     }
 
+    // .agent_card {
+    //   padding: 16px;
+    //   border-radius: 12px;
+    //   background-color: var(--tertiary-bg);
+    //   min-width: 280px;
+    //   width: fit-content;
+    //   min-height: 328px;
+
+    //   h3 {
+    //     font-size: 18px;
+    //     font-weight: 500;
+
+    //     .deactive,
+    //     .active {
+    //       padding: 2px 4px;
+    //       border-radius: 4px;
+    //       font-size: 14px;
+    //     }
+
+    //     .active {
+    //       border: 1px solid var(--success);
+    //       color: var(--success);
+    //       background-color: var(--active-light-bg);
+    //     }
+
+    //     .deactive {
+    //       border: 1px solid var(--error);
+    //       color: var(--error);
+    //       background-color: var(--active-light-bg); // update later
+    //     }
+    //   }
+
+    //   p {
+    //     font-size: 14px;
+    //     display: -webkit-box;
+    //     line-clamp: 2;
+    //     -webkit-line-clamp: 2;
+    //     -webkit-box-orient: vertical;
+    //     overflow: hidden;
+    //     text-overflow: ellipsis;
+    //   }
+
+    //   h2 {
+    //     font-size: 24px;
+    //     font-weight: 500;
+    //   }
+    // }
+
     .agent_card {
-      padding: 16px;
+      box-sizing: border-box;
+      // padding: 16px;
       border-radius: 12px;
-      background-color: var(--tertiary-bg);
-      min-width: 272px;
+      // background-color: var(--tertiary-bg);
+      min-width: 280px;
       width: fit-content;
+
+      min-height: 328px;
+      position: relative;
+      overflow: hidden;
+      border: 1.5px solid #4449a5;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+
       cursor: pointer;
 
-      h3 {
-        font-size: 18px;
-        font-weight: 500;
 
-        .deactive,
-        .active {
-          padding: 2px 4px;
-          border-radius: 4px;
-          font-size: 14px;
+      &:hover {
+        cursor: pointer;
+        transform: scale(1.05);
+      }
+
+      .card_head {
+        height: 130px;
+        background: linear-gradient(to left top, #4449a5, #7178ff);
+
+        img {
+          position: absolute;
+          top: 64px;
+          left: 16px;
+          width: 104px;
+          height: 104px;
+          border-radius: 60px;
+          padding: 8px;
+          background: linear-gradient(to right bottom, #f35ebd, #512579);
         }
+      }
+      .deactive,
+      .active {
+        padding: 2px 4px;
+        border-radius: 4px;
+        font-size: 14px;
+        width: fit-content;
+        margin: 8px 8px 36px auto;
+      }
 
-        .active {
-          border: 1px solid var(--success);
-          color: var(--success);
-          background-color: var(--active-light-bg);
+      .active {
+        border: 1px solid var(--success);
+        color: var(--success);
+        background-color: var(--active-light-bg);
+      }
+
+      .deactive {
+        border: 1px solid var(--error);
+        color: var(--error);
+        background-color: var(--active-light-bg); // update later
+      }
+
+      .agent_head,
+      .agent_description,
+      .tabs {
+        margin: 16px;
+      }
+
+      .agent_head {
+        font-size: 14px;
+        strong {
+          font-size: 20px !important;
+          font-weight: 500;
         }
-
-        .deactive {
-          border: 1px solid var(--error);
-          color: var(--error);
-          background-color: var(--active-light-bg); // update later
+        span {
+          font-size: 10px !important;
         }
       }
 
-      p {
+      .agent_description {
         font-size: 14px;
         display: -webkit-box;
         line-clamp: 2;
@@ -79,9 +170,17 @@
         text-overflow: ellipsis;
       }
 
-      h2 {
-        font-size: 24px;
-        font-weight: 500;
+      .tabs {
+        display: flex;
+        gap: 8px;
+
+        p {
+          font-size: 14px;
+          font-weight: 500;
+          padding: 4px 8px;
+          border: 1.2px solid var(--light);
+          border-radius: 8px;
+        }
       }
     }
   }
