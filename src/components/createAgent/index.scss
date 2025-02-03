@@ -1,3 +1,4 @@
+@import "/src/styles/breakPoints";
 .create_agent_container {
   width: 65%;
   margin: auto;
@@ -6,6 +7,39 @@
   border-radius: 15px;
 
   min-width: 780px;
+
+  .update_title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+    padding: 20px;
+    border-bottom: 1px solid var(--dark);
+    .back_button {
+      position: absolute;
+      left: 1.875rem;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      transition: transform 0.2s ease-in-out;
+
+      &:hover {
+        transform: scale(1.1);
+      }
+    }
+
+    .heading {
+      font-size: 1.5rem;
+      font-weight: bold;
+      text-align: center;
+      flex-grow: 1;
+      font-size: 20px;
+      font-weight: bold;
+      color: var(--primary);
+    }
+  }
 
   .title {
     border-bottom: 1px solid var(--dark);
@@ -84,6 +118,7 @@
         flex-direction: column;
         margin: 20px 0px;
         gap: 5px;
+        align-items: unset;
         input,
         textarea {
           padding: 15px;

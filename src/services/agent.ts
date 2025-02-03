@@ -47,3 +47,17 @@ export const getMyAgentData = async (agentId: string) => {
     throw error;
   }
 };
+
+export const updateAgentData = async (agentId: string, data: any) => {
+  try {
+    const response = await api.patch(`/agent/${agentId}`, data);
+    const tokenData = await getMaketDataByTokenAddress(
+      "base",
+      response.data.token.tCAddress
+    );
+    return { ...response.data, tokenData };
+  } catch (error) {
+    console.error("Error", error);
+    throw error;
+  }
+};

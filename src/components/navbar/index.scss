@@ -1,3 +1,4 @@
+@import "/src/styles/breakPoints";
 .navbar_container {
   display: flex;
   justify-content: space-between;
@@ -7,6 +8,7 @@
   margin: auto;
   margin-block: 10px;
   height: 50px;
+
   .navigation {
     display: flex;
     gap: 50px;
