@@ -37,11 +37,13 @@ export default function MyAgentsPage() {
         <h1>My Agents</h1>
         <section className='agent_card_container'>
           {isLoadingAgent ? (
-            Array(10)
-              .fill(0)
-              ?.map((_, index: number) => (
-                <div key={index} className='agent_card skeleton'></div>
-              ))
+            <div className='agent_cards'>
+              {Array(10)
+                .fill(0)
+                ?.map((_, index: number) => (
+                  <div key={index} className='agent_card skeleton'></div>
+                ))}
+            </div>
           ) : myAgents.length > 0 ? (
             <div className='agent_cards'>
               {myAgents?.map((agent: AgentData) => (
