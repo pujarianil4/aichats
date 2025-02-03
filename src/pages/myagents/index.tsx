@@ -4,6 +4,7 @@ import NotificationMessage from "../../components/common/notificationMessage.tsx
 import { AgentData } from "../../utils/types.ts";
 import "./index.scss";
 import { useNavigate } from "react-router-dom";
+import NoData from "../../components/common/noData.tsx";
 
 export default function MyAgentsPage() {
   const navigate = useNavigate();
@@ -42,41 +43,33 @@ export default function MyAgentsPage() {
                 <div key={index} className='agent_card skeleton'></div>
               ))
           ) : myAgents.length > 0 ? (
-            myAgents?.map((agent: AgentData) => (
-              // <div className='agent_card' key={agent?.id}>
-              //   <h3>
-              //     {agent?.name}{" "}
-              //     <span className={`${true ? "active" : "deactive"} `}>
-              //       Active
-              //     </span>
-              //   </h3>
-              //   <p>{agent?.desc}</p>
-              //   <h2>20</h2>
-              // </div>
-              <div
-                className='agent_card'
-                key={agent?.id}
-                onClick={() => handleNavigate(agent?.id)}
-              >
-                <div className='card_head'>
-                  <img src={agent?.pic} />
+            <div className='agent_cards'>
+              {myAgents?.map((agent: AgentData) => (
+                <div
+                  className='agent_card'
+                  key={agent?.id}
+                  onClick={() => handleNavigate(agent?.id)}
+                >
+                  <div className='card_head'>
+                    <img src={agent?.pic} />
+                  </div>
+                  {/* TODO: Update status later */}
+                  <p className={`${true ? "active" : "deactive"}`}>Active</p>
+                  <p className='agent_head'>
+                    <strong>{agent?.name}</strong> &nbsp; $Lamaa&nbsp;
+                    <span>(4days ago)</span>
+                  </p>
+                  <p className='agent_description'>{agent?.desc}</p>
+                  <div className='tabs'>
+                    <p>tag 1</p>
+                    <p>tag 2</p>
+                    <p>tag 3</p>
+                  </div>
                 </div>
-                {/* TODO: Update status later */}
-                <p className={`${true ? "active" : "deactive"}`}>Active</p>
-                <p className='agent_head'>
-                  <strong>{agent?.name}</strong> &nbsp; $Lamaa&nbsp;
-                  <span>(4days ago)</span>
-                </p>
-                <p className='agent_description'>{agent?.desc}</p>
-                <div className='tabs'>
-                  <p>tag 1</p>
-                  <p>tag 2</p>
-                  <p>tag 3</p>
-                </div>
-              </div>
-            ))
+              ))}
+            </div>
           ) : (
-            <>NO DATA</>
+            <NoData />
           )}
         </section>
       </div>
