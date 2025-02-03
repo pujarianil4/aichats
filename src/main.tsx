@@ -77,7 +77,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       <StoreProvider>
         <WagmiProvider config={wagmiConfig}>
           <QueryClientProvider client={queryClient}>
-            <RainbowKitProvider theme={darkTheme()}>
+            <RainbowKitProvider modalSize='compact' theme={darkTheme()}>
               <ConfigProvider
                 theme={{
                   token: {

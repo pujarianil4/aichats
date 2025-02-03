@@ -23,6 +23,7 @@ export default function MyAgentsPage() {
     }
   };
 
+  console.log("myagents", myAgents);
   useEffect(() => {
     fetMyAgent();
   }, []);

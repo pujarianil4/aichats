@@ -1,7 +1,7 @@
 import { ConnectButton, useConnectModal } from "@rainbow-me/rainbowkit";
 import "./index.scss";
-import { Button, Modal } from "antd";
-import { Link } from "react-router-dom";
+import { Button, message, Modal } from "antd";
+import { Link, useNavigate } from "react-router-dom";
 import { useAccount, useSignMessage, useDisconnect } from "wagmi";
 import { useEffect, useState } from "react";
 import LammaLogo from "./../../assets/logo.png";
@@ -10,19 +10,23 @@ import {
   handleAuthDisconnect,
 } from "../../services/auth.ts";
 import { authSignMsg } from "../../utils/contants.ts";
-import { useAppSelector } from "../../hooks/reduxHooks.tsx";
+import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks.tsx";
 import { shortenAddress } from "../../utils/index.ts";
+import { setUserError } from "../../contexts/reducers/index.ts";
+import { getTokens } from "../../services/apiconfig.ts";
 function Navbar() {
   const { address, isConnected } = useAccount();
   const sign = useSignMessage();
   const { disconnect } = useDisconnect();
-  const [isSigned, setIsSigned] = useState(false);
   const { openConnectModal } = useConnectModal();
+  const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
-  const { isLoading, profile } = useAppSelector((state) => state.user);
+  const { isLoading, profile, error } = useAppSelector((state) => state.user);
+  const dispatch = useAppDispatch();
+  const cookies = getTokens();
 
   const showModal = () => {
-    setOpenModal(true);
+    isConnected ? setOpenModal(true) : openConnectModal();
   };
 
   const handleOk = () => {
@@ -41,8 +45,10 @@ function Navbar() {
       {
         onSuccess(data, variables, context) {
           console.log(data);
-          setIsSigned(true);
           handleAuthConnect({ sig: data, msg: authSignMsg, typ: "EVM" });
+        },
+        onError(error, variables, context) {
+          disconnect();
         },
       }
     );
@@ -50,15 +56,24 @@ function Navbar() {
   };
 
   useEffect(() => {
-    if (isConnected && !profile.token) {
+    if (isConnected && !cookies.token && profile.isLogedIn == "no") {
       handleMsgSign();
     }
-  }, [isConnected, profile.token]);
+  }, [isConnected, profile]);
+
+  useEffect(() => {
+    if (isConnected && error.includes("expired")) {
+      message.error("Session Expired,Please Login Again!");
+      navigate("/");
+      disconnect();
+    }
+  }, [isConnected, error]);
 
   const handleDisconnect = async () => {
     try {
       await handleAuthDisconnect();
-
+      dispatch(setUserError("Disconnected"));
+      navigate("/");
       disconnect();
     } catch (error) {}
   };

@@ -74,13 +74,27 @@ import { useState } from "react";
 import Agent from "./Agent.tsx";
 import Emulator from "./Emulator.tsx";
 import "./index.scss";
+import { getMyAgentData } from "../../../services/agent.ts";
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "react-router-dom";
+import PageLoader from "../../common/PageLoader.tsx";
 
 export default function AgentHome() {
+  const { agentId } = useParams();
+  const agent = useQuery({
+    queryKey: ["privateagent", agentId],
+    queryFn: () => getMyAgentData(agentId!),
+    enabled: !!agentId,
+  });
   const [isEmulatorOpen, setIsEmulatorOpen] = useState(false);
 
   const toggleEmulator = () => {
     setIsEmulatorOpen((prev) => !prev);
   };
+
+  if (agent.isLoading) {
+    return <PageLoader />;
+  }
 
   return (
     <div className={`agenthome ${isEmulatorOpen ? "emulator-open" : ""}`}>
@@ -88,6 +102,7 @@ export default function AgentHome() {
         <Agent
           isEmulatorOpen={isEmulatorOpen}
           toggleEmulator={toggleEmulator}
+          agent={agent}
         />
       </div>
 

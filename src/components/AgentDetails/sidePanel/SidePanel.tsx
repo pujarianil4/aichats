@@ -15,8 +15,8 @@ export default function SidePanel({ tokenDetails }: prop) {
       <div className='swap'>
         <Cowswap />
       </div>
-
-      <BondingCurve />
+      {/* 
+      <BondingCurve /> */}
 
       <div className='analytics'>
         <div className='analytics__title'>
@@ -73,9 +73,11 @@ export default function SidePanel({ tokenDetails }: prop) {
         </div>
       </div>
 
-      <div className='developer_profile'>
-        <TwitterFeed />
-      </div>
+      {tokenDetails.x && (
+        <div className='developer_profile'>
+          <TwitterFeed username={tokenDetails.x} />
+        </div>
+      )}
     </div>
   );
 }

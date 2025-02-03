@@ -34,7 +34,7 @@ export const ROUTES = [
     exact: true,
     component: lazy(() => import("../pages/myagents/index.tsx")),
     name: "myagents",
-    isPrivate: false,
+    isPrivate: true,
   },
   {
     path: "/myagent/:agentId",
