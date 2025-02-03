@@ -8,8 +8,14 @@ import SocialModal from "./socialModal.tsx";
 import { FaCopy } from "react-icons/fa";
 import KnowledgeBase from "./KnowledgeBase.tsx";
 import Capabilities from "./Capabilities.tsx";
+import { LuPanelLeftClose } from "react-icons/lu";
 
-export default function Agent() {
+interface IProps {
+  isEmulatorOpen: boolean;
+  toggleEmulator: () => void;
+}
+
+export default function Agent({ isEmulatorOpen, toggleEmulator }: IProps) {
   const onChange = (key: string | string[]) => {
     console.log(key);
   };
@@ -78,6 +84,13 @@ export default function Agent() {
             </div>
           </div>
         </div>
+        {!isEmulatorOpen && (
+          <LuPanelLeftClose
+            size={18}
+            className='toggle_btn'
+            onClick={toggleEmulator}
+          />
+        )}
       </div>
       <div className='form'>
         <Collapse

@@ -5,7 +5,7 @@
   border-radius: 15px;
   padding: 20px;
   // margin: auto;
-  min-width: 900px;
+  min-width: 600px;
   .basic {
     display: flex;
     justify-content: space-between;
@@ -74,6 +74,13 @@
           }
         }
       }
+    }
+  }
+
+  .toggle_btn {
+    cursor: pointer;
+    &:hover {
+      color: var(--primary);
     }
   }
 
