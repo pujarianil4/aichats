@@ -89,6 +89,12 @@
             padding-left: 1rem;
           }
         }
+        .input_container {
+          input {
+            width: 100%;
+          }
+        }
+
         .current-bot {
           text-align: center;
           gap: 8px;

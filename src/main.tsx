@@ -28,6 +28,7 @@ import {
   walletConnectWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import { BrowserRouter } from "react-router-dom";
+import StoreProvider from "./contexts/storeProvider.tsx";
 
 const { wallets } = getDefaultWallets();
 
@@ -73,42 +74,44 @@ const queryClient = new QueryClient({
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
-      <WagmiProvider config={wagmiConfig}>
-        <QueryClientProvider client={queryClient}>
-          <RainbowKitProvider theme={darkTheme()}>
-            <ConfigProvider
-              theme={{
-                token: {
-                  // Seed Token
-                  colorPrimary: "#ff00b7",
-                  colorTextSecondary: "#ff00b7",
-                  borderRadius: 2,
+      <StoreProvider>
+        <WagmiProvider config={wagmiConfig}>
+          <QueryClientProvider client={queryClient}>
+            <RainbowKitProvider modalSize='compact' theme={darkTheme()}>
+              <ConfigProvider
+                theme={{
+                  token: {
+                    // Seed Token
+                    colorPrimary: "#ff00b7",
+                    colorTextSecondary: "#ff00b7",
+                    borderRadius: 2,
 
-                  // Alias Token
-                  colorBgContainer: "var(--primary-bg)",
+                    // Alias Token
+                    colorBgContainer: "var(--primary-bg)",
 
-                  colorText: "#fffff",
-                  boxShadow: "0px",
-                },
-                components: {
-                  Table: {
-                    headerColor: "var(--primary)",
+                    colorText: "#fffff",
+                    boxShadow: "0px",
                   },
-                  Pagination: {
-                    itemActiveBg: "var(--primary)",
+                  components: {
+                    Table: {
+                      headerColor: "var(--primary)",
+                    },
+                    Pagination: {
+                      itemActiveBg: "var(--primary)",
+                    },
+                    Button: {
+                      colorBgContainerDisabled: "gray",
+                      colorTextDisabled: "black",
+                    },
                   },
-                  Button: {
-                    colorBgContainerDisabled: "gray",
-                    colorTextDisabled: "black",
-                  },
-                },
-              }}
-            >
-              <App />
-            </ConfigProvider>
-          </RainbowKitProvider>
-        </QueryClientProvider>
-      </WagmiProvider>
+                }}
+              >
+                <App />
+              </ConfigProvider>
+            </RainbowKitProvider>
+          </QueryClientProvider>
+        </WagmiProvider>
+      </StoreProvider>
     </BrowserRouter>
   </StrictMode>
 );

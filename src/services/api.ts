@@ -1,9 +1,12 @@
 import { toFixedNumber } from "../utils/index.ts";
 
-export async function getTokenDetails(tokenAddress: string) {
+import axios from "axios";
+import { api } from "./apiconfig.ts";
+
+export async function getTokenDetails(network: string, tokenAddress: string) {
   const eth_key = import.meta.env.VITE_ETHERSCAN_API_KEY;
   const apiUrl = `https://api.dexscreener.com/latest/dex/tokens/${tokenAddress}`;
-  const geckoApi = `https://api.geckoterminal.com/api/v2/networks/eth/tokens/${tokenAddress}?include=top_pools
+  const geckoApi = `https://api.geckoterminal.com/api/v2/networks/${network}/tokens/${tokenAddress}?include=top_pools
 `;
   const creationUrl = `https://api.etherscan.io/v2/api?chainid=1&module=contract&action=getcontractcreation&contractaddresses=${tokenAddress}&apikey=${eth_key}`;
   const holdersUrl = `https://api.etherscan.io/v2/api?chainid=1&module=token&action=tokenholdercount&contractaddress=${tokenAddress}&apikey=${eth_key}`;
@@ -21,7 +24,7 @@ export async function getTokenDetails(tokenAddress: string) {
     const creationData = await creationResponse.json();
     // const holdersData = await holdersResponse.json();
 
-    console.log("Token Details:", tokenData, extractPoolData(tokenData));
+    // console.log("Token Details:", tokenData, extractPoolData(tokenData));
 
     return {
       ...extractPoolData(tokenData),
@@ -33,38 +36,6 @@ export async function getTokenDetails(tokenAddress: string) {
     throw error;
   }
 }
-
-const createObjectFromPair = (pair: any) => {
-  const baseToken = pair.baseToken;
-  const quoteToken = pair.quoteToken;
-  const priceChange24h = pair.priceChange.h24;
-
-  // console.log(pair);
-
-  return {
-    name: baseToken.name,
-
-    symbol: baseToken.symbol,
-    priceInUsd: pair.priceUsd,
-    volume: pair.volume.h24,
-    volume24hChange: priceChange24h,
-    priceChange24h: priceChange24h,
-    liquidity: pair.liquidity.usd,
-    marketCapUsd: pair.marketCap,
-    pairAddress: pair.pairAddress,
-    imageUrl: pair?.info?.imageUrl || "",
-    header: pair?.info?.header || "",
-    website:
-      pair?.info?.websites.find((site: any) => site.label === "Website")?.url ||
-      "",
-    twitter:
-      pair?.info?.socials.find((social: any) => social.type === "twitter")
-        ?.url || "",
-    telegram:
-      pair?.info?.socials.find((social: any) => social.type === "telegram")
-        ?.url || "",
-  };
-};
 
 function extractPoolData(data: any) {
   const tokenData = data.data.attributes;
@@ -83,14 +54,12 @@ function extractPoolData(data: any) {
     pairAddress: pool.id,
     imageUrl: tokenData.image_url,
     fdvInusd: tokenData.fdv_usd,
+    pools: data.included,
   };
 }
 
-import axios from "axios";
-
 const BASE_URL_BALANCE = "https://balance-servie.onrender.com";
 const BASE_URL_CHAT = "https://chat-service-rq16.onrender.com";
-
 export const getMessages = async (
   page: number = 1,
   limit = 20,
@@ -265,13 +234,9 @@ export const uploadSingleFile = async (file: File) => {
   try {
     const formData = new FormData();
     formData.append("file", file);
-    const response = await axios.post(
-      "https://ai-agent-r139.onrender.com/upload/single",
-      formData,
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-      }
-    );
+    const response = await api.post("/upload/single", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
     return response.data.url;
   } catch (error) {
     console.error("Error uploading file", error);
@@ -281,10 +246,7 @@ export const uploadSingleFile = async (file: File) => {
 
 export const createAgent = async (data: any) => {
   try {
-    const response = await axios.post(
-      "https://ai-agent-r139.onrender.com/agent",
-      data
-    );
+    const response = await api.post("/agent", data);
 
     return response.data;
   } catch (error) {
@@ -295,10 +257,28 @@ export const createAgent = async (data: any) => {
 
 export const getAllAgents = async () => {
   try {
-    const response = await axios.get(
-      "https://ai-agent-r139.onrender.com/agent"
-    );
+    const response = await api.get("/agent");
     return response.data;
+  } catch (error) {
+    console.error("Error", error);
+    throw error;
+  }
+};
+
+export const getKBbyAgentID = async () => {
+  try {
+    const response = await api.get(`/upload/kb/017d7ac6e29ce69c`);
+    return response.data;
+  } catch (error) {
+    console.error("Error", error);
+    throw error;
+  }
+};
+
+export const getAllAgentByUser = async () => {
+  try {
+    const { data } = await api.get("/agent/byuid");
+    return data;
   } catch (error) {
     console.error("Error", error);
     throw error;

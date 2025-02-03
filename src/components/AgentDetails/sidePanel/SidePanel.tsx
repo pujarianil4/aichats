@@ -15,8 +15,8 @@ export default function SidePanel({ tokenDetails }: prop) {
       <div className='swap'>
         <Cowswap />
       </div>
-
-      <BondingCurve />
+      {/* 
+      <BondingCurve /> */}
 
       <div className='analytics'>
         <div className='analytics__title'>
@@ -25,15 +25,15 @@ export default function SidePanel({ tokenDetails }: prop) {
         <div className='analytics_data'>
           <div>
             <p className='label'>Price</p>
-            <p>${tokenDetails.priceInUsd}</p>
+            <p>${tokenDetails.tokenData.priceInUsd}</p>
           </div>
           <div>
             <p className='label'>Market Cap</p>
-            <p>${tokenDetails.marketCapUsd}</p>
+            <p>${tokenDetails.tokenData.marketCapUsd}</p>
           </div>
           <div>
             <p className='label'>TVL </p>
-            <p>${tokenDetails.tvl}</p>
+            <p>${tokenDetails.tokenData.tvl}</p>
           </div>
           {/* <div>
             <p className='label'>MC Rank</p>
@@ -45,19 +45,19 @@ export default function SidePanel({ tokenDetails }: prop) {
             <p className='label'>24h change</p>
             <p
               style={{
-                color: getColorForValue(tokenDetails.priceChange24h),
+                color: getColorForValue(tokenDetails.tokenData.priceChange24h),
               }}
             >
-              {tokenDetails.priceChange24h}%
+              {tokenDetails.tokenData.priceChange24h}%
             </p>
           </div>
           <div>
             <p className='label'>Volume</p>
-            <p>${tokenDetails.volume}</p>
+            <p>${tokenDetails.tokenData.volume}</p>
           </div>
           <div>
-            <p className='label'>Holders</p>
-            <p>45675678</p>
+            <p className='label'>FDV</p>
+            <p>${tokenDetails.tokenData.fdvInusd}</p>
           </div>
         </div>
       </div>
@@ -73,9 +73,11 @@ export default function SidePanel({ tokenDetails }: prop) {
         </div>
       </div>
 
-      <div className='developer_profile'>
-        <TwitterFeed />
-      </div>
+      {tokenDetails.x && (
+        <div className='developer_profile'>
+          <TwitterFeed username={tokenDetails.x} />
+        </div>
+      )}
     </div>
   );
 }

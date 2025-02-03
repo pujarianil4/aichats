@@ -7,11 +7,24 @@ import Twitter from "../social/twitter.tsx";
 import Discord from "../social/discord.tsx";
 import { FaCheck } from "react-icons/fa";
 import { BsDash } from "react-icons/bs";
-const SocialModal: React.FC = () => {
+
+interface SocialData {
+  id: string;
+  username: string;
+  name: string;
+}
+
+interface SocialModalProps {
+  discord?: SocialData;
+  telegram?: SocialData;
+  x?: SocialData;
+}
+
+const SocialModal: React.FC<SocialModalProps> = ({ discord, telegram, x }) => {
   const [connectedAccounts, setConnectedAccounts] = useState({
-    Twitter: null as string | null,
-    Telegram: null as string | null,
-    Discord: null as string | null,
+    Twitter: discord?.username as string | null,
+    Telegram: telegram?.username as string | null,
+    Discord: x?.username as string | null,
   });
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -31,7 +44,7 @@ const SocialModal: React.FC = () => {
   ) => {
     setConnectedAccounts((prev) => ({
       ...prev,
-      [platform]: username,
+      [platform]: username || null,
     }));
     setLoading(false);
     setModalVisible(true);
@@ -59,6 +72,7 @@ const SocialModal: React.FC = () => {
               handleConnectionSuccess("Telegram", username)
             }
             onFailure={handleConnectionFailure}
+            initialUsername={connectedAccounts.Telegram || undefined}
           />
         );
       case "Discord":
@@ -68,6 +82,7 @@ const SocialModal: React.FC = () => {
               handleConnectionSuccess("Discord", username)
             }
             onFailure={handleConnectionFailure}
+            initialUsername={connectedAccounts.Discord || undefined}
           />
         );
       default:

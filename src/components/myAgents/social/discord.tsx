@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-
 import "./index.scss";
 
 const Discord: React.FC<{
@@ -8,31 +7,55 @@ const Discord: React.FC<{
   initialUsername?: string;
 }> = ({ onSuccess, onFailure, initialUsername }) => {
   const [isUserConnected, setIsUserConnected] = useState(false);
-  const [discordUsername, SetDiscordUsername] = useState<string | null>(
+  const [discordUsername, setDiscordUsername] = useState<string | null>(
     initialUsername || null
   );
+  const [accessToken, setAccessToken] = useState("");
+  const [isCopied, setIsCopied] = useState(false);
 
   const handleConnect = async () => {
     try {
-      // api call
-      const username = "@sandeepDiscord";
-      SetDiscordUsername(username);
+      if (!accessToken) {
+        alert("Please enter a valid Discord Bot Token.");
+        return;
+      }
+
+      // Example API call to fetch bot data using the Discord Bot Token
+      const response = await fetch("https://discord.com/api/v10/users/@me", {
+        headers: {
+          Authorization: `Bot ${accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to connect the bot. Check the token.");
+      }
+
+      const data = await response.json();
+      console.log("discord Bot Data", data);
+      const username = data.username;
+
+      setDiscordUsername(username);
       setIsUserConnected(true);
       onSuccess(username);
     } catch (error) {
+      console.error("Connection failed:", error);
       setIsUserConnected(false);
       onFailure();
     }
   };
 
-  const [isCopied, setIsCopied] = useState(false);
-
   const handleDisconnect = () => {
-    SetDiscordUsername(null);
+    setDiscordUsername(null);
+    setIsUserConnected(false);
+    setAccessToken("");
+    onSuccess("");
   };
 
   const handleCopy = () => {
-    const inputElement = document.getElementById("name") as HTMLInputElement;
+    const inputElement = document.getElementById(
+      "server-link"
+    ) as HTMLInputElement;
     if (inputElement) {
       inputElement.select();
       navigator.clipboard
@@ -55,7 +78,7 @@ const Discord: React.FC<{
             <div className='tab_bx'>
               <div className='tab-content'>
                 <div className='current-bot'>
-                  <div className='bot_inn'>Current Discord Interface</div>
+                  <div className='bot_inn'>Current Discord Bot</div>
                   <a
                     href={`https://discord.com/`}
                     target='_blank'
@@ -63,17 +86,26 @@ const Discord: React.FC<{
                   >
                     {discordUsername}
                   </a>
-                  <span className='unbind' onClick={() => handleDisconnect()}>
+                  <span className='unbind' onClick={handleDisconnect}>
                     Disconnect
                   </span>
                 </div>
+                <h2>Bind Discord Group Chat</h2>
+                <p>
+                  Bind the Discord group chat so the agent will only be active
+                  there (<a href='#'>admin rights needed</a>). The group chat
+                  link will be shown in the agent's profile on the discovery
+                  page. If the agent isn't bound to any group chats, it will be
+                  active in all group chats it's added to.
+                </p>
                 <div className='input_container'>
                   <input
-                    id='name'
+                    id='server-link'
                     type='text'
-                    placeholder='Enter Server invite Link'
+                    value='https://discord.gg/example-link'
+                    readOnly
                   />
-                  <span className='copy_btn' onClick={() => handleCopy()}>
+                  <span className='copy_btn' onClick={handleCopy}>
                     {isCopied ? "Copied" : "Copy"}
                   </span>
                 </div>
@@ -93,7 +125,6 @@ const Discord: React.FC<{
                     >
                       Open Discord Developer Portal
                     </a>
-                    .
                   </li>
                   <li>Create a New Application.</li>
                   <li>
@@ -110,31 +141,20 @@ const Discord: React.FC<{
                   </li>
                   <li>Copy the bot token and paste it here to bind.</li>
                   <li>
-                    Go to the <b>OAuth2 URL Generator</b> tab:
-                    <ul className='left_list'>
-                      <li>
-                        Untick <b>User Install</b>.
-                      </li>
-                      <li>
-                        Add <b>bot</b> under
-                        <b>Default Install Settings Guild Install Scopes</b>.
-                      </li>
-                    </ul>
-                  </li>
-                  <li>
-                    Copy and open the generated install link in your browser to
-                    install the agent in your server.
+                    Use the <b>OAuth2 URL Generator</b> to install the bot in
+                    your server.
                   </li>
                 </ol>
                 <div className='input_container'>
-                  <label htmlFor='name'>
-                    Bot Access Token
-                    <span className='required'>*</span>
+                  <label htmlFor='bot-token'>
+                    Bot Access Token <span className='required'>*</span>
                   </label>
                   <input
-                    id='name'
+                    id='bot-token'
                     type='text'
                     placeholder='Discord Bot Token'
+                    value={accessToken}
+                    onChange={(e) => setAccessToken(e.target.value)}
                   />
                 </div>
               </div>
@@ -142,9 +162,13 @@ const Discord: React.FC<{
           )}
         </>
       </div>
-      <div className='connect_btn' onClick={handleConnect}>
-        Connect
-      </div>
+      {isUserConnected ? (
+        ""
+      ) : (
+        <div className='connect_btn' onClick={handleConnect}>
+          Connect
+        </div>
+      )}
     </div>
   );
 };

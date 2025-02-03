@@ -3,16 +3,23 @@ import "./index.scss";
 import { Table } from "antd";
 import { getAllAgents } from "../../services/api.ts";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 export default function AgentList() {
   const [allAgents, setAllAgents] = useState<Array<any>>([]);
+  const { data, isLoading } = useQuery({
+    queryKey: ["allagents"],
+    queryFn: () => getAllAgents(),
+  });
   const navigate = useNavigate();
-  const setFallbackURL = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    e.currentTarget.src =
-      "https://img.freepik.com/free-photo/3d-rendering-animal-illustration_23-2151888074.jpg";
-  };
 
-  const getAgents = async () => {
-    const agents: Array<any> = await getAllAgents();
+  const getAgents = async (agents: any[]) => {
+    // const agents: Array<any> = await getAllAgents();
+    const setFallbackURL = (
+      e: React.SyntheticEvent<HTMLImageElement, Event>
+    ) => {
+      e.currentTarget.src =
+        "https://img.freepik.com/free-photo/3d-rendering-animal-illustration_23-2151888074.jpg";
+    };
 
     console.log("agents", agents);
     const dataSource = agents.map((agent, index) => {
@@ -26,7 +33,6 @@ export default function AgentList() {
                 {agent.name} <span>${agent.token.tkr}</span>{" "}
               </h2>
               <div>
-                <p>AI Agent</p>
                 <p>{agent.typ}</p>
               </div>
             </div>
@@ -45,32 +51,10 @@ export default function AgentList() {
   };
 
   useEffect(() => {
-    getAgents();
-  }, []);
+    console.log("data", data);
 
-  const dataSource = Array.from({ length: 30 }, (_, index) => ({
-    key: (index + 1).toString(),
-    aiagent: (
-      <div className='table_aiagent'>
-        <img src='https://img.freepik.com/free-photo/3d-rendering-animal-illustration_23-2151888074.jpg' />
-        <div>
-          <h2>
-            Lamma <span>$lamma</span>{" "}
-          </h2>
-          <div>
-            <p>AI Agent</p>
-            <p>Productivity</p>
-          </div>
-        </div>
-      </div>
-    ),
-    price: 32 + index, // Incrementing price for diversity
-    onehr: 56 + index, // Incrementing onehr for diversity
-    twentyfourhr: 5678 + index * 100, // Incrementing 24hr data
-    fdv: 5678 + index * 50, // Incrementing FDV
-    marketcap: 45678 + index * 1000, // Incrementing marketcap
-    link: "create-agent", //`/item/${index + 1}`,
-  }));
+    if (data) getAgents(data);
+  }, [data]);
 
   const columns = [
     {
@@ -109,8 +93,23 @@ export default function AgentList() {
     <div className='agentlist_container'>
       <Table
         className='antd_table'
+        loading={isLoading}
         pagination={{ position: ["bottomCenter"], pageSize: 10 }}
-        dataSource={allAgents}
+        dataSource={allAgents.length > 0 ? allAgents : undefined}
+        locale={{
+          emptyText: isLoading ? (
+            ""
+          ) : (
+            <div className='custom-no-data'>
+              <img
+                src='https://cdn-icons-png.flaticon.com/512/6134/6134065.png'
+                alt='No Data'
+                width='100'
+              />
+              <p style={{}}>No AI Agents Available</p>
+            </div>
+          ),
+        }}
         columns={columns}
         bordered={false}
         size='small'

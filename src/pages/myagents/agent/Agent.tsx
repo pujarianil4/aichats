@@ -1,5 +1,5 @@
-import React from "react";
+import AgentHome from "../../../components/myAgents/Agent/index.tsx";
 
 export default function MyAgent() {
-  return <div>MyAgent</div>;
+  return <AgentHome />;
 }

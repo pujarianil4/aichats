@@ -1,0 +1,141 @@
+.emulator_container {
+  width: 350px;
+  min-width: 300px;
+  background-color: var(--primary-bg);
+  min-height: 300px;
+  border-radius: 15px;
+  padding: 12px;
+  height: 80vh;
+  position: sticky;
+  top: 0px;
+  right: 0;
+  // background-color: #1e1e1e;
+  // color: white;
+  // width: 400px;s
+  // margin: 0 auto;
+  // border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  .emulator_head {
+    display: flex;
+    gap: 8px;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--dark);
+    padding-bottom: 12px;
+
+    h3 {
+      font-weight: 500;
+    }
+
+    &:nth-child(3) {
+      margin-left: auto;
+    }
+
+    svg {
+      &:hover {
+        color: var(--primary);
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+.chat_container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  // padding: 10px;
+}
+
+.messages {
+  height: calc(100% - 108px) !important;
+  overflow-y: auto;
+  padding-bottom: 10px;
+  // scrollbar-width: none;
+  // -ms-overflow-style: none;
+}
+
+// .messages::-webkit-scrollbar {
+//   display: none;
+// }
+
+.message {
+  padding: 8px 12px;
+  max-width: 70%;
+  width: fit-content;
+  word-wrap: break-word;
+  margin: 8px 0;
+  font-size: 14px;
+}
+
+.message.user {
+  align-self: flex-end;
+  border-radius: 8px 8px 1px 8px;
+  background-color: var(--dark);
+  color: white;
+  margin-left: auto;
+  margin-right: 8px;
+}
+
+.message.bot {
+  align-self: flex-start;
+  border-radius: 8px 8px 8px 1px;
+  background-color: var(--dark);
+  color: white;
+}
+
+.input_container {
+  position: absolute;
+  bottom: 12px;
+  width: calc(100% - 44px);
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  gap: 8px;
+  background-color: var(--dark);
+  border-radius: 12px;
+}
+
+input {
+  flex-grow: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  outline: none;
+  background-color: transparent;
+  color: white;
+}
+
+.send_btn {
+  padding: 5px;
+  width: 22px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  background: none;
+  border: none;
+
+  &:hover {
+    path {
+      stroke: var(--primary);
+    }
+  }
+}
+
+.emulator_popover {
+  width: max-content;
+
+  .popover_item {
+    padding: 4px 8px;
+    border-radius: 4px;
+    color: var(--dark);
+
+    &:hover {
+      cursor: pointer;
+      color: var(--light);
+      background-color: var(--primary);
+    }
+  }
+}
