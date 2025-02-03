@@ -9,6 +9,8 @@ import { store } from "../contexts/store.ts";
 import Cookies from "js-cookie";
 import CryptoJS, { AES } from "crypto-js";
 import { setUserData, setUserError, setUserLoading } from "../contexts/reducers/index.ts";
+import { disconnect } from 'wagmi/actions';
+import { wagmiConfig } from '../wagmiConfig.ts';
 
 
 const SECRET_KEY = import.meta.env.TOKEN_SECRET_KEY || "secret_key";
@@ -112,7 +114,10 @@ api.interceptors.response.use(
       store.dispatch(setUserData(user.data));
     } catch {
       clearTokens();
+     
       store.dispatch(setUserError("Session expired. Please log in again."));
+      await disconnect(wagmiConfig, {})
+      window.location.reload()
     }
   }
 })();
@@ -128,6 +133,7 @@ const validateUser = async () => {
       store.dispatch(setUserData({isLogedIn: "yes",...user.data}));
     } catch {
       clearTokens();
+ 
       store.dispatch(setUserError("Session expired. Please log in again."));
     }
   }
