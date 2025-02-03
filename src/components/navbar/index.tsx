@@ -1,6 +1,6 @@
 import { ConnectButton, useConnectModal } from "@rainbow-me/rainbowkit";
 import "./index.scss";
-import { Button, Modal } from "antd";
+import { Button, message, Modal } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { useAccount, useSignMessage, useDisconnect } from "wagmi";
 import { useEffect, useState } from "react";
@@ -15,6 +15,7 @@ import { shortenAddress } from "../../utils/index.ts";
 import { setUserError } from "../../contexts/reducers/index.ts";
 
 import { RxHamburgerMenu } from "react-icons/rx";
+import { getTokens } from "../../services/apiconfig.ts";
 function Navbar() {
   const { address, isConnected } = useAccount();
   const sign = useSignMessage();
@@ -22,8 +23,9 @@ function Navbar() {
   const { openConnectModal } = useConnectModal();
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
-  const { isLoading, profile } = useAppSelector((state) => state.user);
+  const { isLoading, profile, error } = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
+  const cookies = getTokens();
 
   const showModal = () => {
     isConnected ? setOpenModal(true) : openConnectModal();
@@ -56,12 +58,18 @@ function Navbar() {
   };
 
   useEffect(() => {
-    if (isConnected && profile.isLogedIn == "no") {
+    if (isConnected && !cookies.token && profile.isLogedIn == "no") {
       handleMsgSign();
-    } else if (!isConnected && profile.isLogedIn == "yes") {
-      dispatch(setUserError("Disconnected"));
     }
   }, [isConnected, profile]);
+
+  useEffect(() => {
+    if (isConnected && error.includes("expired")) {
+      message.error("Session Expired,Please Login Again!");
+      navigate("/");
+      disconnect();
+    }
+  }, [isConnected, error]);
 
   const handleDisconnect = async () => {
     try {
