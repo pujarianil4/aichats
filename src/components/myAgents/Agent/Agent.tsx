@@ -69,7 +69,7 @@ export default function Agent({
     {
       key: "3",
       label: "Knowledge Base",
-      children: <KnowledgeBase />,
+      children: <KnowledgeBase agentId={agentData.id} />,
     },
     {
       key: "4",

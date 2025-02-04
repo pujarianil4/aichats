@@ -38,7 +38,21 @@ body {
 }
 
 button {
-  border-radius: 20px;
+  border-radius: 20px !important;
+  border: 1px solid var(--primary);
+  padding: 8px 20px;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+  color: var(--light);
+  height: max-content;
+}
+
+.secondary {
+  border-radius: 20px !important;
   border: 1px solid var(--primary);
   padding: 8px 20px;
   font-size: 1em;

@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { InboxOutlined } from "@ant-design/icons";
 import type { UploadProps } from "antd";
 import { message, Upload } from "antd";
+import { useParams } from "react-router-dom";
+import { getTokens } from "../../../services/apiconfig.ts";
 
 const { Dragger } = Upload;
 
@@ -11,12 +13,16 @@ interface IProps {
 
 const CustomUpload = ({ onSuccess }: IProps) => {
   const [fileList, setFileList] = useState<any[]>([]);
-
+  const { agentId } = useParams();
+  const cookies = getTokens();
   const props: UploadProps = {
     name: "file",
     multiple: false,
     maxCount: 1,
-    action: "https://ai-agent-r139.onrender.com/upload/kb/017d7ac6e29ce69c",
+    action: `https://ai-agent-r139.onrender.com/upload/kb/file/${agentId}`,
+    headers: {
+      Authorization: `Bearer ${cookies.token}`, // Example token
+    },
     accept: ".pdf,.txt,.doc,.docx",
     fileList, // Controlled file list
     defaultFileList: [
@@ -64,9 +70,9 @@ const CustomUpload = ({ onSuccess }: IProps) => {
       <p className='ant-upload-text'>
         Click or drag file to this area to upload
       </p>
-      {/* <p className='ant-upload-hint'>
+      <p className='ant-upload-text'>
         Only files with the following formats are allowed: PDF, TXT, DOC, DOCX.
-      </p> */}
+      </p>
     </Dragger>
   );
 };
