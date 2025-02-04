@@ -21,69 +21,24 @@
 
   .agent_card_container {
     margin-top: 1rem;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
 
-    @include lessThan(xxl) {
-      grid-template-columns: repeat(3, 1fr);
+    .agent_cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+
+      @include lessThan(xxl) {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      @include lessThan(lg) {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      @include lessThan(md) {
+        grid-template-columns: repeat(1, 1fr);
+      }
     }
-
-    @include lessThan(lg) {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    @include lessThan(md) {
-      grid-template-columns: repeat(1, 1fr);
-    }
-
-    // .agent_card {
-    //   padding: 16px;
-    //   border-radius: 12px;
-    //   background-color: var(--tertiary-bg);
-    //   min-width: 280px;
-    //   width: fit-content;
-    //   min-height: 328px;
-
-    //   h3 {
-    //     font-size: 18px;
-    //     font-weight: 500;
-
-    //     .deactive,
-    //     .active {
-    //       padding: 2px 4px;
-    //       border-radius: 4px;
-    //       font-size: 14px;
-    //     }
-
-    //     .active {
-    //       border: 1px solid var(--success);
-    //       color: var(--success);
-    //       background-color: var(--active-light-bg);
-    //     }
-
-    //     .deactive {
-    //       border: 1px solid var(--error);
-    //       color: var(--error);
-    //       background-color: var(--active-light-bg); // update later
-    //     }
-    //   }
-
-    //   p {
-    //     font-size: 14px;
-    //     display: -webkit-box;
-    //     line-clamp: 2;
-    //     -webkit-line-clamp: 2;
-    //     -webkit-box-orient: vertical;
-    //     overflow: hidden;
-    //     text-overflow: ellipsis;
-    //   }
-
-    //   h2 {
-    //     font-size: 24px;
-    //     font-weight: 500;
-    //   }
-    // }
 
     .agent_card {
       box-sizing: border-box;
