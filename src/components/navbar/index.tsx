@@ -118,6 +118,9 @@ function Navbar() {
     Prototype: () => navigate("/prototype"),
     About: () => navigate("/about"),
   };
+  if (isConnected) {
+    menuActions["My Agents"] = () => navigate("/myagent");
+  }
 
   const handleMenuSelect = (label: string) => {
     const action = menuActions[label];
