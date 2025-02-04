@@ -50,4 +50,11 @@ export const ROUTES = [
     name: "agentPage",
     isPrivate: false,
   },
+  {
+    path: "/*",
+    exact: false,
+    component: lazy(() => import("../pages/ErrorPage404/index.tsx")),
+    name: "ErrorPage",
+    isPrivate: false,
+  },
 ];

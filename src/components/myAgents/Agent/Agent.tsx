@@ -8,19 +8,25 @@ import SocialModal from "./socialModal.tsx";
 import { FaCopy } from "react-icons/fa";
 import KnowledgeBase from "./KnowledgeBase.tsx";
 import Capabilities from "./Capabilities.tsx";
+import { LuPanelLeftClose } from "react-icons/lu";
 
 import { useParams } from "react-router-dom";
 import { getMyAgentData } from "../../../services/agent.ts";
 import { shortenAddress } from "../../../utils/index.ts";
 import CopyButton from "../../common/copyButton.tsx";
 
-type prop = {
+interface IProps {
+  isEmulatorOpen: boolean;
+  toggleEmulator: () => void;
   agent: any;
-};
+}
 
-export default function Agent({ agent }: prop) {
+export default function Agent({
+  isEmulatorOpen,
+  toggleEmulator,
+  agent,
+}: IProps) {
   const { data: agentData, isLoading } = agent;
-
   const onChange = (key: string | string[]) => {
     // console.log(key);
   };
@@ -98,6 +104,13 @@ export default function Agent({ agent }: prop) {
             </div>
           </div>
         </div>
+        {!isEmulatorOpen && (
+          <LuPanelLeftClose
+            size={18}
+            className='toggle_btn'
+            onClick={toggleEmulator}
+          />
+        )}
       </div>
       <div className='form'>
         <Collapse
