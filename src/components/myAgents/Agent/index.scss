@@ -2,11 +2,10 @@
   display: flex;
   width: 100%;
   position: relative;
-  overflow: hidden;
+  // overflow: hidden;
 
   .agent {
-    width: 100%;
-    overflow: auto;
+    flex-grow: 1; // overflow: auto;
     transition: width 0.3s ease-in-out;
     margin: 0 1rem;
   }
@@ -41,12 +40,13 @@
 
     .emulator {
       width: 37%;
+      max-width: 400px;
       opacity: 1;
     }
   }
 
   @media (max-width: 992px) {
-    height: calc(100vh - 150px);
+    min-height: calc(100vh - 150px);
     .agent {
       width: 100%;
     }
