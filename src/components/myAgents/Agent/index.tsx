@@ -102,7 +102,7 @@ export default function AgentHome() {
         <Agent
           isEmulatorOpen={isEmulatorOpen}
           toggleEmulator={toggleEmulator}
-          agent={agent}
+          agent={{ ...agent, id: agentId }}
         />
       </div>
 
