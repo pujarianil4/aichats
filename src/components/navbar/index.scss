@@ -21,21 +21,60 @@
     }
   }
 
-  .search {
-    input {
-      background: var(--primary-bg);
-      padding: 10px 15px;
-      border: none;
-      border-radius: 20px;
-      width: 200px;
+  .address {
+    background: var(--primary-bg);
+    border: 1px solid var(--primary) !important;
+  }
 
+  .search {
+    display: flex;
+    align-items: center;
+    position: relative;
+    background: var(--primary-bg);
+    border-radius: 5px;
+    .search-icon {
+      display: none;
+      cursor: pointer;
+
+      margin-left: 5px;
+      width: 14px;
+      @include lessThan(sm) {
+        display: block;
+      }
+    }
+
+    .search-input {
+      width: 200px;
       color: var(--light);
+      border: none;
+      border-radius: 5px;
+      transition: width 0.3s ease-in-out;
+      padding: 10px 15px;
+      font-size: 14px;
+      outline: none;
+      cursor: pointer;
+      background: var(--primary-bg);
+      @include lessThan(sm) {
+        width: 0px;
+        padding: 5px;
+        cursor: pointer;
+      }
+    }
+
+    .search-input.expanded {
+      @include lessThan(sm) {
+        width: 120px;
+        cursor: text;
+        font-size: 12px;
+        height: 20px;
+      }
     }
   }
 
   .mobile {
     display: none;
-    @include lessThan(xl) {
+
+    @include lessThan(lg) {
       display: block;
     }
   }
@@ -46,14 +85,19 @@
 
     button {
       border-radius: 15px;
-    }
 
-    @include lessThan(xl) {
-      display: none;
+      @include lessThan(md) {
+        font-size: 12px;
+      }
     }
   }
 }
 
+.hide {
+  @include lessThan(lg) {
+    display: none;
+  }
+}
 .modal_content {
   display: flex;
   justify-content: space-around;
@@ -95,6 +139,9 @@
 nav {
   display: flex;
   align-items: center;
+  @include lessThan(lg) {
+    display: none;
+  }
   ul {
     display: flex;
     align-items: center;

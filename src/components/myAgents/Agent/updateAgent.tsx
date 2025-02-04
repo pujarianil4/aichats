@@ -208,9 +208,10 @@ export default function UpdateAgent({
           : agentData.instructions,
       };
       console.log("sendData", updatedData);
-      await updateAgentData(agentData.id, updatedData);
-
-      NotificationMessage("success", "Agent Updated Successfully!");
+      const response = await updateAgentData(agentData.id, updatedData);
+      if (response) {
+        NotificationMessage("success", "Agent Updated Successfully!");
+      }
     } catch (error) {
       console.error(error);
       NotificationMessage("error", "Failed to Update Agent. Try Again");

@@ -1,6 +1,7 @@
 @import "/src/styles/breakPoints";
 
 .footer {
+  margin-top: 50px;
   padding: 20px 40px;
   background: #131313;
   color: white;
@@ -38,6 +39,9 @@
         svg {
           width: 20px;
           height: auto;
+          &:hover {
+            color: var(--primary);
+          }
           @include lessThan(md) {
             width: 16px;
             height: auto;
@@ -92,7 +96,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-size: 14px;
     @include lessThan(md) {
+      font-size: 12px;
+      display: none;
+    }
+    @include lessThan(sm) {
+      font-size: 10px;
       display: none;
     }
     .footer_token {
@@ -123,14 +133,18 @@
       display: flex;
       gap: 15px;
       @include lessThan(md) {
-        gap: 2rem;
+        gap: 3rem;
       }
-      @include lessThan(sm) {
+      @include lessThan(xs) {
         gap: 10px;
       }
+
       a {
         color: white;
         text-decoration: none;
+        &:hover {
+          color: var(--primary);
+        }
         @include lessThan(md) {
           font-size: 12px;
         }

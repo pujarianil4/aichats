@@ -6,6 +6,7 @@ import { FaXTwitter } from "react-icons/fa6";
 
 import { FaTelegramPlane } from "react-icons/fa";
 import { FaRegFileAlt } from "react-icons/fa";
+import CopyButton from "../common/copyButton.tsx";
 
 const Footer = () => {
   return (
@@ -43,7 +44,10 @@ const Footer = () => {
         <p>Disclaimer</p>
         <div className='footer_token'>
           <span>$LAMAA</span>
-          <button className='footer__contract'>0x0b3e...4e7E1b</button>
+          <button className='footer__contract'>
+            <span>0xfE.....10a2 </span>
+            <CopyButton text='0xfEA4Ff6Ce70b9AE6Dd77FdeE8aaF090827710a24' />
+          </button>
         </div>
       </div>
       <div className='social_bx'>

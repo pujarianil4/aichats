@@ -51,11 +51,7 @@ export const getMyAgentData = async (agentId: string) => {
 export const updateAgentData = async (agentId: string, data: any) => {
   try {
     const response = await api.patch(`/agent/${agentId}`, data);
-    const tokenData = await getMaketDataByTokenAddress(
-      "base",
-      response.data.token.tCAddress
-    );
-    return { ...response.data, tokenData };
+    return response.data;
   } catch (error) {
     console.error("Error", error);
     throw error;
