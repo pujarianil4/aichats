@@ -1,11 +1,12 @@
 import { Popover } from "antd";
 import { TooltipPlacement } from "antd/es/tooltip";
 import React, { useState } from "react";
-import { IoIosMore } from "react-icons/io";
+
 import "./index.scss";
 interface List {
   label: string;
   icon?: any;
+  class?: string;
 }
 interface IPopup {
   children: React.ReactNode;
@@ -33,9 +34,13 @@ export default function CPopup({
   };
   const content = (
     <div className='cpopup_content'>
-      {list?.map(({ icon: Icon, label }: List) => (
-        <div onClick={() => handleSelect(label)} key={label} className='option'>
-          {Icon && Icon}
+      {list?.map(({ icon: Icon, label, class: customClass }: List) => (
+        <div
+          onClick={() => handleSelect(label)}
+          key={label}
+          className={`option ${customClass || ""}`}
+        >
+          {Icon && <Icon />}
           <span>{label}</span>
         </div>
       ))}

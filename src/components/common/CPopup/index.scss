@@ -1,3 +1,4 @@
+@import "/src/styles/breakPoints";
 .cpopup_content {
   min-width: 120px;
   border-radius: 10px !important;
@@ -19,6 +20,15 @@
     }
     svg {
       width: 20px;
+    }
+  }
+
+  .mobile_hide {
+    @include lessThan(xl) {
+      display: none;
+    }
+    @include lessThan(lg) {
+      display: block;
     }
   }
 }

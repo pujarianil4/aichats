@@ -34,6 +34,12 @@ function Navbar() {
   const { disconnect } = useDisconnect();
   const { openChainModal } = useChainModal();
 
+  const navLinks = [
+    { href: "/", label: "Sentient" },
+    { href: "#", label: "Prototype" },
+    { href: "#", label: "About" },
+  ];
+
   const { openConnectModal } = useConnectModal();
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
@@ -109,101 +115,138 @@ function Navbar() {
       dispatch(setUserError("Disconnected"));
       navigate("/");
       disconnect();
-    } catch (error) {}
+      setTimeout(() => {
+        window?.location?.reload();
+      }, 1000);
+    } catch (error) {
+      setTimeout(() => {
+        window?.location?.reload();
+      }, 1000);
+    }
   };
 
-  const menuActions: Record<string, () => void> = {
-    "Create Agent": () => setOpenModal(true),
-    Sentient: () => navigate("/sentient"),
-    Prototype: () => navigate("/prototype"),
-    About: () => navigate("/about"),
+  const defaultMenuActions: Record<
+    string,
+    { action: () => void; className?: string }
+  > = {
+    Sentient: {
+      action: () => navigate("/sentient"),
+      className: "mobile_hide",
+    },
+    Prototype: {
+      action: () => navigate("/prototype"),
+      className: "mobile_hide",
+    },
+    About: { action: () => navigate("/about"), className: "mobile_hide" },
   };
-  if (isConnected) {
-    menuActions["My Agents"] = () => navigate("/myagent");
-  }
+
+  const connectedMenuActions: Record<
+    string,
+    { action: () => void; className?: string }
+  > = {
+    "My Agents": {
+      action: () => navigate("/myagent"),
+    },
+    "Create New Agent": {
+      action: () => setOpenModal(true),
+    },
+  };
+
+  const menuActions = isConnected
+    ? { ...connectedMenuActions, ...defaultMenuActions }
+    : defaultMenuActions;
 
   const handleMenuSelect = (label: string) => {
-    const action = menuActions[label];
-    if (action) action();
+    const menuItem = menuActions[label];
+    if (menuItem && menuItem.action) {
+      menuItem.action();
+    }
   };
 
   return (
     <>
-      <div className='navbar_container'>
-        <div className='navigation'>
-          <a href='/'>
-            <img src={LammaLogo} alt='logo' />
-          </a>
-          <nav>
-            <ul>
-              <li>
-                <a href='#'>Sentient</a>
-              </li>
-              <li>
-                <a href='#'>Prototype</a>
-              </li>
-              <li>
-                <a href='#'>About</a>
-              </li>
-            </ul>
-          </nav>
-        </div>
-        <div className='search' onClick={() => setSearchExpanded(true)}>
-          <IoSearch className='search-icon' size={22} />
-          <input
-            ref={searchRef}
-            type='text'
-            className={`search-input ${isSearchExpanded ? "expanded" : ""}`}
-            placeholder='Search...'
-            onFocus={() => setSearchExpanded(true)}
-          />
-        </div>
-        <div className='actions'>
-          {/* <Link to={"/create-agent"}> */}{" "}
-          {isConnected && (
-            <a href={`/myagent`}>
-              <Button className='hide' type='primary'>
-                My Agents
-              </Button>
-            </a>
-          )}
-          <Button className='hide' onClick={showModal}>
-            Create New Agent
-          </Button>
-          {/* </Link> */}
-          {isConnected ? (
-            <CPopup
-              onSelect={(label) => {
-                if (label === "Disconnect") handleDisconnect();
-                if (label === "Switch Network") openChainModal();
-              }}
-              onAction='click'
-              position='bottomRight'
-              list={[{ label: "Disconnect" }, { label: "Switch Network" }]}
-            >
-              <Button type='primary' className='address'>
-                {address && shortenAddress(address)}
-              </Button>
-            </CPopup>
-          ) : (
-            <Button onClick={openConnectModal} type='primary'>
-              Connect Wallet
-            </Button>
-          )}
-        </div>
-        <div className='mobile'>
-          <CPopup
-            onSelect={handleMenuSelect}
-            onAction='click'
-            position='bottomRight'
-            list={Object.keys(menuActions).map((label) => ({ label }))}
-          >
-            <div className='other'>
-              <RxHamburgerMenu color='#ff00b7' size={24} />
+      <div className='navbar'>
+        <div className='container'>
+          <div className='content'>
+            <div>
+              <a href='/' className='logo'>
+                <img src={LammaLogo} alt='logo' />
+              </a>
             </div>
-          </CPopup>
+
+            <div className='nav'>
+              {navLinks.map((link) => (
+                <a key={link.label} href={link.href} className='link'>
+                  {link.label}
+                </a>
+              ))}
+            </div>
+
+            <div className='search' onClick={() => setSearchExpanded(true)}>
+              <IoSearch className='search-icon' size={22} />
+              <input
+                ref={searchRef}
+                type='text'
+                className={`search-input ${isSearchExpanded ? "expanded" : ""}`}
+                placeholder='Search...'
+                onFocus={() => setSearchExpanded(true)}
+              />
+            </div>
+
+            <div className='actions'>
+              {isConnected && (
+                <a href={`/myagent`}>
+                  <Button className='hide myagent_btn' type='primary'>
+                    My Agents
+                  </Button>
+                </a>
+              )}
+              <Button className='hide' onClick={showModal}>
+                Create New Agent
+              </Button>
+              {/* </Link> */}
+              {isConnected ? (
+                <CPopup
+                  onSelect={(label) => {
+                    if (label === "Disconnect") handleDisconnect();
+                    if (label === "Switch Network") openChainModal();
+                  }}
+                  onAction='click'
+                  position='bottomRight'
+                  list={[{ label: "Disconnect" }, { label: "Switch Network" }]}
+                >
+                  <Button type='primary' className='address'>
+                    {address && shortenAddress(address)}
+                  </Button>
+                </CPopup>
+              ) : (
+                <Button onClick={openConnectModal} type='primary'>
+                  Connect Wallet
+                </Button>
+              )}
+            </div>
+
+            <div className='mobile'>
+              <CPopup
+                onSelect={handleMenuSelect}
+                onAction='click'
+                position='bottomRight'
+                list={Object.entries(menuActions).map(
+                  ([label, { className }]) => ({
+                    label,
+                    class: className,
+                  })
+                )}
+              >
+                <div className='other'>
+                  <RxHamburgerMenu color='#ff00b7' size={24} />
+                </div>
+              </CPopup>
+            </div>
+          </div>
         </div>
       </div>
+
       <Modal
         open={openModal}
         title={"Create New AI Agent"}
