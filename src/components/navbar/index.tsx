@@ -1,9 +1,18 @@
-import { ConnectButton, useConnectModal } from "@rainbow-me/rainbowkit";
+import {
+  ConnectButton,
+  useConnectModal,
+  useChainModal,
+} from "@rainbow-me/rainbowkit";
 import "./index.scss";
-import { Button, message, Modal } from "antd";
+import { Button, message, Modal, Popover } from "antd";
 import { Link, useNavigate } from "react-router-dom";
-import { useAccount, useSignMessage, useDisconnect } from "wagmi";
-import { useEffect, useState } from "react";
+import {
+  useAccount,
+  useSignMessage,
+  useDisconnect,
+  useSwitchChain,
+} from "wagmi";
+import { useEffect, useRef, useState } from "react";
 import LammaLogo from "./../../assets/logo.png";
 import {
   handleAuthConnect,
@@ -13,14 +22,45 @@ import { authSignMsg } from "../../utils/contants.ts";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks.tsx";
 import { shortenAddress } from "../../utils/index.ts";
 import { setUserError } from "../../contexts/reducers/index.ts";
+
+import { RxHamburgerMenu } from "react-icons/rx";
 import { getTokens } from "../../services/apiconfig.ts";
+import CPopup from "../common/CPopup/Cpopup.tsx";
+import { IoSearch } from "react-icons/io5";
+
 function Navbar() {
   const { address, isConnected } = useAccount();
   const sign = useSignMessage();
   const { disconnect } = useDisconnect();
+  const { openChainModal } = useChainModal();
+
+  const navLinks = [
+    { href: "/", label: "Sentient" },
+    { href: "#", label: "Prototype" },
+    { href: "#", label: "About" },
+  ];
+
   const { openConnectModal } = useConnectModal();
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
+
+  const [isSearchExpanded, setSearchExpanded] = useState(false);
+  const searchRef = useRef<HTMLInputElement>(null);
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      searchRef.current &&
+      !searchRef.current.contains(event.target as Node)
+    ) {
+      setSearchExpanded(false);
+    }
+  };
+
+  useState(() => {
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  });
+
   const { isLoading, profile, error } = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
   const cookies = getTokens();
@@ -75,56 +115,138 @@ function Navbar() {
       dispatch(setUserError("Disconnected"));
       navigate("/");
       disconnect();
-    } catch (error) {}
+      setTimeout(() => {
+        window?.location?.reload();
+      }, 1000);
+    } catch (error) {
+      setTimeout(() => {
+        window?.location?.reload();
+      }, 1000);
+    }
+  };
+
+  const defaultMenuActions: Record<
+    string,
+    { action: () => void; className?: string }
+  > = {
+    Sentient: {
+      action: () => navigate("/sentient"),
+      className: "mobile_hide",
+    },
+    Prototype: {
+      action: () => navigate("/prototype"),
+      className: "mobile_hide",
+    },
+    About: { action: () => navigate("/about"), className: "mobile_hide" },
+  };
+
+  const connectedMenuActions: Record<
+    string,
+    { action: () => void; className?: string }
+  > = {
+    "My Agents": {
+      action: () => navigate("/myagent"),
+    },
+    "Create New Agent": {
+      action: () => setOpenModal(true),
+    },
+  };
+
+  const menuActions = isConnected
+    ? { ...connectedMenuActions, ...defaultMenuActions }
+    : defaultMenuActions;
+
+  const handleMenuSelect = (label: string) => {
+    const menuItem = menuActions[label];
+    if (menuItem && menuItem.action) {
+      menuItem.action();
+    }
   };
 
   return (
     <>
-      <div className='navbar_container'>
-        <div className='navigation'>
-          <a href='/'>
-            {" "}
-            <img src={LammaLogo} alt='logo' />
-          </a>
-          <nav>
-            <ul>
-              <li>
-                <a href='#'>Sentient</a>
-              </li>
-              <li>
-                <a href='#'>Prototype</a>
-              </li>
-              <li>
-                <a href='#'>About</a>
-              </li>
-            </ul>
-          </nav>
-        </div>
-        <div className='search'>
-          <input type='text' placeholder='Search' />
-        </div>
-        <div className='actions'>
-          {/* <Link to={"/create-agent"}> */}{" "}
-          {isConnected && (
-            <a href={`/myagent`}>
-              {" "}
-              <Button type='primary'> My Agents</Button>{" "}
-            </a>
-          )}
-          <Button onClick={showModal}> Create New Agent </Button>
-          {/* </Link> */}
-          {isConnected ? (
-            <Button onClick={handleDisconnect} type='primary'>
-              {address && shortenAddress(address)}
-            </Button>
-          ) : (
-            <Button onClick={openConnectModal} type='primary'>
-              {" "}
-              Connect Wallet
-            </Button>
-          )}
+      <div className='navbar'>
+        <div className='container'>
+          <div className='content'>
+            <div>
+              <a href='/' className='logo'>
+                <img src={LammaLogo} alt='logo' />
+              </a>
+            </div>
+
+            <div className='nav'>
+              {navLinks.map((link) => (
+                <a key={link.label} href={link.href} className='link'>
+                  {link.label}
+                </a>
+              ))}
+            </div>
+
+            <div className='search' onClick={() => setSearchExpanded(true)}>
+              <IoSearch className='search-icon' size={22} />
+              <input
+                ref={searchRef}
+                type='text'
+                className={`search-input ${isSearchExpanded ? "expanded" : ""}`}
+                placeholder='Search...'
+                onFocus={() => setSearchExpanded(true)}
+              />
+            </div>
+
+            <div className='actions'>
+              {isConnected && (
+                <a href={`/myagent`}>
+                  <Button className='hide myagent_btn' type='primary'>
+                    My Agents
+                  </Button>
+                </a>
+              )}
+              <Button className='hide' onClick={showModal}>
+                Create New Agent
+              </Button>
+              {/* </Link> */}
+              {isConnected ? (
+                <CPopup
+                  onSelect={(label) => {
+                    if (label === "Disconnect") handleDisconnect();
+                    if (label === "Switch Network") openChainModal();
+                  }}
+                  onAction='click'
+                  position='bottomRight'
+                  list={[{ label: "Disconnect" }, { label: "Switch Network" }]}
+                >
+                  <Button type='primary' className='address'>
+                    {address && shortenAddress(address)}
+                  </Button>
+                </CPopup>
+              ) : (
+                <Button onClick={openConnectModal} type='primary'>
+                  Connect Wallet
+                </Button>
+              )}
+            </div>
+
+            <div className='mobile'>
+              <CPopup
+                onSelect={handleMenuSelect}
+                onAction='click'
+                position='bottomRight'
+                list={Object.entries(menuActions).map(
+                  ([label, { className }]) => ({
+                    label,
+                    class: className,
+                  })
+                )}
+              >
+                <div className='other'>
+                  <RxHamburgerMenu color='#ff00b7' size={24} />
+                </div>
+              </CPopup>
+            </div>
+          </div>
         </div>
       </div>
+
       <Modal
         open={openModal}
         title={"Create New AI Agent"}

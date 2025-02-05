@@ -1,0 +1,53 @@
+@import "/src/styles/breakPoints";
+.cpopup_content {
+  min-width: 120px;
+  border-radius: 10px !important;
+  .option {
+    padding: 8px 8px;
+    cursor: pointer;
+    color: var(--primary);
+    text-transform: capitalize;
+    border-radius: 5px;
+
+    &:hover {
+      background: var(--primary);
+      color: var(--light);
+      // opacity: 0.8;
+    }
+
+    span {
+      font-size: 11px;
+    }
+    svg {
+      width: 20px;
+    }
+  }
+
+  .mobile_hide {
+    @include lessThan(xl) {
+      display: none;
+    }
+    @include lessThan(lg) {
+      display: block;
+    }
+  }
+}
+.ant-popover {
+  margin: 10px !important;
+
+  .ant-popover-content {
+    border-radius: 10px !important;
+    .ant-popover-inner {
+      padding: 0px !important;
+      background-color: #2c2c2c;
+      border-radius: 8px;
+      .ant-popover-inner-content {
+        color: var(--primary-text);
+      }
+    }
+  }
+  .ant-popover-arrow::before {
+    background: var(--secondary-bg);
+    display: none;
+  }
+}
