@@ -93,7 +93,6 @@ export default function ChatAdminSettings({
       );
       if (type === "admin") {
         response = admins;
-        console.log("ADMIN_RES", response);
       } else if (type === "members") {
         const res = await getAllUsersbyInstanceId(instanceData?.id);
         const memberData = res?.map((item: any) => ({
@@ -107,14 +106,12 @@ export default function ChatAdminSettings({
             (member: any) => !adminAddresses.includes(member.address)
           ),
         ];
-        console.log("MEMBERS_RES", response);
       } else if (type === "muted") {
         const res = await getMutedUsersWithInstanceId(instanceData?.id);
         response = res?.map((item: any) => ({
           address: item?.walletAddress,
           mutedAt: item?.mutedAt,
         }));
-        console.log("MUTED_RES_1", response);
       }
       cache[type] = { data: response, lastFetched: currentTime };
       setListData(response);
