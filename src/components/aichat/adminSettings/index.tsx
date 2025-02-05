@@ -29,11 +29,13 @@ interface IProps {
   instanceData: InstanceData;
   updateStreamUrl: (youtubeLink: string, minTokenValue: string) => void;
   setIsSettings: (value: boolean) => void;
+  mutedUsers: string[];
 }
 export default function ChatAdminSettings({
   instanceData,
   updateStreamUrl,
   setIsSettings,
+  mutedUsers,
 }: IProps) {
   const { address } = useAccount();
   const [minAmount, setMinAmount] = useState("");
@@ -198,6 +200,7 @@ export default function ChatAdminSettings({
           currentView={currentView}
           listData={listData}
           setListData={setListData}
+          mutedUsers={mutedUsers}
           isLoading={isLoading}
           copiedIndex={copiedIndex}
           setCopiedIndex={setCopiedIndex}

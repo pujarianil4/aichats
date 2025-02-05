@@ -222,6 +222,7 @@ export default function AiChats() {
         className='live'
       >
         <YoutubeVideo youtubeLink={instanceData?.streamUrl} />
+
         {/* {isModerator ||
           (instanceData?.adminAddress === address && (
             <div onClick={handleOpenModal} className='update'>
@@ -255,6 +256,7 @@ export default function AiChats() {
             instanceData={instanceData}
             updateStreamUrl={updateStreamUrl}
             setIsSettings={setIsSettings}
+            mutedUsers={mutedUsers}
           />
         ) : (
           <>
