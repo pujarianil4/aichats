@@ -1,11 +1,12 @@
 .emulator_container {
-  width: 350px;
+  position: absolute;
+  width: 94%;
   min-width: 300px;
   background-color: var(--primary-bg);
-  min-height: 300px;
   border-radius: 15px;
   padding: 12px;
   height: 80vh;
+  min-height: 300px;
   position: sticky;
   top: 0px;
   right: 0;

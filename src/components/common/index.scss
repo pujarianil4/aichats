@@ -25,3 +25,22 @@
 .ant-notification-notice {
   height: fit-content !important;
 }
+
+.no_data,
+.error404 {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    min-width: 240px;
+    max-width: 500px;
+    margin: auto;
+  }
+}
+
+.error404 {
+  height: calc(100vh - 252px);
+}

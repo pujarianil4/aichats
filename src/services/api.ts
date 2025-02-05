@@ -265,15 +265,7 @@ export const getAllAgents = async () => {
   }
 };
 
-export const getKBbyAgentID = async () => {
-  try {
-    const response = await api.get(`/upload/kb/017d7ac6e29ce69c`);
-    return response.data;
-  } catch (error) {
-    console.error("Error", error);
-    throw error;
-  }
-};
+
 
 export const getAllAgentByUser = async () => {
   try {

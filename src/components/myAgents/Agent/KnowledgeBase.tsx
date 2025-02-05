@@ -8,10 +8,16 @@ import { IoIosSearch } from "react-icons/io";
 import { BsTable } from "react-icons/bs";
 import { MdOutlineUploadFile } from "react-icons/md";
 
-import { Checkbox, Modal } from "antd";
+import { Button, Checkbox, message, Modal } from "antd";
 import type { CheckboxProps } from "antd";
 import CustomUpload from "../../common/Upload/Upload.tsx";
-import { getKBbyAgentID } from "../../../services/api.ts";
+import {
+  deleteKbByAgent,
+  getKBbyAgentID,
+  uploadTextByAgent,
+} from "../../../services/agent.ts";
+import { timeAgo } from "../../../utils/index.ts";
+import { useQuery } from "@tanstack/react-query";
 
 // const kbData = [
 //   {
@@ -36,24 +42,29 @@ interface IKBData {
   aId: string;
   filename: string;
   content: string;
-  type: "documents";
+  typ: string;
   createdAt: string;
 }
 
 const icons: any = {
-  richtext: <RxText size={25} />,
+  text: <RxText size={25} />,
   website: <IoIosGlobe size={25} />,
   table: <BsTable size={25} />,
-  documents: <IoDocumentTextOutline size={25} />,
+  file: <IoDocumentTextOutline size={25} />,
   search: <IoIosSearch size={25} />,
   upload: <MdOutlineUploadFile size={25} />,
 };
 
-export default function KnowledgeBase() {
+export default function KnowledgeBase({ agentId }: { agentId: string }) {
   const [checkedList, setCheckedList] = useState<number[]>([]);
   const [openModal, setOpenModal] = useState(false);
   const [TabModalContent, setTabModalContent] = useState("website");
-  const [kbData, setKbData] = useState<IKBData[]>([]);
+  // const [kbData, setKbData] = useState<IKBData[]>([]);
+  const { data: kbData, refetch } = useQuery<IKBData[]>({
+    queryKey: ["kbbyagent", agentId],
+    queryFn: () => getKBbyAgentID(agentId!),
+    enabled: !!agentId,
+  });
 
   const showModal = (tab: string) => {
     setTabModalContent(tab);
@@ -68,10 +79,13 @@ export default function KnowledgeBase() {
 
   const handleCancel = () => {
     setOpenModal(false);
+    refetch();
   };
-  const checkAll = kbData.length ? kbData.length === checkedList.length : false;
+  const checkAll = kbData?.length
+    ? kbData?.length === checkedList.length
+    : false;
   const indeterminate =
-    checkedList.length > 0 && checkedList.length < kbData.length;
+    kbData && checkedList.length > 0 && checkedList.length < kbData?.length;
 
   const onCheckChange = (id: number) => {
     if (checkedList.includes(id)) {
@@ -82,15 +96,22 @@ export default function KnowledgeBase() {
   };
 
   const onCheckAllChange: CheckboxProps["onChange"] = (e) => {
-    setCheckedList(e.target.checked ? kbData.map((d) => d.id) : []);
+    kbData && setCheckedList(e.target.checked ? kbData?.map((d) => d.id) : []);
   };
 
-  useEffect(() => {
-    (async () => {
-      const data = await getKBbyAgentID();
-      setKbData(data);
-    })();
-  }, []);
+  const handleDeleteKb = async () => {
+    try {
+      const ids = checkedList;
+
+      console.log("ids", ids);
+      await deleteKbByAgent(agentId, {
+        ids,
+      });
+      message.success("Delete Successfully !");
+    } catch (error) {
+      message.error("Failed to delete, please try again");
+    }
+  };
 
   const modalContent: any = {
     website: (
@@ -135,22 +156,50 @@ export default function KnowledgeBase() {
         </div>
       </div>
     ),
-    richText: (
-      <div className='add_richtext_modal'>
-        <h2>Add Rich Text</h2>
+    richText: (() => {
+      const [richTextData, setRichTextData] = useState("");
+      const [loading, setLoading] = useState(false);
 
-        <div className='input_box'>
-          <textarea
-            rows={10}
-            id='bio'
-            placeholder='This is the short bio that will be shown at your agents profile.'
-          />
+      const handleSaveText = async () => {
+        setLoading(true);
+        try {
+          await uploadTextByAgent(agentId, {
+            content: richTextData,
+          });
+          handleCancel();
+          message.success("Text uploaded Successfully !");
+          console.log(richTextData);
+        } catch (error) {
+          message.error("Failed to Upload, Please Try Again");
+        } finally {
+          setLoading(false);
+        }
+      };
+      return (
+        <div className='add_richtext_modal'>
+          <h2>Add Rich Text</h2>
+
+          <div className='input_box'>
+            <textarea
+              rows={10}
+              id='bio'
+              value={richTextData}
+              onChange={(e) => setRichTextData(e.target.value)}
+              placeholder='This is the short bio that will be shown at your agents profile.'
+            />
+          </div>
+          <div className='btn'>
+            <Button
+              className='secondary'
+              loading={loading}
+              onClick={handleSaveText}
+            >
+              Save
+            </Button>
+          </div>
         </div>
-        <div className='btn'>
-          <button>Save</button>
-        </div>
-      </div>
-    ),
+      );
+    })(),
     webSearch: (
       <div className='add_richtext_modal'>
         <h2>Search the Web</h2>
@@ -192,8 +241,8 @@ export default function KnowledgeBase() {
               checked={checkAll}
             />
           </div>
-          {(indeterminate || checkAll) && kbData.length ? (
-            <div className='item'>
+          {(indeterminate || checkAll) && kbData?.length ? (
+            <div onClick={handleDeleteKb} className='item'>
               <p>Remove Selected</p>
             </div>
           ) : (
@@ -226,7 +275,7 @@ export default function KnowledgeBase() {
           )}
         </div>
         <div className='kb_body'>
-          {kbData.map((item) => (
+          {kbData?.map((item: any) => (
             <KBList
               key={item.id}
               item={item}
@@ -296,7 +345,7 @@ const KBList = ({
         </div>
       </div>
     ),
-    documents: (
+    file: (
       <div className='show_doc_modal'>
         <div
           // dangerouslySetInnerHTML={{ __html: item.content }}
@@ -327,20 +376,21 @@ const KBList = ({
         </div>
       </div>
     ),
-    richText: (
+    text: (
       <div className='add_richtext_modal'>
-        <h2>Add Rich Text</h2>
+        <h2>Text</h2>
 
         <div className='input_box'>
           <textarea
             rows={10}
             id='bio'
+            value={item.content}
             placeholder='This is the short bio that will be shown at your agents profile.'
           />
         </div>
-        <div className='btn'>
+        {/* <div className='btn'>
           <button>Save</button>
-        </div>
+        </div> */}
       </div>
     ),
     webSearch: (
@@ -382,11 +432,11 @@ const KBList = ({
             checked={checkedList.includes(item.id)}
           />
         </div>
-        <div onClick={() => showModal("documents")} className='item'>
-          <div className='icon'>{icons["documents"]}</div>
+        <div onClick={() => showModal(item.typ)} className='item'>
+          <div className='icon'>{icons[item.typ]}</div>
           <div className='content'>
-            <p>{"documents"}</p>
-            <span>{item.createdAt}</span>
+            <p>{item.filename}</p>
+            <span>{timeAgo(item.createdAt)}</span>
           </div>
         </div>
       </div>

@@ -6,18 +6,21 @@ import { BsThreeDots } from "react-icons/bs";
 import { LuPanelRightClose } from "react-icons/lu";
 import { Popover } from "antd";
 
-// Emulator animation for closing and opening
 // main agent_container and emulator container shold be scrolable
 // Show not chat UI
 
+// Emulator animation for closing and opening
 // pop over with 2 options as per SS
 /// 1 Start as new user - for start fresh chat, like clear old memory
 /// 2 Simulate timeout event - until this AI should waiting for user input
 // on reset chat button clear chat
 // with up and down arrow previous text are coming in chat input
 
-// Main Emulator Component
-export default function Emulator() {
+interface IProps {
+  toggleEmulator: () => void;
+}
+
+export default function Emulator({ toggleEmulator }: IProps) {
   const [messages, setMessages] = useState<{ sender: string; text: string }[]>(
     []
   );
@@ -51,7 +54,11 @@ export default function Emulator() {
   return (
     <div className='emulator_container'>
       <div className='emulator_head'>
-        <LuPanelRightClose size={18} />
+        <LuPanelRightClose
+          size={18}
+          className='toggle-btn'
+          onClick={toggleEmulator}
+        />
         <h3 style={{ textAlign: "center" }}>Emulator</h3>
         <div>
           <IoReloadSharp

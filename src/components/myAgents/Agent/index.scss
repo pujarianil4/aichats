@@ -1,6 +1,77 @@
 .agenthome {
   display: flex;
-  width: 95%;
-  margin: auto;
-  gap: 10px;
+  width: 100%;
+  position: relative;
+  // overflow: hidden;
+
+  .agent {
+    flex-grow: 1; // overflow: auto;
+    transition: width 0.3s ease-in-out;
+    margin: 0 1rem;
+  }
+
+  .drag-resizer {
+    width: 8px;
+    background: #ccc;
+    cursor: ew-resize;
+    height: 100vh;
+    transition: opacity 0.3s;
+    opacity: 0;
+  }
+
+  .emulator {
+    width: 0;
+    box-shadow: -5px 0 10px rgba(0, 0, 0, 0.2);
+    transition: width 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    opacity: 0;
+    overflow: hidden;
+    margin: 0 1rem;
+  }
+
+  &.emulator-open {
+    .agent {
+      width: calc(63% - 8px);
+      margin-right: 8px;
+    }
+
+    .drag-resizer {
+      opacity: 1;
+    }
+
+    .emulator {
+      width: 37%;
+      max-width: 400px;
+      opacity: 1;
+    }
+  }
+
+  @media (max-width: 992px) {
+    min-height: calc(100vh - 150px);
+    .agent {
+      width: 100%;
+    }
+
+    .drag-resizer {
+      display: none;
+    }
+
+    .emulator {
+      position: absolute;
+      right: -100%;
+      width: 100%;
+      transition: right 0.3s ease-in-out;
+    }
+
+    &.emulator-open {
+      .agent {
+        width: 100%;
+        overflow: hidden;
+      }
+
+      .emulator {
+        right: 0;
+        height: 100%;
+      }
+    }
+  }
 }

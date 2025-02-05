@@ -11,9 +11,17 @@ export function shortenAddress(
   return `${address.slice(0, startLength)}...${address.slice(-endLength)}`;
 }
 
-export function timeAgo(timestamp: number) {
-  const now = Date.now();
-  const secondsAgo = Math.floor((now - timestamp * 1000) / 1000);
+export function timeAgo(timestamp: string | number) {
+  const now = Date.now(); // Current time in milliseconds
+  let timeInMs: number;
+
+  if (typeof timestamp === "string") {
+    timeInMs = new Date(timestamp).getTime(); // Convert ISO string to milliseconds
+  } else {
+    timeInMs = timestamp * 1000; // Convert seconds to milliseconds if it's a number
+  }
+
+  const secondsAgo = Math.floor((now - timeInMs) / 1000); // Convert difference to seconds
 
   const units = [
     { label: "year", seconds: 365 * 24 * 60 * 60 },
@@ -34,6 +42,7 @@ export function timeAgo(timestamp: number) {
 
   return "just now";
 }
+
 
 export const toFixedNumber = (value: number, precision: number = 3) => {
   return Number(value).toFixed(precision);
