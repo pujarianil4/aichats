@@ -1,22 +1,18 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import "./agent.scss";
-import { FaXTwitter } from "react-icons/fa6";
-import { Collapse, Select } from "antd";
+import { Collapse } from "antd";
 import type { CollapseProps } from "antd";
-import NotificationMessage from "../../common/notificationMessage.tsx";
 import SocialModal from "./socialModal.tsx";
-import { FaCopy } from "react-icons/fa";
 import KnowledgeBase from "./KnowledgeBase.tsx";
 import Capabilities from "./Capabilities.tsx";
 ``;
 import { LuPanelLeftClose } from "react-icons/lu";
 
-import { useParams } from "react-router-dom";
-import { getMyAgentData } from "../../../services/agent.ts";
 import { shortenAddress } from "../../../utils/index.ts";
 import CopyButton from "../../common/copyButton.tsx";
 import UpdateAgent from "./updateAgent.tsx";
 import { FiEdit } from "react-icons/fi";
+import { BsCurrencyDollar } from "react-icons/bs";
 interface IProps {
   isEmulatorOpen: boolean;
   toggleEmulator: () => void;
@@ -124,6 +120,17 @@ export default function Agent({
                 onClick={toggleEmulator}
               />
             )}
+            <div className='credits_card'>
+              <div>
+                <p className='total_creadits'>20</p>
+                <p>
+                  Credits <span>Active</span>
+                </p>
+              </div>
+              <button>
+                <BsCurrencyDollar /> Add Credits
+              </button>
+            </div>
           </div>
           <div className='form'>
             <Collapse
