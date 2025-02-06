@@ -2,13 +2,11 @@ import "./sidePanel.scss";
 import TwitterFeed from "../twitterFeed/index.tsx";
 import Cowswap from "../cowSwap/index.tsx";
 import BondingCurve from "./bondingCurve/index.tsx";
+import { getColorForValue } from "../../../utils/index.ts";
 type prop = {
   tokenDetails: any;
 };
 
-export function getColorForValue(value: number): string {
-  return value < 0 ? "#D40000" : "#00e832";
-}
 export default function SidePanel({ tokenDetails }: prop) {
   return (
     <div className='sidepanel'>
