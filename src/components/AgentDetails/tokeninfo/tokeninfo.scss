@@ -33,6 +33,7 @@
         border-radius: 50%;
         background-color: aliceblue;
         margin: auto;
+        object-fit: cover;
         @include lessThan(md) {
           width: 50px;
           min-width: 50px;
@@ -41,7 +42,6 @@
           margin: 0;
         }
 
-        object-fit: cover;
         img {
           width: 100%;
           height: 100%;
