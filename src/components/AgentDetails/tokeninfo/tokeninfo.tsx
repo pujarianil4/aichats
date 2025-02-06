@@ -1,6 +1,10 @@
 import "./tokeninfo.scss";
 import GeckoChart from "../../Charts/GeckoChart.tsx";
-import { shortenAddress, timeAgo } from "../../../utils/index.ts";
+import {
+  setFallbackURL,
+  shortenAddress,
+  timeAgo,
+} from "../../../utils/index.ts";
 
 type prop = {
   tokenDetails: any;
@@ -16,7 +20,11 @@ export default function TokenInfo({ tokenDetails }: prop) {
       <div className='basic'>
         <div className='content'>
           <div className='tokenlogo'>
-            <img src={tokenDetails?.pic} alt='' />
+            <img
+              src={tokenDetails?.pic}
+              alt='agent logo'
+              onError={setFallbackURL}
+            />
           </div>
           <div className='info'>
             <h2>
