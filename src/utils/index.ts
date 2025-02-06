@@ -53,3 +53,22 @@ export function getCurrentDomain() {
     ? window.location.origin
     : "http://localhost:5173";
 }
+
+export function getColorForValue(value: number): string {
+  return value < 0 ? "#D40000" : "#00e832";
+}
+
+export const setFallbackURL = (
+  e: React.SyntheticEvent<HTMLImageElement, Event>
+) => {
+  e.currentTarget.src =
+    "https://img.freepik.com/free-photo/3d-rendering-animal-illustration_23-2151888074.jpg";
+};
+
+export function formatToMillions(number: number) {
+  // Convert the number to millions
+  const inMillions = number / 1000000;
+
+  // Round to 1 decimal place and add 'M' for millions
+  return `${Math.round(inMillions * 10) / 10}M`;
+}

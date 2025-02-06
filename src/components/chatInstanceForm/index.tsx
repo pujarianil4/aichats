@@ -3,6 +3,8 @@ import { isAddress } from "viem";
 import { createInstance } from "../../services/api.ts";
 import { useNavigate } from "react-router-dom";
 import "./index.scss";
+import { FaChevronDown } from "react-icons/fa";
+import { Popover } from "antd";
 
 interface FormData {
   name: string;
@@ -51,6 +53,10 @@ const ChatInstanceForm: React.FC = () => {
     });
   };
 
+  const handleChainSelect = (value: string) => {
+    setFormData({ ...formData, chainId: value });
+  };
+
   const handleModeratorsChange = (
     event: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
@@ -97,6 +103,20 @@ const ChatInstanceForm: React.FC = () => {
       console.log("FAILED TO CREATE INSTANCE", error);
     }
   };
+
+  const popoverContent = (
+    <div className='popover_select'>
+      {chainOptions.map((option) => (
+        <p
+          className='select_item'
+          key={option.value}
+          onClick={() => handleChainSelect(option.value)}
+        >
+          {option.label}
+        </p>
+      ))}
+    </div>
+  );
 
   return (
     <form onSubmit={handleSubmit}>
@@ -217,7 +237,7 @@ const ChatInstanceForm: React.FC = () => {
         <label>
           Chain ID<span>*</span>
         </label>
-        <select
+        {/* <select
           name='chainId'
           value={formData.chainId}
           onChange={handleInputChange}
@@ -231,7 +251,17 @@ const ChatInstanceForm: React.FC = () => {
               {option.label}
             </option>
           ))}
-        </select>
+        </select> */}
+
+        <Popover content={popoverContent} trigger='click'>
+          <div className='select'>
+            <p className='select_item'>
+              {chainOptions.find((option) => option.value === formData.chainId)
+                ?.label || "Select a Chain"}
+            </p>
+            <FaChevronDown />
+          </div>
+        </Popover>
       </div>
 
       <button type='submit'>Submit</button>

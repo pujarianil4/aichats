@@ -1,10 +1,16 @@
 import "./tokeninfo.scss";
 import GeckoChart from "../../Charts/GeckoChart.tsx";
-import { shortenAddress, timeAgo } from "../../../utils/index.ts";
+
 import Tabs from "../../common/Tabs/Tabs.tsx";
 import DetailsTab from "./detailsTab/detailsTab.tsx";
 import DeveloperTab from "./developerTab/developer.tsx";
 import HolderTab from "./holderTab/holder.tsx";
+import {
+  setFallbackURL,
+  shortenAddress,
+  timeAgo,
+} from "../../../utils/index.ts";
+
 type prop = {
   tokenDetails: any;
   activeTab: string;
@@ -38,7 +44,11 @@ export default function TokenInfo({ tokenDetails, activeTab }: prop) {
       <div className='basic'>
         <div className='content'>
           <div className='tokenlogo'>
-            <img src={tokenDetails?.pic} alt='' />
+            <img
+              src={tokenDetails?.pic}
+              alt='agent logo'
+              onError={setFallbackURL}
+            />
           </div>
           <div className='info'>
             <h2>

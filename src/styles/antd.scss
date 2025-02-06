@@ -88,11 +88,15 @@
   // filter: blur(10px);
 }
 .ant-modal {
-  width: max-content !important;
+  width: 92% !important;
   .ant-modal-content {
+    max-width: 600px;
+    min-width: 300px;
+    width: 100%;
+    margin: auto;
     background-color: var(--primary-bg);
     border-radius: 10px;
-    width: max-content !important;
+    // width: max-content !important;
 
     .ant-modal-title {
       background: var(--primary-bg);

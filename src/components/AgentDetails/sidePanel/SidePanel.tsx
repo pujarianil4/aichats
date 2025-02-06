@@ -2,16 +2,15 @@ import "./sidePanel.scss";
 import TwitterFeed from "../twitterFeed/index.tsx";
 import Cowswap from "../cowSwap/index.tsx";
 import BondingCurve from "./bondingCurve/index.tsx";
+import { getColorForValue } from "../../../utils/index.ts";
 type prop = {
   tokenDetails: any;
   activeTab: string;
 };
 
-export function getColorForValue(value: number): string {
-  return value < 0 ? "#D40000" : "#00e832";
-}
 export default function SidePanel({ tokenDetails, activeTab }: prop) {
   console.log("active tab", activeTab);
+
   return (
     <div className='sidepanel'>
       <div className={`swap ${activeTab === "swap" ? "show" : "hide"}`}>
