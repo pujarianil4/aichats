@@ -5,40 +5,10 @@
   min-height: 500px;
   background-color: var(--primary-bg);
   border-radius: 15px;
-
   min-width: 780px;
-
-  .update_title {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
+  @include lessThan(md) {
+    min-width: auto;
     width: 100%;
-    padding: 20px;
-    border-bottom: 1px solid var(--dark);
-    .back_button {
-      position: absolute;
-      left: 1.875rem;
-      font-size: 1.2rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      transition: transform 0.2s ease-in-out;
-
-      &:hover {
-        transform: scale(1.1);
-      }
-    }
-
-    .heading {
-      font-size: 1.5rem;
-      font-weight: bold;
-      text-align: center;
-      flex-grow: 1;
-      font-size: 20px;
-      font-weight: bold;
-      color: var(--primary);
-    }
   }
 
   .title {
@@ -47,10 +17,19 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    @include lessThan(md) {
+      padding: 20px;
+    }
     h2 {
       font-size: 20px;
       font-weight: bold;
       color: var(--primary);
+      @include lessThan(md) {
+        font-size: 16px;
+      }
+      @include lessThan(sm) {
+        font-size: 12px;
+      }
     }
     .tabs {
       display: flex;
@@ -64,6 +43,11 @@
         text-align: center;
 
         cursor: pointer;
+        @include lessThan(md) {
+          width: 85px;
+          font-size: 10px;
+        }
+
         &:first-child {
           border-radius: 20px 0px 0px 20px;
         }
@@ -79,9 +63,15 @@
 
   .form {
     padding: 30px;
+    @include lessThan(md) {
+      padding: 20px;
+    }
     .profile {
       h4 {
         font-weight: 300;
+        @include lessThan(md) {
+          font-size: 12px;
+        }
       }
       div {
         margin-top: 10px;
@@ -104,6 +94,9 @@
           margin: 20px;
           p {
             font-size: 12px;
+            @include lessThan(sm) {
+              font-size: 10px;
+            }
           }
           .pic {
             color: var(--light-text);
@@ -120,6 +113,12 @@
         gap: 5px;
         align-items: unset;
         position: unset;
+
+        label {
+          @include lessThan(md) {
+            font-size: 12px;
+          }
+        }
         input,
         textarea {
           padding: 15px;
@@ -155,6 +154,10 @@
         padding: 20px;
         font-weight: 600;
         font-size: 15px;
+        @include lessThan(md) {
+          font-size: 12px;
+          padding: 16px;
+        }
       }
 
       .more_options {
@@ -190,7 +193,11 @@
     padding: 5px;
     font-weight: 600;
     border-radius: 5px;
+    color: var(--light);
     cursor: pointer;
+    @include lessThan(md) {
+      font-size: 11px;
+    }
     &:hover {
       background-color: var(--primary);
     }

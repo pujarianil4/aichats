@@ -1,3 +1,4 @@
+@import "/src/styles//breakPoints";
 .antd_table {
   .ant-table-content {
     min-height: 645px;
@@ -61,15 +62,19 @@
 }
 
 .custom_tabs {
-  background: var(--dark);
+  // background: var(--dark);
   .ant-tabs-nav-wrap {
-    border-bottom: 2px solid var(--primary-bg);
+    border-bottom: 2px solid var(--light);
   }
   .ant-tabs-tab {
     border: 1px solid var(--primary-bg) !important;
     outline: none !important;
     margin: 0px !important;
     color: var(--light-text);
+    border-radius: 8px !important;
+    @include lessThan(md) {
+      font-size: 12px;
+    }
   }
   .ant-tabs-tab-active {
     background: var(--tertiary-bg) !important;

@@ -1,13 +1,35 @@
 import "./tokeninfo.scss";
 import GeckoChart from "../../Charts/GeckoChart.tsx";
 import { shortenAddress, timeAgo } from "../../../utils/index.ts";
-
+import Tabs from "../../common/Tabs/Tabs.tsx";
+import DetailsTab from "./detailsTab/detailsTab.tsx";
+import DeveloperTab from "./developerTab/developer.tsx";
+import HolderTab from "./holderTab/holder.tsx";
 type prop = {
   tokenDetails: any;
+  activeTab: string;
 };
 
-export default function TokenInfo({ tokenDetails }: prop) {
+export default function TokenInfo({ tokenDetails, activeTab }: prop) {
   const poolAddress = String(tokenDetails.tokenData.pools[0].id).split("_")[1];
+  console.log("active tab", activeTab);
+  const tabItems = [
+    {
+      key: "1",
+      label: "Details",
+      children: <DetailsTab tokenDetails={tokenDetails} />,
+    },
+    {
+      key: "2",
+      label: "Developer",
+      children: <DeveloperTab tokenDetails={tokenDetails} />,
+    },
+    {
+      key: "3",
+      label: "Holders",
+      children: <HolderTab tokenDetails={tokenDetails} />,
+    },
+  ];
 
   console.log("tokenDetails", tokenDetails, poolAddress);
 
@@ -47,9 +69,8 @@ export default function TokenInfo({ tokenDetails }: prop) {
       </div>
       <GeckoChart network='base' poolAddress={poolAddress} />
 
-      <div className='details'>
-        <h2>Biography</h2>
-        <p>{tokenDetails.desc}</p>
+      <div className={`details ${activeTab === "info" ? "show" : "hide"}`}>
+        <Tabs items={tabItems} />
       </div>
     </div>
   );

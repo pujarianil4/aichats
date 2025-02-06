@@ -1,7 +1,76 @@
+@import "/src/styles/breakPoints";
+
 .tokendetails_container {
   width: 100%;
   margin-bottom: 50px;
   display: flex;
   justify-content: space-evenly;
   gap: 10px;
+  @include moreThan(lg) {
+    width: 99%;
+  }
+
+  @include lessThan(lg) {
+    display: block;
+  }
+}
+.show {
+  display: block;
+
+  transition: opacity 0.3s ease-in-out;
+}
+
+.hide {
+  display: none;
+}
+.mobile-buttons {
+  display: none !important;
+  position: absolute;
+  bottom: -49px;
+  left: 0;
+  width: 100%;
+  background: var(--primary-bg);
+  display: flex;
+  justify-content: space-around;
+
+  text-align: center;
+  @include lessThan(lg) {
+    display: flex !important;
+  }
+  @include lessThan(sm) {
+    bottom: -35px;
+  }
+  .active {
+    background-color: var(--primary) !important;
+  }
+
+  .btn {
+    flex: 1;
+    padding: 15px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--light);
+    background: transparent;
+    border: none;
+    border-radius: 0px !important;
+    cursor: pointer;
+    transition: 0.3s;
+    color: var(--light);
+    min-width: 80px;
+    text-align: center;
+    &:hover {
+      opacity: 0.9;
+    }
+
+    @include lessThan(md) {
+      padding: 10px 14px;
+      font-size: 12px;
+      min-width: 70px;
+    }
+    @include lessThan(xs) {
+      padding: 8px 10px;
+      font-size: 11px;
+      min-width: 60px;
+    }
+  }
 }

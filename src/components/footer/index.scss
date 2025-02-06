@@ -8,6 +8,7 @@
   font-size: 14px;
   display: flex;
   flex-direction: column;
+
   @include lessThan(md) {
     padding: 20px 10px;
     gap: 5px;
@@ -65,16 +66,18 @@
       align-items: center;
       gap: 1rem;
     }
+    @include lessThan(sm) {
+      display: block;
+      text-align: center;
+      flex-direction: row;
+    }
     p {
       font-size: 14px;
       @include lessThan(md) {
         font-size: 12px;
       }
       @include lessThan(sm) {
-        font-size: 10px;
-      }
-      @include lessThan(xs) {
-        font-size: 8px;
+        font-size: 12px;
       }
     }
     .footer_info {
@@ -86,6 +89,7 @@
       }
       @include lessThan(sm) {
         font-size: 10px;
+        justify-content: center;
       }
       @include lessThan(xs) {
         font-size: 8px;
@@ -101,10 +105,7 @@
       font-size: 12px;
       display: none;
     }
-    @include lessThan(sm) {
-      font-size: 10px;
-      display: none;
-    }
+
     .footer_token {
       display: flex;
       align-items: center;
@@ -135,6 +136,9 @@
       @include lessThan(md) {
         gap: 3rem;
       }
+      @include lessThan(sm) {
+        gap: 2rem;
+      }
       @include lessThan(xs) {
         gap: 10px;
       }
@@ -147,9 +151,6 @@
         }
         @include lessThan(md) {
           font-size: 12px;
-        }
-        @include lessThan(sm) {
-          font-size: 10px;
         }
       }
     }
