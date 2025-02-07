@@ -74,10 +74,6 @@ export default function Agent({
     },
   ];
 
-  if (isLoading) {
-    return <div className='loading'>Loading...</div>;
-  }
-
   return (
     <>
       {edit ? (

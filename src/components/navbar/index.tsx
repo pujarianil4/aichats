@@ -196,12 +196,12 @@ function Navbar() {
             <div className='actions'>
               {isConnected && (
                 <a href={`/myagent`}>
-                  <Button className='hide myagent_btn' type='primary'>
+                  <Button className='hidebtn myagent_btn' type='primary'>
                     My Agents
                   </Button>
                 </a>
               )}
-              <Button className='hide' onClick={showModal}>
+              <Button className='hidebtn' onClick={showModal}>
                 Create New Agent
               </Button>
               {/* </Link> */}

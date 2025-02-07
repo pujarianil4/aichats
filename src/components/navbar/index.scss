@@ -121,7 +121,7 @@
     }
   }
 }
-.hide {
+.hidebtn {
   @include lessThan(xl) {
     display: none;
   }

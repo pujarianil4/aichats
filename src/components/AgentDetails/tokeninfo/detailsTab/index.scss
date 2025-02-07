@@ -1,0 +1,124 @@
+@import "/src/styles/breakPoints";
+.details-tab {
+  padding: 24px;
+  color: white;
+  @include lessThan(md) {
+    padding: 2px;
+  }
+  .biography {
+    margin-bottom: 20px;
+    h2 {
+      @include lessThan(md) {
+        font-size: 16px;
+      }
+    }
+
+    p {
+      color: #ccc;
+      font-size: 14px;
+      @include lessThan(md) {
+        font-size: 12px;
+      }
+    }
+  }
+
+  .capabilities {
+    margin-bottom: 20px;
+    h2 {
+      margin-bottom: 5px;
+      @include lessThan(md) {
+        font-size: 16px;
+      }
+    }
+
+    .capabilities-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+
+      .capability-btn {
+        border: 1px solid #fff;
+        background: transparent;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        @include lessThan(md) {
+          font-size: 12px;
+        }
+        &:hover {
+          background: #ff00b7 !important;
+          border-color: #ff00b7 !important;
+        }
+      }
+    }
+  }
+
+  .socials {
+    h2 {
+      @include lessThan(md) {
+        font-size: 16px;
+      }
+    }
+    .socials-container {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 5px;
+
+      .social-card {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        width: 250px;
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        color: white;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+
+        @include lessThan(md) {
+          width: 180px;
+          padding: 8px 10px;
+        }
+        &:hover {
+          background: rgba(255, 255, 255, 0.2);
+        }
+
+        .social-icon {
+          font-size: 24px;
+          background: var(--dark);
+          border-radius: 50%;
+          padding: 5px;
+        }
+
+        .social-info {
+          flex-grow: 1;
+
+          .social-name {
+            font-weight: bold;
+            font-size: 12px;
+
+            @include lessThan(md) {
+              font-size: 10px;
+            }
+          }
+
+          .social-access {
+            font-size: 14px;
+            color: #ccc;
+            @include lessThan(md) {
+              font-size: 11px;
+            }
+          }
+        }
+
+        .link-icon {
+          font-size: 18px;
+          color: #ff00b7;
+        }
+      }
+    }
+  }
+}

@@ -35,6 +35,7 @@ body {
   min-height: 100vh;
   max-width: 1600px;
   margin: auto;
+  position: relative;
 }
 
 button {

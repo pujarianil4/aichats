@@ -1,0 +1,57 @@
+@import "/src/styles/breakPoints";
+.developer_profile {
+  width: 100%;
+  background-color: var(--primary-bg);
+  border-radius: 15px;
+
+  h2 {
+    padding: 30px;
+    @include lessThan(md) {
+      padding: 2px;
+      font-size: 16px;
+    }
+  }
+
+  .info {
+    display: flex;
+    gap: 20px;
+    padding-inline: 20px;
+    align-items: center;
+    .img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: #000000;
+    }
+    p {
+      @include lessThan(md) {
+        font-size: 12px;
+      }
+    }
+  }
+
+  .social {
+    display: flex;
+    gap: 10px;
+    padding: 20px;
+    @include lessThan(md) {
+      padding: 2px;
+      font-size: 12px;
+    }
+    p {
+      font-size: 15px;
+      min-width: 50px;
+      color: #ffff;
+      border: 1px solid #ababab;
+      padding: 5px 15px;
+      border-radius: 15px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      @include lessThan(md) {
+        font-size: 12px;
+        padding: 5px 10px;
+      }
+    }
+  }
+}
