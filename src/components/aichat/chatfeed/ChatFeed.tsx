@@ -6,7 +6,10 @@ import dropdownIcon from "../../../assets/dropdownIcon.svg";
 import noChatFound from "../../../assets/noChatFound.svg";
 import socket from "../../../services/socket.ts";
 import UserMessage, { shortenAddress } from "../userMessage/index.tsx";
-import { getMessages } from "../../../services/api.ts";
+import {
+  getMessages,
+  getSuperChatsWithInstanceId,
+} from "../../../services/api.ts";
 import SuperChatMessage from "../superChat/index.tsx";
 import { useAccount } from "wagmi";
 import NotificationMessage from "../../common/notificationMessage.tsx";
@@ -14,8 +17,15 @@ import NotificationMessage from "../../common/notificationMessage.tsx";
 interface IProps {
   chatInstanceId: number;
   adminAddress: string;
+  mutedUsers: string[];
+  isModerator: boolean;
 }
-export default function ChatFeed({ chatInstanceId, adminAddress }: IProps) {
+export default function ChatFeed({
+  chatInstanceId,
+  adminAddress,
+  mutedUsers,
+  isModerator,
+}: IProps) {
   const { isConnected, address } = useAccount();
   const [page, setPage] = useState<number>(1);
   const [chat, setChat] = useState<any[]>([]);
@@ -26,11 +36,7 @@ export default function ChatFeed({ chatInstanceId, adminAddress }: IProps) {
   const [isInitialLoad, setIsInitialLoad] = useState(false);
   const [firstItemIndex, setFirstItemIndex] = useState(0);
   const loadingArray = Array(10).fill(() => 0);
-
-  const tempMuteList = [
-    // "0xD5b26AC46d2F43F4d82889f4C7BBc975564859e3",
-    // "0x79821a0F47e0c9598413b12FE4882b33326B0cF8",
-  ];
+  const symbol = JSON.parse(localStorage?.getItem("tokenData") || "")?.symbol;
 
   useEffect(() => {
     if (isConnected) {
@@ -63,8 +69,18 @@ export default function ChatFeed({ chatInstanceId, adminAddress }: IProps) {
     }
   };
 
+  const getSuperChats = async () => {
+    try {
+      const data = await getSuperChatsWithInstanceId(chatInstanceId);
+      setSuperChat(data);
+    } catch (error) {
+      console.log("Get SuperChat Error", error);
+    }
+  };
+
   useEffect(() => {
     fetchData(1, limit);
+    getSuperChats();
   }, []);
   useEffect(() => {
     if (page > 1 && chat?.length >= limit) {
@@ -72,87 +88,71 @@ export default function ChatFeed({ chatInstanceId, adminAddress }: IProps) {
     }
   }, [page]);
 
+  // const { data: chatData, isLoading } = useQuery(["chatMessages", chatInstanceId, page], () => getMessages(page, limit, chatInstanceId), {
+  //   keepPreviousData: true,
+  //   onSuccess: (data) => {
+  //     if (page === 1) setChat(data.reverse());
+  //     else setChat((prev) => [...data.reverse(), ...prev]);
+  //   },
+  // });
+
+  // const { data: superChat = [] } = useQuery(["superChats", chatInstanceId], () => getSuperChatsWithInstanceId(chatInstanceId));
+
   const handleView = () => {
     if (superChat.length > 0) {
       setIsFullHeight(!isFullHeight);
     }
   };
 
-  const handleDeleteMessage = (messageId: string) => {
+  const handleDeleteMessage = (messageId: number) => {
     setChat((prevChat) =>
       prevChat.filter((message) => message.id !== messageId)
     );
   };
 
   useEffect(() => {
-    let isNewMessageProcessed: boolean = false;
+    if (!socket) return;
     const newMessageHandler = (data: any) => {
       console.log("New message received:", data);
-      if (tempMuteList.includes(data?.senderAddress as string)) {
+      if (mutedUsers?.includes(data?.senderAddress as string)) {
         throw new Error("You are muted");
       }
-      setChat((prevChat) => [
-        ...prevChat,
-        data,
-        // { id: prevChat.length + 1, ...data },
-      ]);
+      if (data.amnt) {
+        setSuperChat((prevChat) => [data, ...prevChat]);
+      }
+      setChat((prevChat) => [...prevChat, data]);
       setIsInitialLoad(true);
-      isNewMessageProcessed = true;
     };
 
-    //socket.on('filteredMessages', (data) => {
-    // console.log('filtered message ', data);
-
-    const newSuperChatHandler = (data: any) => {
-      if (!isNewMessageProcessed) {
-        console.log("Waiting for new message to be processed...");
-        return;
-      }
-      // const newData = data.messages;
-      // console.log("New super chat received:", newData);
-      // setSuperChat((prevChat) => [...prevChat, newData[0]]);
-      if (tempMuteList.includes(data?.senderAddress as string)) {
-        throw new Error("You are muted");
-      }
-      try {
-        const newData = data.messages;
-        console.log("NEW_MESSAGE", newData);
-        // setSuperChat((prevChat) => [...prevChat, newData[0]]);
-        setSuperChat(newData);
-      } catch (error: any) {
-        NotificationMessage("error", error.message);
-      }
-    };
+    // const newSuperChatHandler = (data: any) => {
+    //   try {
+    //     setSuperChat(data.messages);
+    //   } catch (error: any) {
+    //     NotificationMessage("error", error.message);
+    //   }
+    // };
 
     const errorHandler = (err: any) => {
       NotificationMessage("error", err.message);
     };
 
     socket.on("newMessage", newMessageHandler);
-    // setTimeout(() => {
-    //   socket.on("filteredMessages", newSuperChatHandler);
-    // }, 300);
-    socket.on("filteredMessages", async (data) => {
-      if (isNewMessageProcessed) {
-        newSuperChatHandler(data);
-      } else {
-        console.log(
-          "filteredMessages skipped because newMessage is not processed yet."
-        );
-      }
-    });
+    // socket.on("filteredMessages", newSuperChatHandler);
     socket.on("error", errorHandler);
     return () => {
       socket.off("newMessage");
-      socket.off("filteredMessages");
+      // socket.off("filteredMessages");
       socket.off("error");
     };
-  }, []);
+  }, [socket]);
 
   return (
     <div
-      className={`feedContainer ${isFullHeight ? "fullHeight" : "splitView"}`}
+      className={`feedContainer ${isFullHeight ? "fullHeight" : "splitView"} ${
+        isModerator || isAdmin ? "adminfeedContainer" : ""
+      }`}
     >
+      {/* <div className='feed_controls'></div> */}
       <div className='feed_header'>
         {superChat?.length > 0 && (
           <div className='close_icon' onClick={handleView}>
@@ -177,7 +177,9 @@ export default function ChatFeed({ chatInstanceId, adminAddress }: IProps) {
                     <div className='name'>
                       {shortenAddress(item?.senderAddress, 4)}
                     </div>
-                    <div className='value'>${item?.amnt}</div>
+                    <div className='value'>
+                      {item?.amnt} &nbsp;{symbol}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -253,6 +255,8 @@ export default function ChatFeed({ chatInstanceId, adminAddress }: IProps) {
                   instance={chatInstanceId}
                   adminAddress={adminAddress}
                   isAdmin={isAdmin}
+                  isModerator={isModerator}
+                  mutedUsers={mutedUsers}
                   onDeleteMessage={handleDeleteMessage}
                 />
               )}

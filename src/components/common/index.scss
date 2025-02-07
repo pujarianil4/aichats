@@ -1,10 +1,7 @@
 .virtuoso {
-  height: 672px;
+  // max-height: 572px;
+  // height: calc(100% - 112px);
   overflow: auto;
-
-  // @include lessThan(md) {
-  //   margin-top: -15px;
-  // }
 }
 
 .notification_class {

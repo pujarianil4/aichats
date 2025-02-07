@@ -3,7 +3,7 @@ import { toFixedNumber } from "../utils/index.ts";
 import axios from "axios";
 import { api } from "./apiconfig.ts";
 
-export async function getTokenDetails(network : string, tokenAddress: string) {
+export async function getTokenDetails(network: string, tokenAddress: string) {
   const eth_key = import.meta.env.VITE_ETHERSCAN_API_KEY;
   const apiUrl = `https://api.dexscreener.com/latest/dex/tokens/${tokenAddress}`;
   const geckoApi = `https://api.geckoterminal.com/api/v2/networks/${network}/tokens/${tokenAddress}?include=top_pools
@@ -54,11 +54,9 @@ function extractPoolData(data: any) {
     pairAddress: pool.id,
     imageUrl: tokenData.image_url,
     fdvInusd: tokenData.fdv_usd,
-    pools: data.included
-
+    pools: data.included,
   };
 }
-
 
 const BASE_URL_BALANCE = "https://balance-servie.onrender.com";
 const BASE_URL_CHAT = "https://chat-service-rq16.onrender.com";
@@ -110,8 +108,9 @@ export const createInstance = async (payload: any) => {
   }
 };
 
-export const updateInstanceStreamLink = async (
+export const updateChatInstance = async (
   link: string,
+  minTokenValue: string,
   instanceId: number
 ) => {
   try {
@@ -119,11 +118,12 @@ export const updateInstanceStreamLink = async (
       `${BASE_URL_BALANCE}/address/instance/${instanceId}`,
       {
         streamUrl: link,
+        minTokenValue: Number(minTokenValue),
       }
     );
     return data;
   } catch (error) {
-    console.log("ADD_ADDRESS_Error", error);
+    console.log("Update_Instance_Error", error);
     throw error;
   }
 };
@@ -151,6 +151,85 @@ export const getChatInstanceWithAgentId = async (agentId: string) => {
     throw error;
   }
 };
+
+export const getSuperChatsWithInstanceId = async (instanceId: number) => {
+  try {
+    const { data } = await axios.get(
+      `${BASE_URL_CHAT}/messages/superchat/${instanceId}`
+    );
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const getMutedUsersWithInstanceId = async (instanceId: number) => {
+  try {
+    const { data } = await axios.get(
+      `${BASE_URL_CHAT}/messages/mute/${instanceId}`
+    );
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const getAllUsersbyInstanceId = async (instanceId: number) => {
+  try {
+    const { data } = await axios.get(
+      `${BASE_URL_BALANCE}/address/${instanceId}`
+    );
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const addModeratorToChatInstance = async (payload: {
+  admin: string;
+  moderators: string;
+  instanceId: number;
+}) => {
+  const { admin, moderators, instanceId } = payload;
+  try {
+    const { data } = await axios.patch(
+      `${BASE_URL_BALANCE}/address/instance/add/${instanceId}`,
+      {
+        admin,
+        moderators,
+      }
+    );
+    return data;
+  } catch (error) {
+    console.error("Add Moderator Error", error);
+    throw error;
+  }
+};
+
+export const removeModeratorFromChatInstance = async (payload: {
+  admin: string;
+  moderators: string;
+  instanceId: number;
+}) => {
+  const { admin, moderators, instanceId } = payload;
+  try {
+    const { data } = await axios.patch(
+      `${BASE_URL_BALANCE}/address/instance/remove/${instanceId}`,
+      {
+        admin,
+        moderators,
+      }
+    );
+    return data;
+  } catch (error) {
+    console.error("Remove Moderator Error", error);
+    throw error;
+  }
+};
+
 export const uploadSingleFile = async (file: File) => {
   try {
     const formData = new FormData();

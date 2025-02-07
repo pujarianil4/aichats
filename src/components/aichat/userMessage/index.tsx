@@ -12,6 +12,8 @@ interface UserMessageProps {
   instance: number;
   adminAddress: string;
   isAdmin: boolean;
+  mutedUsers: string[];
+  isModerator: boolean;
   onDeleteMessage: (messageId: number) => void;
 }
 
@@ -24,6 +26,8 @@ export default function UserMessage({
   instance,
   adminAddress,
   isAdmin,
+  mutedUsers,
+  isModerator,
   onDeleteMessage,
 }: UserMessageProps) {
   const { data: ensName, isLoading: isEnsNameLoading } = useEnsName({
@@ -32,17 +36,14 @@ export default function UserMessage({
   const [isMuted, setIsMuted] = useState(false);
   const [isPopoverVisible, setIsPopoverVisible] = useState(false);
 
-  const tempMuteList = [
-    "0xD5b26AC46d2F43F4d82889f4C7BBc975564859e3",
-    "0x79821a0F47e0c9598413b12FE4882b33326B0cF8",
-  ];
-
   const handlePopoverVisibleChange = (visible: boolean) => {
     setIsPopoverVisible(visible);
     if (visible) {
-      setIsMuted(tempMuteList.includes(data.senderAddress));
+      setIsMuted(mutedUsers?.includes(data.senderAddress));
     }
   };
+  // Move Mute and Delete to parent
+  // if muted disable super chat
 
   const handleMute = () => {
     if (isMuted) {
@@ -110,7 +111,7 @@ export default function UserMessage({
               <span className='user-message__text'>{data.content}</span>
             </div>
           </div>
-          {adminAddress != data.senderAddress && isAdmin && (
+          {adminAddress != data.senderAddress && (isAdmin || isModerator) && (
             <div className='more'>
               <Popover
                 content={content}

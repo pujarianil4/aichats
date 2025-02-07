@@ -7,6 +7,7 @@ interface UserMessageProps {
 }
 
 export default function SuperChatMessage({ ensName, data }: UserMessageProps) {
+  const symbol = JSON.parse(localStorage?.getItem("tokenData") || "")?.symbol;
   return (
     <div>
       <div className='super_container'>
@@ -19,7 +20,9 @@ export default function SuperChatMessage({ ensName, data }: UserMessageProps) {
           <span className='admin__name'>
             {ensName ? ensName : shortenAddress(data.senderAddress)}:
           </span>
-          <span className='admin__value'> ${data.amnt} </span>
+          <span className='admin__value'>
+            {data.amnt}&nbsp; {symbol}
+          </span>
           <div className='admin__text'>{data.content}</div>
         </div>
       </div>

@@ -43,7 +43,6 @@ export function timeAgo(timestamp: string | number) {
   return "just now";
 }
 
-
 export const toFixedNumber = (value: number, precision: number = 3) => {
   return Number(value).toFixed(precision);
 };
@@ -54,6 +53,43 @@ export function getCurrentDomain() {
     : "http://localhost:5173";
 }
 
+export function formatTimeDifference(dateString: string): string {
+  const currentTime = new Date();
+  const inputTime = new Date(dateString);
+  const timeDifference = currentTime.getTime() - inputTime.getTime();
+
+  const seconds = Math.floor(timeDifference / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  const weeks = Math.floor(days / 7);
+
+  if (seconds < 60) {
+    return seconds === 1 ? "1 second ago" : `${seconds} seconds ago`;
+  }
+  if (minutes < 60) {
+    return minutes === 1 ? "1 minute ago" : `${minutes} minutes ago`;
+  }
+  if (hours < 24) {
+    return hours === 1 ? "1 hour ago" : `${hours} hours ago`;
+  }
+  if (days < 7) {
+    return days === 1 ? "1 day ago" : `${days} days ago`;
+  }
+  if (weeks < 4) {
+    return weeks === 1 ? "1 week ago" : `${weeks} weeks ago`;
+  }
+
+  // For dates beyond a month, return formatted date and time
+  return inputTime.toLocaleString("en-US", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+}
 export function getColorForValue(value: number): string {
   return value < 0 ? "#D40000" : "#00e832";
 }
