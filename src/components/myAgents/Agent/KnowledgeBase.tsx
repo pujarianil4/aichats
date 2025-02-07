@@ -252,7 +252,7 @@ export default function KnowledgeBase({ agentId }: { agentId: string }) {
                 <p>Website</p>
               </div>
               <div onClick={() => showModal("table")} className='item'>
-                <BsTable size={18} />
+                <BsTable size={16} />
                 <p>Table</p>
               </div>
               <div onClick={() => showModal("richText")} className='item'>

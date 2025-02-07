@@ -1,20 +1,18 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import "./agent.scss";
-import { FaXTwitter } from "react-icons/fa6";
-import { Collapse, Select } from "antd";
+import { Collapse } from "antd";
 import type { CollapseProps } from "antd";
-import NotificationMessage from "../../common/notificationMessage.tsx";
 import SocialModal from "./socialModal.tsx";
-import { FaCopy } from "react-icons/fa";
 import KnowledgeBase from "./KnowledgeBase.tsx";
 import Capabilities from "./Capabilities.tsx";
+``;
 import { LuPanelLeftClose } from "react-icons/lu";
 
-import { useParams } from "react-router-dom";
-import { getMyAgentData } from "../../../services/agent.ts";
 import { shortenAddress } from "../../../utils/index.ts";
 import CopyButton from "../../common/copyButton.tsx";
-
+import UpdateAgent from "./updateAgent.tsx";
+import { FiEdit } from "react-icons/fi";
+import { BsCurrencyDollar } from "react-icons/bs";
 interface IProps {
   isEmulatorOpen: boolean;
   toggleEmulator: () => void;
@@ -27,8 +25,12 @@ export default function Agent({
   agent,
 }: IProps) {
   const { data: agentData, isLoading } = agent;
+  const [edit, setEdit] = useState<boolean>(false);
   const onChange = (key: string | string[]) => {
     // console.log(key);
+  };
+  const changeEdit = () => {
+    setEdit((prev) => !prev);
   };
 
   const items: CollapseProps["items"] = [
@@ -77,49 +79,69 @@ export default function Agent({
   }
 
   return (
-    <div className='agent_container'>
-      <div className='basic'>
-        <div className='content'>
-          <div className='tokenlogo'>
-            <img src={agentData.pic} alt='' />
-          </div>
-          <div className='info'>
-            <h2>
-              {agentData?.name} <span>@{agentData?.token?.tkr}</span>
-            </h2>
+    <>
+      {edit ? (
+        <UpdateAgent agentData={agentData} setIsEditing={setEdit} />
+      ) : (
+        <div className='agent_container'>
+          <div className='basic'>
+            <div className='content'>
+              <div className='tokenlogo'>
+                <img src={agentData.pic} alt='' />
+              </div>
+              <div className='info'>
+                <h2>
+                  {agentData?.name} <span>@{agentData?.token?.tkr}</span>
+                  <span className='edit_btn' onClick={changeEdit}>
+                    <FiEdit /> Edit
+                  </span>
+                </h2>
 
-            <div className='social_tab'>
-              <p>
-                <span>{shortenAddress(agentData?.token.tCAddress)}</span>{" "}
-                <CopyButton
-                  text={agentData?.token.tCAddress}
-                  className='copy-btn'
-                />
-              </p>
-              <SocialModal
-                discord={agentData?.discord}
-                telegram={agentData?.telegram}
-                x={agentData?.x}
+                <div className='social_tab'>
+                  <p>
+                    <span>{shortenAddress(agentData?.token.tCAddress)}</span>{" "}
+                    <CopyButton
+                      text={agentData?.token.tCAddress}
+                      className='copy-btn'
+                    />
+                  </p>
+                  <SocialModal
+                    discord={agentData?.discord}
+                    telegram={agentData?.telegram}
+                    x={agentData?.x}
+                  />
+                </div>
+              </div>
+            </div>
+            {!isEmulatorOpen && (
+              <LuPanelLeftClose
+                size={18}
+                className='toggle_btn'
+                onClick={toggleEmulator}
               />
+            )}
+            <div className='credits_card'>
+              <div>
+                <p className='total_creadits'>20</p>
+                <p>
+                  Credits <span>Active</span>
+                </p>
+              </div>
+              <button>
+                <BsCurrencyDollar /> Add Credits
+              </button>
             </div>
           </div>
+          <div className='form'>
+            <Collapse
+              defaultActiveKey={["3"]}
+              onChange={onChange}
+              expandIconPosition={"end"}
+              items={items}
+            />
+          </div>
         </div>
-        {!isEmulatorOpen && (
-          <LuPanelLeftClose
-            size={18}
-            className='toggle_btn'
-            onClick={toggleEmulator}
-          />
-        )}
-      </div>
-      <div className='form'>
-        <Collapse
-          defaultActiveKey={["3"]}
-          onChange={onChange}
-          expandIconPosition={"end"}
-          items={items}
-        />
-      </div>
-    </div>
+      )}
+    </>
   );
 }

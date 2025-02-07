@@ -48,6 +48,16 @@ export const getMyAgentData = async (agentId: string) => {
   }
 };
 
+export const updateAgentData = async (agentId: string, data: any) => {
+  try {
+    const response = await api.patch(`/agent/${agentId}`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error", error);
+    throw error;
+  }
+};
+
 export const getKBbyAgentID = async (agentID: string) => {
   try {
     const response = await api.get(`/upload/kb/${agentID}`);

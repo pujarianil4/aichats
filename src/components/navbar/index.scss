@@ -1,15 +1,33 @@
-.navbar_container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+@import "/src/styles/breakPoints";
+
+.navbar {
   padding: 1rem;
-  width: 90%;
-  margin: auto;
-  margin-block: 10px;
-  height: 50px;
-  .navigation {
+
+  .container {
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    @include lessThan(xl) {
+      padding: 0 1.5rem;
+      max-width: 100%;
+    }
+    @include lessThan(md) {
+      padding: 0px 0px;
+    }
+  }
+
+  .content {
     display: flex;
-    gap: 50px;
+    align-items: center;
+    justify-content: space-between;
+    height: 4rem;
+    @include lessThan(md) {
+      height: 2rem;
+    }
+  }
+
+  .logo {
+    flex-shrink: 0;
+
     img {
       border: 1px solid white;
       background-color: aliceblue;
@@ -19,25 +37,139 @@
     }
   }
 
-  .search {
-    input {
-      background: var(--primary-bg);
-      padding: 10px 15px;
-      border: none;
-      border-radius: 20px;
-      width: 200px;
-
-      color: var(--light);
+  .nav {
+    display: none;
+    gap: 2.5rem;
+    @include moreThan(lg) {
+      display: flex;
+      align-items: center;
+      gap: 3rem;
+      font-size: 12px;
+    }
+    .linkHide {
+      @include lessThan(xl) {
+        display: none;
+      }
     }
   }
 
-  .actions {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
+  .link {
+    color: var(--light);
+    text-decoration: none;
+    transition: color 0.2s;
+    font-size: 14px;
+    &:hover {
+      color: var(--primary);
+    }
+  }
 
-    button {
-      border-radius: 15px;
+  .linkHide {
+    @include lessThan(lg) {
+      display: none;
+    }
+  }
+
+  .search {
+    flex: 1;
+    max-width: 20rem;
+    margin: 0 1rem;
+    position: relative;
+
+    border-radius: 20px;
+
+    @include lessThan(md) {
+      max-width: 17rem;
+    }
+
+    @include lessThan(sm) {
+      max-width: 8rem;
+    }
+    @include lessThan(xs) {
+      max-width: 8rem;
+    }
+
+    input {
+      color: var(--light);
+      border: none;
+
+      border-radius: 20px;
+      transition: width 0.3s ease-in-out;
+      padding: 10px 30px;
+      font-size: 14px;
+      outline: none;
+      cursor: pointer;
+      background: var(--primary-bg);
+      @include lessThan(md) {
+        width: 100%;
+      }
+      @include lessThan(sm) {
+        padding: 7px;
+        cursor: pointer;
+        font-size: 10px;
+      }
+    }
+
+    svg {
+      position: absolute;
+      left: 0.5rem;
+      top: 0.625rem;
+      height: 1rem;
+      width: 1rem;
+      @include lessThan(sm) {
+        display: none;
+      }
+    }
+  }
+}
+.hide {
+  @include lessThan(xl) {
+    display: none;
+  }
+}
+
+.mobile {
+  display: none;
+
+  @include lessThan(xl) {
+    display: block;
+  }
+
+  .other {
+    margin-top: 5px;
+
+    svg {
+      width: 22px;
+      height: auto;
+
+      @include lessThan(md) {
+        margin-left: 4px;
+        width: 18px;
+      }
+    }
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 1.5rem;
+  .address {
+    background: var(--primary-bg);
+    border: 1px solid var(--primary) !important;
+  }
+  .myagent_btn {
+    margin-left: 5px;
+  }
+  button {
+    font-size: 14px;
+    @include lessThan(xl) {
+      font-size: 12px;
+    }
+    @include lessThan(md) {
+      font-size: 12px;
+      height: 25px !important;
+    }
+    @include lessThan(sm) {
+      font-size: 10px;
     }
   }
 }
@@ -76,29 +208,6 @@
   .magic {
     h3 {
       color: var(--primary);
-    }
-  }
-}
-
-nav {
-  display: flex;
-  align-items: center;
-  ul {
-    display: flex;
-    align-items: center;
-    gap: 3rem;
-
-    li {
-      list-style: none;
-      a {
-        text-decoration: none;
-        color: white;
-        font-family: monospace;
-        cursor: pointer;
-        &:hover {
-          color: var(--primary);
-        }
-      }
     }
   }
 }

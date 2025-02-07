@@ -1,7 +1,7 @@
 @import "/src/styles/breakPoints";
-.create_agent_container {
-  width: 65%;
-  margin: auto;
+.update_agent_container {
+  flex-grow: 1;
+  margin: 0 auto;
   min-height: 500px;
   background-color: var(--primary-bg);
   border-radius: 15px;
@@ -112,7 +112,7 @@
       }
     }
 
-    .basic_info {
+    .update_info {
       .input_container {
         display: flex;
         flex-direction: column;
@@ -120,7 +120,6 @@
         gap: 5px;
         align-items: unset;
         position: unset;
-        input,
         textarea {
           padding: 15px;
           background: var(--dark);
