@@ -17,9 +17,6 @@ import { useAccount } from "wagmi";
 import MutedList from "./MutedList.tsx";
 import ListItems from "./ListItems.tsx";
 
-// handle delete user bug
-// handle responsiveness for mobile and tab
-
 interface CachedData {
   data: string[];
   lastFetched: number;

@@ -88,13 +88,23 @@ export default function ChatFeed({
     }
   }, [page]);
 
+  // const { data: chatData, isLoading } = useQuery(["chatMessages", chatInstanceId, page], () => getMessages(page, limit, chatInstanceId), {
+  //   keepPreviousData: true,
+  //   onSuccess: (data) => {
+  //     if (page === 1) setChat(data.reverse());
+  //     else setChat((prev) => [...data.reverse(), ...prev]);
+  //   },
+  // });
+
+  // const { data: superChat = [] } = useQuery(["superChats", chatInstanceId], () => getSuperChatsWithInstanceId(chatInstanceId));
+
   const handleView = () => {
     if (superChat.length > 0) {
       setIsFullHeight(!isFullHeight);
     }
   };
 
-  const handleDeleteMessage = (messageId: string) => {
+  const handleDeleteMessage = (messageId: number) => {
     setChat((prevChat) =>
       prevChat.filter((message) => message.id !== messageId)
     );
@@ -248,9 +258,6 @@ export default function ChatFeed({
                   isModerator={isModerator}
                   mutedUsers={mutedUsers}
                   onDeleteMessage={handleDeleteMessage}
-                  // onDeleteMessage={(id: number) =>
-                  //   handleDeleteMessage(id.toString())
-                  // }
                 />
               )}
               footerHeight={24}
