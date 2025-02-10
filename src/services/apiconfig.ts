@@ -132,7 +132,7 @@ const validateUser = async () => {
 
       store.dispatch(setUserData({isLogedIn: "yes",...user.data}));
     } catch {
-      clearTokens();
+
  
       store.dispatch(setUserError("Session expired. Please log in again."));
     }

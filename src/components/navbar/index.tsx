@@ -24,7 +24,7 @@ import { shortenAddress } from "../../utils/index.ts";
 import { setUserError } from "../../contexts/reducers/index.ts";
 
 import { RxHamburgerMenu } from "react-icons/rx";
-import { getTokens } from "../../services/apiconfig.ts";
+import { clearTokens, getTokens } from "../../services/apiconfig.ts";
 import CPopup from "../common/CPopup/Cpopup.tsx";
 import { IoSearch } from "react-icons/io5";
 
@@ -102,10 +102,11 @@ function Navbar() {
   }, [isConnected, profile]);
 
   useEffect(() => {
-    if (isConnected && error.includes("expired")) {
+    if (isConnected && error.includes("expired") && cookies.token) {
       message.error("Session Expired,Please Login Again!");
       navigate("/");
       disconnect();
+      clearTokens();
     }
   }, [isConnected, error]);
 
