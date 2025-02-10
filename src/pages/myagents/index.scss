@@ -17,6 +17,15 @@
   h1 {
     font-size: 32px;
     font-weight: 500;
+    @include lessThan(md) {
+      font-size: 24px;
+    }
+    @include lessThan(sm) {
+      font-size: 22px;
+    }
+    @include lessThan(xs) {
+      font-size: 18px;
+    }
   }
 
   .agent_card_container {
@@ -35,7 +44,10 @@
         grid-template-columns: repeat(2, 1fr);
       }
 
-      @include lessThan(md) {
+      // @include lessThan(md) {
+      //   grid-template-columns: repeat(2, 1fr);
+      // }
+      @include lessThan(sm) {
         grid-template-columns: repeat(1, 1fr);
       }
     }
@@ -56,16 +68,28 @@
 
       cursor: pointer;
 
-
       &:hover {
         cursor: pointer;
         transform: scale(1.05);
       }
 
+      @include lessThan(md) {
+        min-height: 303px;
+      }
+      @include lessThan(xs) {
+        min-width: fit-content;
+        min-height: 290px;
+      }
+
       .card_head {
         height: 130px;
         background: linear-gradient(to left top, #4449a5, #7178ff);
-
+        @include lessThan(md) {
+          height: 100px;
+        }
+        @include lessThan(xs) {
+          height: 80px;
+        }
         img {
           position: absolute;
           top: 64px;
@@ -75,6 +99,16 @@
           border-radius: 60px;
           padding: 8px;
           background: linear-gradient(to right bottom, #f35ebd, #512579);
+          @include lessThan(md) {
+            top: 40px;
+            width: 95px;
+            height: 95px;
+          }
+          @include lessThan(xs) {
+            top: 30px;
+            width: 85px;
+            height: 85px;
+          }
         }
       }
       .deactive,
@@ -84,6 +118,12 @@
         font-size: 14px;
         width: fit-content;
         margin: 8px 8px 36px auto;
+        @include lessThan(md) {
+          font-size: 12px;
+        }
+        @include lessThan(xs) {
+          font-size: 10px;
+        }
       }
 
       .active {
@@ -102,6 +142,9 @@
       .agent_description,
       .tabs {
         margin: 16px;
+        @include lessThan(md) {
+          margin: 12px;
+        }
       }
 
       .agent_head {
@@ -109,6 +152,12 @@
         strong {
           font-size: 20px !important;
           font-weight: 500;
+          @include lessThan(md) {
+            font-size: 18px !important;
+          }
+          @include lessThan(xs) {
+            font-size: 16px !important;
+          }
         }
         span {
           font-size: 10px !important;
@@ -123,6 +172,9 @@
         -webkit-box-orient: vertical;
         overflow: hidden;
         text-overflow: ellipsis;
+        @include lessThan(md) {
+          font-size: 12px;
+        }
       }
 
       .tabs {
@@ -135,6 +187,9 @@
           padding: 4px 8px;
           border: 1.2px solid var(--light);
           border-radius: 8px;
+          @include lessThan(md) {
+            font-size: 12px;
+          }
         }
       }
     }
