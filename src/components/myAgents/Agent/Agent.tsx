@@ -65,7 +65,7 @@ export default function Agent({
     {
       key: "3",
       label: "Knowledge Base",
-      children: <KnowledgeBase agentId={agentData.id} />,
+      children: <KnowledgeBase agentId={agentData?.id} />,
     },
     {
       key: "4",
@@ -83,7 +83,7 @@ export default function Agent({
           <div className='basic'>
             <div className='content'>
               <div className='tokenlogo'>
-                <img src={agentData.pic} alt='' />
+                <img src={agentData?.pic} alt='' />
               </div>
               <div className='info'>
                 <h2>
