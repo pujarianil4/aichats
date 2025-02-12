@@ -136,6 +136,7 @@ const SocialModal: React.FC<SocialModalProps> = ({ discord, telegram, x }) => {
         onCancel={() => setModalVisible(false)}
         footer={null}
         centered
+        className='socialModal'
       >
         {loading ? (
           <div style={{ textAlign: "center" }}>

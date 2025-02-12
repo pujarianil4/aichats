@@ -111,6 +111,12 @@
       font-size: 20px;
       border-bottom: 1px solid var(--tertiary-bg);
       padding-bottom: 10px;
+      @include lessThan(md) {
+        font-size: 18px;
+      }
+      @include lessThan(sm) {
+        font-size: 16px;
+      }
     }
 
     .ant-modal-close {
