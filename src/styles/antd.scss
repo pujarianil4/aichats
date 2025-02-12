@@ -1,5 +1,11 @@
 @import "/src/styles//breakPoints";
 .antd_table {
+  .ant-table-small {
+    @include lessThan(md) {
+      font-size: 12px !important;
+    }
+  }
+
   .ant-table-content {
     min-height: 645px;
     .ant-table-thead {
