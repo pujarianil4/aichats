@@ -33,7 +33,7 @@ type FormData = {
   contractAddress: string;
   desc: string;
   instructions: string;
-  personality: string;
+  persona: string;
   agentType: string;
   // greeting: string;
   // environmentPrompts: EnvironmentPrompts;
@@ -51,7 +51,7 @@ export default function CreateAgent() {
   const [errorMsg, setErrorMsg] = useState({
     desc: "",
     contractAddress: "",
-    personality: "",
+    persona: "",
   });
   const fileRefs = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState<FormData>({
@@ -61,7 +61,7 @@ export default function CreateAgent() {
     contractAddress: "",
     desc: "",
     instructions: "",
-    personality: "",
+    persona: "",
     agentType: "none",
     // greeting: "",
     // environmentPrompts: {
@@ -80,7 +80,7 @@ export default function CreateAgent() {
     formData.ticker &&
     formData.contractAddress &&
     formData.instructions &&
-    formData.personality;
+    formData.persona;
   // (tabs == "new" ? formData.ticker : formData.contractAddress);
   const setFallbackURL = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     console.log("error", e);
@@ -96,7 +96,7 @@ export default function CreateAgent() {
       contractAddress: "",
       desc: "",
       instructions: "",
-      personality: "",
+      persona: "",
       agentType: "none",
     });
   };
@@ -248,7 +248,7 @@ export default function CreateAgent() {
   };
 
   const formValidation = () => {
-    const { desc, contractAddress, instructions, personality } = formData;
+    const { desc, contractAddress, instructions, persona } = formData;
 
     const validations = [
       {
@@ -262,7 +262,7 @@ export default function CreateAgent() {
       },
       {
         condition: () => {
-          const charLength = String(personality).split("").length;
+          const charLength = String(persona).split("").length;
           console.log(
             "charLength",
             charLength,
@@ -271,9 +271,9 @@ export default function CreateAgent() {
 
           return charLength >= 50 && charLength <= 300; // Example validation range
         },
-        field: "personality",
+        field: "persona",
         errorMsg:
-          "Personality must be between 50 and 300 characters (excluding spaces).",
+          "persona must be between 50 and 300 characters (excluding spaces).",
       },
       {
         condition: () => isAddress(contractAddress),
@@ -313,7 +313,7 @@ export default function CreateAgent() {
             tCAddress: formData.contractAddress,
           },
           desc: formData.desc,
-          personality: formData.personality,
+          persona: formData.persona,
           instructions: formData.instructions
             .split("\n")
             .map((line) => line.replace(/^-\s*/, "").trim()),
@@ -603,18 +603,18 @@ export default function CreateAgent() {
             <span className='errormsg'>{errorMsg.desc}</span>
           </div>
           <div className='input_container'>
-            <label htmlFor='personality'>
-              Personality
+            <label htmlFor='persona'>
+              persona
               <span className='required'>*</span>{" "}
             </label>
             <textarea
-              value={formData.personality}
-              onChange={(e) => handleInputChange("personality", e.target.value)}
+              value={formData.persona}
+              onChange={(e) => handleInputChange("persona", e.target.value)}
               rows={10}
-              id='personality'
-              placeholder='Short information about agent personality'
+              id='persona'
+              placeholder='Short information about agent persona'
             />
-            <span className='errormsg'>{errorMsg.personality}</span>
+            <span className='errormsg'>{errorMsg.persona}</span>
           </div>
           <div className='input_container'>
             <label htmlFor='instructions'>
