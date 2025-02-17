@@ -40,3 +40,14 @@
 .container_height {
   min-height: 70vh;
 }
+
+.gradient-border {
+  background: #000;
+  border: 1px solid transparent;
+  background-clip: padding-box, border-box;
+  background-origin: border-box;
+  background-image: linear-gradient(#000, #000), var(--gradient);
+  &:hover {
+    border: 1px solid var(--primary);
+  }
+}
