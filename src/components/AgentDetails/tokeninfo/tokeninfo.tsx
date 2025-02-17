@@ -10,6 +10,9 @@ import {
   shortenAddress,
   timeAgo,
 } from "../../../utils/index.ts";
+import { useQuery } from "@tanstack/react-query";
+import { getTotalTokenHolders } from "../../../services/marketdata.ts";
+import { useEffect } from "react";
 
 type prop = {
   tokenDetails: any;
@@ -19,6 +22,14 @@ type prop = {
 export default function TokenInfo({ tokenDetails, activeTab }: prop) {
   const poolAddress = String(tokenDetails.tokenData.pools[0].id).split("_")[1];
   console.log("active tab", activeTab);
+  const {
+    data: tokenHolders,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["totalHolders"],
+    queryFn: () => getTotalTokenHolders("base", poolAddress),
+  });
   const tabItems = [
     {
       key: "1",
@@ -36,8 +47,9 @@ export default function TokenInfo({ tokenDetails, activeTab }: prop) {
       children: <HolderTab tokenDetails={tokenDetails} />,
     },
   ];
-
-  console.log("tokenDetails", tokenDetails, poolAddress);
+  useEffect(() => {
+    console.log("holders", tokenHolders);
+  }, [tokenHolders]);
 
   return (
     <div className='tokeninfo'>

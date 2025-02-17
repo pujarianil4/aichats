@@ -165,13 +165,13 @@
       flex-direction: column;
 
       .credits_card {
-        div {
-          flex-direction: row;
-        }
         justify-content: flex-end;
         justify-content: space-between;
         max-width: 450px;
         margin-bottom: 12px;
+        div {
+          flex-direction: row;
+        }
       }
     }
   }

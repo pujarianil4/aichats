@@ -1,6 +1,6 @@
 import { Address } from "viem";
 import { api } from "./apiconfig.ts";
-import { getTokenDetails } from "./api.ts";
+import { getTokenDetails } from "./marketdata.ts";
 
 export const getAgentByID = async (agentId: string) => {
   try {

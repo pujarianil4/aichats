@@ -10,6 +10,13 @@ export default defineConfig({
   server: {
     host: '0.0.0.0', // This binds the server to all available network interfaces, including your local IP
     port: 5173, // You can leave the default port or choose any other available port
+    proxy: {
+      '/api/geckoterminal': {
+        target: 'https://app.geckoterminal.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/geckoterminal/, ''),
+      },
+    },
   },
   plugins: [react()],
 });
