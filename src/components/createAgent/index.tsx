@@ -87,7 +87,8 @@ export default function CreateAgent() {
     formData.ticker &&
     formData.contractAddress &&
     formData.instructions &&
-    formData.persona;
+    formData.persona &&
+    formData.agentType != "none";
   // (tabs == "new" ? formData.ticker : formData.contractAddress);
   const setFallbackURL = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     console.log("error", e);

@@ -27,9 +27,9 @@ const Footer = () => {
           <span>
             <FaXTwitter />
           </span>
-          <span>
+          {/* <span>
             <FaXTwitter />
-          </span>
+          </span> */}
         </div>
       </div>
       <div className='copyright_div'>

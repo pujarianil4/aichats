@@ -1,3 +1,4 @@
+@import "/src//styles/breakPoints";
 .agenthome {
   display: flex;
   width: 100%;
@@ -74,6 +75,44 @@
         right: 0;
         height: 100%;
       }
+    }
+  }
+}
+
+.socialModal {
+  width: 92% !important;
+  @include lessThan(lg) {
+    top: -115px !important;
+  }
+  @include lessThan(sm) {
+    top: 0px !important;
+  }
+
+  .ant-modal-content {
+    max-width: 430px;
+    min-width: 300px;
+    width: 100%;
+    margin: auto;
+    background-color: var(--primary-bg);
+    border-radius: 10px;
+    // width: max-content !important;
+    @include lessThan(md) {
+      padding: 20px 15px;
+    }
+    .ant-modal-title {
+      background: var(--primary-bg);
+      color: var(--primary);
+      text-align: center;
+      font-size: 20px;
+      border-bottom: 1px solid var(--tertiary-bg);
+      padding-bottom: 10px;
+    }
+
+    .ant-modal-close {
+      color: var(--light);
+      top: 2px;
+      width: 10px;
+      height: 28px;
     }
   }
 }

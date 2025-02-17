@@ -178,6 +178,10 @@
   display: flex;
   justify-content: space-around;
   gap: 20px;
+  align-items: center;
+  @include lessThan(sm) {
+    flex-direction: column;
+  }
   div {
     width: 200px;
     background: var(--dark);
@@ -193,6 +197,9 @@
 
     h3 {
       font-size: 1.2rem;
+      @include lessThan(md) {
+        font-size: 1rem;
+      }
     }
     p {
       font-size: 0.7rem;
@@ -203,6 +210,13 @@
       // border-color: var(--primary);
       // padding-block: 15px;
       // padding: 10px 20px;
+      font-size: 16px;
+      @include lessThan(md) {
+        font-size: 14px;
+      }
+      @include lessThan(sm) {
+        font-size: 12px;
+      }
     }
   }
   .magic {

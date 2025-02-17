@@ -63,7 +63,7 @@ export default function Agent({
             rows={10}
             id='bio'
             placeholder='This is the short bio that will be shown at your agents profile.'
-            defaultValue={agentData?.personality}
+            defaultValue={agentData?.persona}
           />
         </div>
       ),

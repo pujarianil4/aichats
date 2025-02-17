@@ -1,5 +1,6 @@
+@import "/src//styles/breakPoints";
 .social_bx {
-  padding-bottom: 20px;
+  // padding-bottom: 20px;
   .connect_btn {
     max-width: 355px;
     display: flex;
@@ -12,10 +13,13 @@
     border-radius: 16px;
     cursor: pointer;
     color: #fff;
-    padding: 12px;
+    padding: 10px;
     position: relative;
     z-index: 1;
-
+    @include lessThan(md) {
+      max-width: unset;
+      width: unset;
+    }
     &:before {
       content: "";
       position: absolute;
@@ -43,9 +47,29 @@
     .tab_bx {
       padding: 0px 10px;
       border-radius: 8px;
-
+      @include lessThan(md) {
+        padding: 0px 0px;
+      }
       .tab-content {
         // text-align: center;
+        h2 {
+          font-size: 22px;
+          @include lessThan(md) {
+            font-size: 18px;
+          }
+        }
+        p {
+          font-size: 14px;
+          @include lessThan(md) {
+            font-size: 12px !important;
+          }
+        }
+        ol {
+          font-size: 14px;
+          @include lessThan(md) {
+            font-size: 12px;
+          }
+        }
         .command_header {
           display: flex;
 
@@ -90,8 +114,13 @@
           }
         }
         .input_container {
+          width: 100%;
+          padding: 0px;
           input {
             width: 100%;
+            @include lessThan(md) {
+              padding: 10px 8px !important;
+            }
           }
         }
 

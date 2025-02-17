@@ -17,9 +17,10 @@ import { erc20Abi } from "../../helpers/contracts/abi.ts";
 import { multicall } from "wagmi/actions";
 import { wagmiConfig } from "../../main.tsx";
 import NotificationMessage from "../common/notificationMessage.tsx";
-import { MdOutlineFeaturedVideo } from "react-icons/md";
+import { MdOutlineChat, MdOutlineFeaturedVideo } from "react-icons/md";
 import ChatAdminSettings from "./adminSettings/index.tsx";
 import { IoSettingsOutline } from "react-icons/io5";
+import useIsMobile from "../../hooks/useIsMobile.ts";
 
 export interface InstanceData {
   id: number;
@@ -45,6 +46,21 @@ export default function AiChats() {
   const [youtubeLink, setYoutubeLink] = useState("");
   const [isSetting, setIsSettings] = useState(false);
   const [mutedUsers, setMutedUsers] = useState<string[]>([]);
+  const [mobileView, setMobileView] = useState(1);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const chatRef = useRef(null);
+  const isMobile = useIsMobile(992);
+
+  const handleToggleChat = () => setIsChatOpen(!isChatOpen);
+
+  const handleScroll = () => {
+    if (chatRef.current) {
+      const { scrollTop } = chatRef.current;
+      if (scrollTop === 0) {
+        setIsChatOpen(false);
+      }
+    }
+  };
 
   const isModerator = useMemo(
     () => instanceData?.moderators?.includes(address as string) || false,
@@ -209,99 +225,188 @@ export default function AiChats() {
   }
 
   return (
-    <div style={dynamicStyles} className='aichats'>
-      <div
-        className={`actions ${viewSize === 0 ? "full" : "half"}`}
-        onClick={handleViewSizeChange}
-      >
-        <MdOutlineFeaturedVideo size={24} color='#ffffff' />
-      </div>
+    <>
+      {isMobile ? (
+        <div className='aichats_mobile'>
+          {mobileView == 1 && (
+            <div
+              className='view_1'
+              onClick={() => setMobileView(2)}
+              style={{ animation: "fadeInUp 0.4s ease-in-out" }}
+            >
+              <p>Live &bull;</p>
+            </div>
+          )}
+          {mobileView == 2 && (
+            <div
+              className='view_2'
+              style={{ animation: "scaleIn 0.4s ease-in-out" }}
+            >
+              <YoutubeVideo youtubeLink={instanceData?.streamUrl} />
+              <button onClick={() => setMobileView(3)} className='view_btn'>
+                <MdOutlineFeaturedVideo size={20} />
+              </button>
+            </div>
+          )}
+          {mobileView == 3 && (
+            <div
+              className={`view_3 ${isChatOpen ? "chat_open" : ""}`}
+              style={{ animation: "slideUp 0.4s ease-in-out" }}
+            >
+              <div className='video_container'>
+                <YoutubeVideo youtubeLink={instanceData?.streamUrl} />
+                <button onClick={() => setMobileView(1)} className='view_btn'>
+                  <MdOutlineFeaturedVideo size={20} />
+                </button>
+                <button className='chat_toggle_btn' onClick={handleToggleChat}>
+                  <MdOutlineChat size={20} />
+                </button>
+              </div>
 
-      <div
-        style={viewSize == 2 ? { width: "100%" } : { width: "446px" }}
-        className='live'
-      >
-        <YoutubeVideo youtubeLink={instanceData?.streamUrl} />
+              <div
+                className='chat_overlay'
+                ref={chatRef}
+                onScroll={handleScroll}
+              >
+                <div
+                  className='drag_handle'
+                  onClick={() => setIsChatOpen(false)}
+                ></div>
+                {(isModerator || instanceData?.adminAddress === address) && (
+                  <div className='feedControls'>
+                    <button onClick={handleOpenModal}>update link</button>
+                    <button
+                      className={`${isSetting ? "active" : ""}`}
+                      onClick={() => setIsSettings(!isSetting)}
+                    >
+                      settings&nbsp;
+                      <IoSettingsOutline color='#ffffff' />
+                    </button>
+                  </div>
+                )}
+                {isSetting ? (
+                  <ChatAdminSettings
+                    instanceData={instanceData}
+                    updateStreamUrl={updateStreamUrl}
+                    setIsSettings={setIsSettings}
+                    mutedUsers={mutedUsers}
+                  />
+                ) : (
+                  <>
+                    <ChatFeed
+                      chatInstanceId={instanceData?.id}
+                      adminAddress={instanceData?.adminAddress}
+                      mutedUsers={mutedUsers}
+                      isModerator={isModerator}
+                    />
+                    <ChatInput
+                      adminAddress={instanceData?.adminAddress}
+                      tokenAddress={instanceData?.tokenAddress}
+                      chatInstanceId={instanceData?.id}
+                      mutedUsers={mutedUsers}
+                    />
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div style={dynamicStyles} className='aichats'>
+          <div
+            className={`actions ${viewSize === 0 ? "full" : "half"}`}
+            onClick={handleViewSizeChange}
+          >
+            <MdOutlineFeaturedVideo size={24} color='#ffffff' />
+          </div>
 
-        {/* {isModerator ||
+          <div
+            style={viewSize == 2 ? { width: "100%" } : { width: "446px" }}
+            className='live'
+          >
+            <YoutubeVideo youtubeLink={instanceData?.streamUrl} />
+
+            {/* {isModerator ||
           (instanceData?.adminAddress === address && (
             <div onClick={handleOpenModal} className='update'>
               update
             </div>
           ))} */}
-      </div>
+          </div>
 
-      <div className='chatfeed'>
-        {(isModerator || instanceData?.adminAddress === address) && (
-          <div className='feedControls'>
-            {/* <Switch
+          <div className='chatfeed'>
+            {(isModerator || instanceData?.adminAddress === address) && (
+              <div className='feedControls'>
+                {/* <Switch
             className='adminSettings'
             defaultChecked
             onChange={(checked) => setIsSettings(checked)}
-          /> */}
+                /> */}
 
-            <button onClick={handleOpenModal}>update link</button>
+                <button onClick={handleOpenModal}>update link</button>
 
-            <button
-              className={`${isSetting ? "active" : ""}`}
-              onClick={() => setIsSettings(!isSetting)}
-            >
-              settings&nbsp;
-              <IoSettingsOutline color='#ffffff' />
-            </button>
+                <button
+                  className={`${isSetting ? "active" : ""}`}
+                  onClick={() => setIsSettings(!isSetting)}
+                >
+                  settings&nbsp;
+                  <IoSettingsOutline color='#ffffff' />
+                </button>
+              </div>
+            )}
+            {isSetting ? (
+              <ChatAdminSettings
+                instanceData={instanceData}
+                updateStreamUrl={updateStreamUrl}
+                setIsSettings={setIsSettings}
+                mutedUsers={mutedUsers}
+              />
+            ) : (
+              <>
+                <ChatFeed
+                  chatInstanceId={instanceData?.id}
+                  adminAddress={instanceData?.adminAddress}
+                  mutedUsers={mutedUsers}
+                  isModerator={isModerator}
+                />
+                <ChatInput
+                  adminAddress={instanceData?.adminAddress}
+                  tokenAddress={instanceData?.tokenAddress}
+                  chatInstanceId={instanceData?.id}
+                  mutedUsers={mutedUsers}
+                />
+              </>
+            )}
           </div>
-        )}
-        {isSetting ? (
-          <ChatAdminSettings
-            instanceData={instanceData}
-            updateStreamUrl={updateStreamUrl}
-            setIsSettings={setIsSettings}
-            mutedUsers={mutedUsers}
-          />
-        ) : (
-          <>
-            <ChatFeed
-              chatInstanceId={instanceData?.id}
-              adminAddress={instanceData?.adminAddress}
-              mutedUsers={mutedUsers}
-              isModerator={isModerator}
-            />
-            <ChatInput
-              adminAddress={instanceData?.adminAddress}
-              tokenAddress={instanceData?.tokenAddress}
-              chatInstanceId={instanceData?.id}
-              mutedUsers={mutedUsers}
-            />
-          </>
-        )}
-      </div>
-      <Modal
-        title='Update Stream Link'
-        open={isModalOpen}
-        onCancel={handleCloseModal}
-        footer={[
-          // <Button key='cancel' onClick={handleCloseModal}>
-          //   Cancel
-          // </Button>,
-          <Button
-            key='submit'
-            type='primary'
-            onClick={() =>
-              updateStreamUrl(youtubeLink, instanceData?.minTokenValue)
-            }
-            disabled={!youtubeLink}
+          <Modal
+            title='Update Stream Link'
+            open={isModalOpen}
+            onCancel={handleCloseModal}
+            footer={[
+              // <Button key='cancel' onClick={handleCloseModal}>
+              //   Cancel
+              // </Button>,
+              <Button
+                key='submit'
+                type='primary'
+                onClick={() =>
+                  updateStreamUrl(youtubeLink, instanceData?.minTokenValue)
+                }
+                disabled={!youtubeLink}
+              >
+                Update
+              </Button>,
+            ]}
           >
-            Update
-          </Button>,
-        ]}
-      >
-        <Input
-          style={{ backgroundColor: "white" }}
-          placeholder='Enter stream video link'
-          value={youtubeLink}
-          onChange={(e) => setYoutubeLink(e.target.value)}
-        />
-      </Modal>
-    </div>
+            <Input
+              style={{ backgroundColor: "white" }}
+              placeholder='Enter stream video link'
+              value={youtubeLink}
+              onChange={(e) => setYoutubeLink(e.target.value)}
+            />
+          </Modal>
+        </div>
+      )}
+    </>
   );
 }
