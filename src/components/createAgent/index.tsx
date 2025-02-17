@@ -80,7 +80,8 @@ export default function CreateAgent() {
     formData.ticker &&
     formData.contractAddress &&
     formData.instructions &&
-    formData.persona;
+    formData.persona &&
+    formData.agentType != "none";
   // (tabs == "new" ? formData.ticker : formData.contractAddress);
   const setFallbackURL = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     console.log("error", e);
@@ -603,16 +604,16 @@ export default function CreateAgent() {
             <span className='errormsg'>{errorMsg.desc}</span>
           </div>
           <div className='input_container'>
-            <label htmlFor='persona'>
-              persona
+            <label htmlFor='personality'>
+              Personality
               <span className='required'>*</span>{" "}
             </label>
             <textarea
               value={formData.persona}
               onChange={(e) => handleInputChange("persona", e.target.value)}
               rows={10}
-              id='persona'
-              placeholder='Short information about agent persona'
+              id='personality'
+              placeholder='Short information about agent personality'
             />
             <span className='errormsg'>{errorMsg.persona}</span>
           </div>
