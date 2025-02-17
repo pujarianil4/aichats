@@ -24,7 +24,7 @@ type FormData = {
   contractAddress: string;
   desc: string;
   instructions: string;
-  personality: string;
+  persona: string;
   agentType: string;
 };
 
@@ -44,7 +44,7 @@ export default function UpdateAgent({
     name: "",
     desc: "",
     contractAddress: "",
-    personality: "",
+    persona: "",
   });
   const fileRefs = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState<FormData>({
@@ -54,7 +54,7 @@ export default function UpdateAgent({
     contractAddress: "",
     desc: "",
     instructions: "",
-    personality: "",
+    persona: "",
     agentType: "none",
   });
 
@@ -67,7 +67,7 @@ export default function UpdateAgent({
         contractAddress: agentData?.token?.tCAddress || "",
         desc: agentData.desc || "",
         instructions: agentData.instructions?.join("\n") || "",
-        personality: agentData.personality || "",
+        persona: agentData.persona || "",
         agentType: agentData.typ || "none",
       });
     }
@@ -80,7 +80,7 @@ export default function UpdateAgent({
     formData.ticker &&
     formData.contractAddress &&
     formData.instructions &&
-    formData.personality;
+    formData.persona;
   // (tabs == "new" ? formData.ticker : formData.contractAddress);
   const setFallbackURL = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     console.log("error", e);
@@ -132,7 +132,7 @@ export default function UpdateAgent({
   };
 
   const formValidation = () => {
-    const { name, desc, contractAddress, instructions, personality } = formData;
+    const { name, desc, contractAddress, instructions, persona } = formData;
 
     const validations = [
       {
@@ -155,7 +155,7 @@ export default function UpdateAgent({
       },
       {
         condition: () => {
-          const charLength = String(personality).split("").length;
+          const charLength = String(persona).split("").length;
           console.log(
             "charLength",
             charLength,
@@ -164,9 +164,9 @@ export default function UpdateAgent({
 
           return charLength >= 100 && charLength <= 300; // Example validation range
         },
-        field: "personality",
+        field: "persona",
         errorMsg:
-          "Personality must be between 50 and 300 characters (excluding spaces).",
+          "persona must be between 50 and 300 characters (excluding spaces).",
       },
       {
         condition: () => isAddress(contractAddress),
@@ -202,7 +202,7 @@ export default function UpdateAgent({
         name: formData.name || agentData.name,
         pic: formData.profile || agentData.imageUrl,
         desc: formData.desc || agentData.desc,
-        personality: formData.personality || agentData.personality,
+        persona: formData.persona || agentData.persona,
         instructions: formData.instructions
           ? formData.instructions.split("\n").map((line) => line.trim())
           : agentData.instructions,
@@ -350,13 +350,13 @@ export default function UpdateAgent({
               <span className='required'>*</span>{" "}
             </label>
             <textarea
-              value={formData.personality}
-              onChange={(e) => handleInputChange("personality", e.target.value)}
+              value={formData.persona}
+              onChange={(e) => handleInputChange("persona", e.target.value)}
               rows={10}
               id='personality'
               placeholder='Short information about agent personality'
             />
-            <span className='errormsg'>{errorMsg.personality}</span>
+            <span className='errormsg'>{errorMsg.persona}</span>
           </div>
           <div className='input_container'>
             <label htmlFor='instructions'>
