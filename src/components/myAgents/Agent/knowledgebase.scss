@@ -106,6 +106,12 @@
   // background: var(--primary-bg);
   h2 {
     font-size: 18px;
+    @include lessThan(md) {
+      font-size: 16px;
+    }
+    @include lessThan(sm) {
+      font-size: 14px;
+    }
   }
   p {
     font-size: 13px;
