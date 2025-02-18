@@ -87,3 +87,43 @@ export const deleteKbByAgent = async (agentID: string, payload: any) => {
     throw error;
   }
 };
+
+export const getOnetoOneChatSession = async (agentID: string) => {
+  try {
+    const { data } = await api.get(`/chat-session?aId=${agentID}`);
+    return data;
+  } catch (error) {
+    console.error("Error", error);
+    throw error;
+  }
+};
+
+export const getOnetoOneChatHistoryBySession = async (sessionID: string) => {
+  try {
+    const { data } = await api.get(`/chat-message/${sessionID}`);
+    return data;
+  } catch (error) {
+    console.error("Error", error);
+    throw error;
+  }
+};
+
+export const createOnetoOneChatSession = async (agentID: string) => {
+  try {
+    const { data } = await api.post(`/chat-session`, { aId: agentID });
+    return data;
+  } catch (error) {
+    console.error("Create Session Error", error);
+    throw error;
+  }
+};
+
+export const chatWithOnetoOneAgent = async (payload: any) => {
+  try {
+    const { data } = await api.post(`/chat-message`, payload);
+    return data;
+  } catch (error) {
+    console.error("Error", error);
+    throw error;
+  }
+};
