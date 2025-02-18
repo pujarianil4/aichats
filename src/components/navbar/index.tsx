@@ -200,10 +200,15 @@ function Navbar() {
                   onSelect={(label) => {
                     if (label === "Disconnect") handleDisconnect();
                     if (label === "Switch Network") openChainModal();
+                    if (label === "Profile") navigate("/profile");
                   }}
                   onAction='click'
                   position='bottomRight'
-                  list={[{ label: "Disconnect" }, { label: "Switch Network" }]}
+                  list={[
+                    { label: "Profile" },
+                    { label: "Disconnect" },
+                    { label: "Switch Network" },
+                  ]}
                 >
                   <Button type='primary' className='address'>
                     {address && shortenAddress(address)}

@@ -6,12 +6,13 @@ import { FaChevronDown } from "react-icons/fa";
 import { BsDashCircle } from "react-icons/bs";
 import Camera from "../../assets/camera.png";
 import { GoArrowSwitch } from "react-icons/go";
-
+import { FiUpload } from "react-icons/fi";
 import { useImageNameValidator } from "../../hooks/useImageNameValidator.tsx";
 import { createAgent, uploadSingleFile } from "../../services/api.ts";
 import { Address, erc20Abi, isAddress } from "viem";
 import { readContract } from "wagmi/actions";
 import { wagmiConfig } from "../../main.tsx";
+import { useNavigate } from "react-router-dom";
 export const IMAGE_FILE_TYPES = "image/png, image/jpeg, image/webp, image/jpg";
 interface IConversation {
   id: number;
@@ -34,6 +35,7 @@ type FormData = {
   desc: string;
   instructions: string;
   persona: string;
+  flowImage: string;
   agentType: string;
   // greeting: string;
   // environmentPrompts: EnvironmentPrompts;
@@ -41,6 +43,7 @@ type FormData = {
 };
 
 export default function CreateAgent() {
+  const navigate = useNavigate();
   const [isViewMore, setIsViewMore] = useState(false);
   const [tabs, setTabs] = useState("new");
   const { validateImage, error: err, clearError } = useImageNameValidator();
@@ -53,7 +56,10 @@ export default function CreateAgent() {
     contractAddress: "",
     persona: "",
   });
+  const [isProfileUploading, setIsProfileUploading] = useState<boolean>(false);
+  const [isFlowUploading, setIsFlowUploading] = useState<boolean>(false);
   const fileRefs = useRef<HTMLInputElement>(null);
+  const flowFileRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState<FormData>({
     name: "",
     ticker: "",
@@ -62,6 +68,7 @@ export default function CreateAgent() {
     desc: "",
     instructions: "",
     persona: "",
+    flowImage: "",
     agentType: "none",
     // greeting: "",
     // environmentPrompts: {
@@ -98,6 +105,7 @@ export default function CreateAgent() {
       desc: "",
       instructions: "",
       persona: "",
+      flowImage: "",
       agentType: "none",
     });
   };
@@ -229,9 +237,12 @@ export default function CreateAgent() {
 
   const uploadProfile = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
+      setIsProfileUploading(true);
+      console.log("upload  profile");
       try {
         const file = event.target.files[0];
         if (!validateImage(file)) {
+          setIsProfileUploading(false);
           return;
         }
         const imgURL = await uploadSingleFile(file);
@@ -243,7 +254,30 @@ export default function CreateAgent() {
       } catch (error) {
         event.target.value = "";
       }
+      setIsProfileUploading(false);
+      //setImgSrc(imgURL);
+    }
+  };
+  const uploadFlow = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      setIsFlowUploading(true);
+      try {
+        const file = event.target.files[0];
+        if (!validateImage(file)) {
+          setIsFlowUploading(false);
+          return;
+        }
 
+        const imgURL = await uploadSingleFile(file);
+        console.log("image", imgURL);
+        handleInputChange("flowImage", imgURL);
+
+        //reset value to select same image again
+        event.target.value = "";
+      } catch (error) {
+        event.target.value = "";
+      }
+      setIsFlowUploading(false);
       //setImgSrc(imgURL);
     }
   };
@@ -318,11 +352,14 @@ export default function CreateAgent() {
           instructions: formData.instructions
             .split("\n")
             .map((line) => line.replace(/^-\s*/, "").trim()),
+          // flowImage: formData.flowImage,
           typ: formData.agentType,
         };
         console.log("Form Data Submitted:", data);
         setLoading(true);
         const res = await createAgent(data);
+        console.log("result", res);
+        navigate(`/myagent/${res.id}`);
         resetForm();
         message.success("Agent Created Successfully!");
       }
@@ -527,14 +564,16 @@ export default function CreateAgent() {
               onError={setFallbackURL}
               alt='logo'
             />
+
             <input
               ref={fileRefs}
               onChange={uploadProfile}
               type='file'
               accept={IMAGE_FILE_TYPES}
-              name='img'
+              name='profileImg'
               style={{ visibility: "hidden", position: "absolute" }}
             />
+
             <div>
               <p>AI Agent</p>
               <p className='pic'>
@@ -557,20 +596,7 @@ export default function CreateAgent() {
               placeholder='Agent Name'
             />
           </div>
-          {true && (
-            <div className='input_container'>
-              <label htmlFor='ticker'>
-                Ticker <span className='required'>*</span>{" "}
-              </label>
-              <input
-                value={formData.ticker}
-                id='ticker'
-                type='text'
-                placeholder='$'
-                disabled
-              />
-            </div>
-          )}
+
           {true && (
             <div className='input_container'>
               <label htmlFor='contract_address'>
@@ -589,6 +615,22 @@ export default function CreateAgent() {
               <span className='errormsg'>{errorMsg.contractAddress}</span>
             </div>
           )}
+
+          {true && (
+            <div className='input_container'>
+              <label htmlFor='ticker'>
+                Ticker <span className='required'>*</span>{" "}
+              </label>
+              <input
+                value={formData.ticker}
+                id='ticker'
+                type='text'
+                placeholder='$'
+                disabled
+              />
+            </div>
+          )}
+
           <div className='input_container'>
             <label htmlFor='bio'>
               AI Agent Description
@@ -604,16 +646,16 @@ export default function CreateAgent() {
             <span className='errormsg'>{errorMsg.desc}</span>
           </div>
           <div className='input_container'>
-            <label htmlFor='personality'>
-              Personality
+            <label htmlFor='persona'>
+              persona
               <span className='required'>*</span>{" "}
             </label>
             <textarea
               value={formData.persona}
               onChange={(e) => handleInputChange("persona", e.target.value)}
               rows={10}
-              id='personality'
-              placeholder='Short information about agent personality'
+              id='persona'
+              placeholder='Short information about agent persona'
             />
             <span className='errormsg'>{errorMsg.persona}</span>
           </div>
@@ -637,6 +679,47 @@ export default function CreateAgent() {
             />
             <span className='errormsg'>{errorMsg.desc}</span>
           </div>
+
+          <div className='input_container'>
+            <label htmlFor='name'>
+              Flow Chart <span className='required'>*</span>
+            </label>
+
+            <div className='flow'>
+              {formData.flowImage ? (
+                <img
+                  onClick={() => flowFileRef.current?.click()}
+                  src={formData.flowImage || Camera}
+                  onError={setFallbackURL}
+                  alt='logo'
+                />
+              ) : (
+                <button
+                  onClick={() => flowFileRef.current?.click()}
+                  className='upload-button'
+                  disabled={isFlowUploading}
+                >
+                  {isFlowUploading ? (
+                    "Uploading..."
+                  ) : (
+                    <span>
+                      <FiUpload /> Upload Flowchart
+                    </span>
+                  )}
+                </button>
+              )}
+
+              <input
+                ref={flowFileRef}
+                onChange={uploadFlow}
+                type='file'
+                accept={IMAGE_FILE_TYPES}
+                name='img'
+                style={{ visibility: "hidden", position: "absolute" }}
+              />
+            </div>
+          </div>
+
           <div className='input_container'>
             <label htmlFor='agenttype'>
               Agent Type
