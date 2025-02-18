@@ -1,4 +1,3 @@
-
 import axios, {
   AxiosInstance,
   AxiosResponse,
@@ -8,16 +7,17 @@ import axios, {
 import { store } from "../contexts/store.ts";
 import Cookies from "js-cookie";
 import CryptoJS, { AES } from "crypto-js";
-import { setUserData, setUserError, setUserLoading } from "../contexts/reducers/index.ts";
-import { disconnect } from 'wagmi/actions';
-import { wagmiConfig } from '../wagmiConfig.ts';
-
+import {
+  setUserData,
+  setUserError,
+  setUserLoading,
+} from "../contexts/reducers/index.ts";
+import { disconnect } from "wagmi/actions";
+import { wagmiConfig } from "../wagmiConfig.ts";
 
 const SECRET_KEY = import.meta.env.TOKEN_SECRET_KEY || "secret_key";
 const BASE_URL =
-import.meta.env.NEXT_PUBLIC_BASE_URL || " https://ai-agent-r139.onrender.com";
-
-
+  import.meta.env.NEXT_PUBLIC_BASE_URL || "https://ai-agent-r139.onrender.com/";
 
 // Encrypt token before saving to cookies
 export const encryptToken = (token: string): string => {
@@ -76,20 +76,15 @@ api.interceptors.request.use(
 // Response interceptor to handle token expiration
 api.interceptors.response.use(
   (response: AxiosResponse) => {
-    if (
-      response.config.url === "/auth/connect"
-    ) {
-       const { token, id } = response.data;
+    if (response.config.url === "/auth/connect") {
+      const { token, id } = response.data;
       console.log(response.data);
-      
-       saveTokens(id, token);
 
-       store.dispatch(setUserData({isLogedIn: "yes", ...response.data }));
+      saveTokens(id, token);
+
+      store.dispatch(setUserData({ isLogedIn: "yes", ...response.data }));
     }
-    if (
-      response.config.url === "/auth/disconnect"
-    ) {
-
+    if (response.config.url === "/auth/disconnect") {
       //  store.dispatch(setUserData("disconnected"));
     }
     return response;
@@ -114,10 +109,10 @@ api.interceptors.response.use(
       store.dispatch(setUserData(user.data));
     } catch {
       clearTokens();
-     
+
       store.dispatch(setUserError("Session expired. Please log in again."));
-      await disconnect(wagmiConfig, {})
-      window.location.reload()
+      await disconnect(wagmiConfig, {});
+      window.location.reload();
     }
   }
 })();
@@ -125,18 +120,16 @@ api.interceptors.response.use(
 const validateUser = async () => {
   const { token } = getTokens();
   console.log("validateUser", token);
-  
+
   if (token) {
     try {
       const user = await api.get("/auth/currentuser");
 
-      store.dispatch(setUserData({isLogedIn: "yes",...user.data}));
+      store.dispatch(setUserData({ isLogedIn: "yes", ...user.data }));
     } catch {
-
- 
       store.dispatch(setUserError("Session expired. Please log in again."));
     }
   }
-}
+};
 
 export { api, saveTokens, clearTokens, getTokens, validateUser };
