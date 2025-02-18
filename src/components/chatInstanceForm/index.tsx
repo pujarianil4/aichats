@@ -9,7 +9,7 @@ import { Popover } from "antd";
 interface FormData {
   name: string;
   adminAddress: string;
-  agentId: string;
+  aId: string;
   streamUrl: string;
   moderators: string[];
   tokenAddress: string;
@@ -22,7 +22,7 @@ const ChatInstanceForm: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
     name: "",
     adminAddress: "",
-    agentId: "",
+    aId: "",
     streamUrl: "",
     moderators: [],
     tokenAddress: "",
@@ -98,7 +98,7 @@ const ChatInstanceForm: React.FC = () => {
 
     try {
       await createInstance(formData);
-      navigate(`/agent/${1}`);
+      // navigate(`/agent/${1}`);
     } catch (error) {
       console.log("FAILED TO CREATE INSTANCE", error);
     }
@@ -155,8 +155,8 @@ const ChatInstanceForm: React.FC = () => {
         </label>
         <input
           type='text'
-          name='agentId'
-          value={formData.agentId}
+          name='aId'
+          value={formData.aId}
           onChange={handleInputChange}
           required
         />

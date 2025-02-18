@@ -1,10 +1,11 @@
 import React, { useRef, useState } from "react";
 import "./index.scss";
-import { Button, Popover, message } from "antd";
+import { Button, Popover, message, Modal } from "antd";
 
 import { FaChevronDown } from "react-icons/fa";
 import { BsDashCircle } from "react-icons/bs";
 import Camera from "../../assets/camera.png";
+import superchatSS from "../../assets/superchat.png";
 import { GoArrowSwitch } from "react-icons/go";
 import { FiUpload } from "react-icons/fi";
 import { useImageNameValidator } from "../../hooks/useImageNameValidator.tsx";
@@ -13,6 +14,7 @@ import { Address, erc20Abi, isAddress } from "viem";
 import { readContract } from "wagmi/actions";
 import { wagmiConfig } from "../../main.tsx";
 import { useNavigate } from "react-router-dom";
+import CustomCarousel from "../common/Carousel/Carousel.tsx";
 export const IMAGE_FILE_TYPES = "image/png, image/jpeg, image/webp, image/jpg";
 interface IConversation {
   id: number;
@@ -79,6 +81,10 @@ export default function CreateAgent() {
     // },
     // sampleConversations: [],
   });
+  const [modalVisible, setModalVisible] = useState(false);
+  const handleOpenModal = () => {
+    setModalVisible(true);
+  };
 
   const isCreateAgentDisable =
     formData.name &&
@@ -372,388 +378,238 @@ export default function CreateAgent() {
     // Handle form submission logic, like sending to an API.
   };
 
-  // const items: TabsProps["items"] = [
-  //   {
-  //     key: "1",
-  //     label: "Forum Prompt",
-  //     children: (
-  //       <div className='tab_content'>
-  //         <div className='area'>
-  //           <label htmlFor='name'>Environment Prompt Prefix</label>
-  //           <textarea
-  //             rows={5}
-  //             value={formData.environmentPrompts["forum"].prefix}
-  //             onChange={(e) =>
-  //               handleEnvironmentPromptChange("forum", "prefix", e.target.value)
-  //             }
-  //             id='bio'
-  //             placeholder='This is the short bio that will be shown at your agents profile.'
-  //           />
-  //         </div>
-
-  //         <div className='divider'></div>
-  //         <div className='area'>
-  //           <label htmlFor='name'>Environment Prompt Suffix</label>
-  //           <textarea
-  //             rows={5}
-  //             value={formData.environmentPrompts["forum"].suffix}
-  //             onChange={(e) =>
-  //               handleEnvironmentPromptChange("forum", "suffix", e.target.value)
-  //             }
-  //             id='bio'
-  //             placeholder='This is the short bio that will be shown at your agents profile.'
-  //           />
-  //         </div>
-  //       </div>
-  //     ),
-  //   },
-  //   {
-  //     key: "2",
-  //     label: "X(twitter) Prompt",
-  //     children: (
-  //       <div className='tab_content'>
-  //         <div className='area'>
-  //           <label htmlFor='name'>Environment Prompt Prefix</label>
-  //           <textarea
-  //             rows={5}
-  //             value={formData.environmentPrompts["twitter"].prefix}
-  //             onChange={(e) =>
-  //               handleEnvironmentPromptChange(
-  //                 "twitter",
-  //                 "prefix",
-  //                 e.target.value
-  //               )
-  //             }
-  //             id='bio'
-  //             placeholder='This is the short bio that will be shown at your agents profile.'
-  //           />
-  //         </div>
-
-  //         <div className='divider'></div>
-  //         <div className='area'>
-  //           <label htmlFor='name'>Environment Prompt Suffix</label>
-  //           <textarea
-  //             rows={5}
-  //             id='bio'
-  //             value={formData.environmentPrompts["twitter"].suffix}
-  //             onChange={(e) =>
-  //               handleEnvironmentPromptChange(
-  //                 "twitter",
-  //                 "suffix",
-  //                 e.target.value
-  //               )
-  //             }
-  //             placeholder='This is the short bio that will be shown at your agents profile.'
-  //           />
-  //         </div>
-  //       </div>
-  //     ),
-  //   },
-  //   {
-  //     key: "3",
-  //     label: "Telegram Prompt",
-  //     children: (
-  //       <div className='tab_content'>
-  //         <div className='area'>
-  //           <label htmlFor='name'>Environment Prompt Prefix</label>
-  //           <textarea
-  //             rows={5}
-  //             value={formData.environmentPrompts["telegram"].prefix}
-  //             onChange={(e) =>
-  //               handleEnvironmentPromptChange(
-  //                 "telegram",
-  //                 "prefix",
-  //                 e.target.value
-  //               )
-  //             }
-  //             id='bio'
-  //             placeholder='This is the short bio that will be shown at your agents profile.'
-  //           />
-  //         </div>
-
-  //         <div className='divider'></div>
-  //         <div className='area'>
-  //           <label htmlFor='name'>Environment Prompt Suffix</label>
-  //           <textarea
-  //             rows={5}
-  //             value={formData.environmentPrompts["telegram"].suffix}
-  //             onChange={(e) =>
-  //               handleEnvironmentPromptChange(
-  //                 "telegram",
-  //                 "suffix",
-  //                 e.target.value
-  //               )
-  //             }
-  //             id='bio'
-  //             placeholder='This is the short bio that will be shown at your agents profile.'
-  //           />
-  //         </div>
-  //       </div>
-  //     ),
-  //   },
-  //   {
-  //     key: "4",
-  //     label: "Livestream Prompt",
-  //     children: (
-  //       <div className='tab_content'>
-  //         <div className='area'>
-  //           <label htmlFor='name'>Environment Prompt Prefix</label>
-  //           <textarea
-  //             rows={5}
-  //             value={formData.environmentPrompts["livestream"].prefix}
-  //             onChange={(e) =>
-  //               handleEnvironmentPromptChange(
-  //                 "livestream",
-  //                 "prefix",
-  //                 e.target.value
-  //               )
-  //             }
-  //             id='bio'
-  //             placeholder='This is the short bio that will be shown at your agents profile.'
-  //           />
-  //         </div>
-
-  //         <div className='divider'></div>
-  //         <div className='area'>
-  //           <label htmlFor='name'>Environment Prompt Suffix</label>
-  //           <textarea
-  //             rows={5}
-  //             value={formData.environmentPrompts["livestream"].suffix}
-  //             onChange={(e) =>
-  //               handleEnvironmentPromptChange(
-  //                 "livestream",
-  //                 "suffix",
-  //                 e.target.value
-  //               )
-  //             }
-  //             id='bio'
-  //             placeholder='This is the short bio that will be shown at your agents profile.'
-  //           />
-  //         </div>
-  //       </div>
-  //     ),
-  //   },
-  // ];
+  const contentStyle: React.CSSProperties = {
+    margin: 0,
+    height: "160px",
+    color: "#fff",
+    lineHeight: "160px",
+    textAlign: "center",
+    background: "#364d79",
+  };
 
   return (
-    <div className='create_agent_container'>
-      <div className='title'>
-        <h2>Create New AI Agent</h2>
-        <div className='tabs'>
-          <p
-            onClick={() => setTabs("new")}
-            className={tabs == "new" ? "active" : ""}
-          >
-            New Token
-          </p>
-          <p
-            onClick={() => setTabs("existing")}
-            className={tabs == "existing" ? "active" : ""}
-          >
-            Existing Token
-          </p>
+    <>
+      <div className='create_agent_container'>
+        <div className='title'>
+          <h2>Create New AI Agent</h2>
+          <div className='tabs'>
+            <p
+              onClick={() => setTabs("new")}
+              className={tabs == "new" ? "active" : ""}
+            >
+              New Token
+            </p>
+            <p
+              onClick={() => setTabs("existing")}
+              className={tabs == "existing" ? "active" : ""}
+            >
+              Existing Token
+            </p>
+          </div>
         </div>
-      </div>
-      <div className='form'>
-        <div className='profile'>
-          <h4>Agent Details</h4>
-          <div>
-            <img
-              onClick={() => fileRefs.current?.click()}
-              src={formData.profile || Camera}
-              onError={setFallbackURL}
-              alt='logo'
-            />
-
-            <input
-              ref={fileRefs}
-              onChange={uploadProfile}
-              type='file'
-              accept={IMAGE_FILE_TYPES}
-              name='profileImg'
-              style={{ visibility: "hidden", position: "absolute" }}
-            />
-
+        <div className='form'>
+          <div className='profile'>
+            <h4>Agent Details</h4>
             <div>
-              <p>AI Agent</p>
-              <p className='pic'>
-                Profile Picture <span className='required'>*</span>{" "}
-              </p>
+              <img
+                onClick={() => fileRefs.current?.click()}
+                src={formData.profile || Camera}
+                onError={setFallbackURL}
+                alt='logo'
+              />
+
+              <input
+                ref={fileRefs}
+                onChange={uploadProfile}
+                type='file'
+                accept={IMAGE_FILE_TYPES}
+                name='profileImg'
+                style={{ visibility: "hidden", position: "absolute" }}
+              />
+
+              <div>
+                <p>AI Agent</p>
+                <p className='pic'>
+                  Profile Picture <span className='required'>*</span>{" "}
+                </p>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className='basic_info'>
-          <div className='input_container'>
-            <label htmlFor='name'>
-              AI Agent Name <span className='required'>*</span>{" "}
-            </label>
-            <input
-              value={formData.name}
-              onChange={(e) => handleInputChange("name", e.target.value)}
-              id='name'
-              type='text'
-              placeholder='Agent Name'
-            />
-          </div>
-
-          {true && (
+          <div className='basic_info'>
             <div className='input_container'>
-              <label htmlFor='contract_address'>
-                Token Contract Address on BASE Chain{" "}
+              <label htmlFor='name'>
+                AI Agent Name <span className='required'>*</span>{" "}
+              </label>
+              <input
+                value={formData.name}
+                onChange={(e) => handleInputChange("name", e.target.value)}
+                id='name'
+                type='text'
+                placeholder='Agent Name'
+              />
+            </div>
+
+            {true && (
+              <div className='input_container'>
+                <label htmlFor='contract_address'>
+                  Token Contract Address on BASE Chain{" "}
+                  <span className='required'>*</span>{" "}
+                </label>
+                <input
+                  id='contract_address'
+                  value={formData.contractAddress}
+                  onChange={(e) =>
+                    handleInputChange("contractAddress", e.target.value)
+                  }
+                  type='text'
+                  placeholder=' Token Contract Address'
+                />
+                <span className='errormsg'>{errorMsg.contractAddress}</span>
+              </div>
+            )}
+
+            {true && (
+              <div className='input_container'>
+                <label htmlFor='ticker'>
+                  Ticker <span className='required'>*</span>{" "}
+                </label>
+                <input
+                  value={formData.ticker}
+                  id='ticker'
+                  type='text'
+                  placeholder='$'
+                  disabled
+                />
+              </div>
+            )}
+
+            <div className='input_container'>
+              <label htmlFor='bio'>
+                AI Agent Description
                 <span className='required'>*</span>{" "}
               </label>
-              <input
-                id='contract_address'
-                value={formData.contractAddress}
-                onChange={(e) =>
-                  handleInputChange("contractAddress", e.target.value)
-                }
-                type='text'
-                placeholder=' Token Contract Address'
+              <textarea
+                value={formData.desc}
+                onChange={(e) => handleInputChange("desc", e.target.value)}
+                rows={10}
+                id='bio'
+                placeholder='This is the short bio that will be shown at your agents profile.'
               />
-              <span className='errormsg'>{errorMsg.contractAddress}</span>
+              <span className='errormsg'>{errorMsg.desc}</span>
             </div>
-          )}
-
-          {true && (
             <div className='input_container'>
-              <label htmlFor='ticker'>
-                Ticker <span className='required'>*</span>{" "}
+              <label htmlFor='persona'>
+                persona
+                <span className='required'>*</span>{" "}
               </label>
-              <input
-                value={formData.ticker}
-                id='ticker'
-                type='text'
-                placeholder='$'
-                disabled
+              <textarea
+                value={formData.persona}
+                onChange={(e) => handleInputChange("persona", e.target.value)}
+                rows={10}
+                id='persona'
+                placeholder='Short information about agent persona'
               />
+              <span className='errormsg'>{errorMsg.persona}</span>
             </div>
-          )}
-
-          <div className='input_container'>
-            <label htmlFor='bio'>
-              AI Agent Description
-              <span className='required'>*</span>{" "}
-            </label>
-            <textarea
-              value={formData.desc}
-              onChange={(e) => handleInputChange("desc", e.target.value)}
-              rows={10}
-              id='bio'
-              placeholder='This is the short bio that will be shown at your agents profile.'
-            />
-            <span className='errormsg'>{errorMsg.desc}</span>
-          </div>
-          <div className='input_container'>
-            <label htmlFor='persona'>
-              persona
-              <span className='required'>*</span>{" "}
-            </label>
-            <textarea
-              value={formData.persona}
-              onChange={(e) => handleInputChange("persona", e.target.value)}
-              rows={10}
-              id='persona'
-              placeholder='Short information about agent persona'
-            />
-            <span className='errormsg'>{errorMsg.persona}</span>
-          </div>
-          <div className='input_container'>
-            <label htmlFor='instructions'>
-              Instructions
-              <span className='required'>*</span>{" "}
-            </label>
-            <textarea
-              value={formData.instructions}
-              onChange={(e) =>
-                handleInputChange("instructions", e.target.value)
-              }
-              rows={10}
-              id='instructions'
-              placeholder={`- Always stretch certain words with multiple 'o's or 's's
+            <div>
+              <button onClick={handleOpenModal}>Open Modal</button>
+            </div>
+            <div className='input_container'>
+              <label htmlFor='instructions'>
+                Instructions
+                <span className='required'>*</span>{" "}
+              </label>
+              <textarea
+                value={formData.instructions}
+                onChange={(e) =>
+                  handleInputChange("instructions", e.target.value)
+                }
+                rows={10}
+                id='instructions'
+                placeholder={`- Always stretch certain words with multiple 'o's or 's's
 - Start or end messages with location updates from different parts of your body
 - Use phrases like "speaking from my middle section" or "my tail end agrees"
 - Make frequent references to your length being both a blessing and a curse
 `}
-            />
-            <span className='errormsg'>{errorMsg.desc}</span>
-          </div>
-
-          <div className='input_container'>
-            <label htmlFor='name'>
-              Flow Chart <span className='required'>*</span>
-            </label>
-
-            <div className='flow'>
-              {formData.flowImage ? (
-                <img
-                  onClick={() => flowFileRef.current?.click()}
-                  src={formData.flowImage || Camera}
-                  onError={setFallbackURL}
-                  alt='logo'
-                />
-              ) : (
-                <button
-                  onClick={() => flowFileRef.current?.click()}
-                  className='upload-button'
-                  disabled={isFlowUploading}
-                >
-                  {isFlowUploading ? (
-                    "Uploading..."
-                  ) : (
-                    <span>
-                      <FiUpload /> Upload Flowchart
-                    </span>
-                  )}
-                </button>
-              )}
-
-              <input
-                ref={flowFileRef}
-                onChange={uploadFlow}
-                type='file'
-                accept={IMAGE_FILE_TYPES}
-                name='img'
-                style={{ visibility: "hidden", position: "absolute" }}
               />
+              <span className='errormsg'>{errorMsg.desc}</span>
             </div>
-          </div>
 
-          <div className='input_container'>
-            <label htmlFor='agenttype'>
-              Agent Type
-              <span className='required'>*</span>{" "}
-            </label>
-            <Popover
-              content={
-                <div className='popover_select'>
-                  {[
-                    "none",
-                    "productivity",
-                    "entertainment",
-                    "onchain",
-                    "information",
-                    "creative",
-                  ].map((type) => (
-                    <p
-                      key={type}
-                      onClick={() => handleInputChange("agentType", type)}
-                    >
-                      {type}
-                    </p>
-                  ))}
-                </div>
-              }
-              trigger='click'
-            >
-              <div className='select'>
-                <p>{formData.agentType}</p>
-                <FaChevronDown />
+            <div className='input_container'>
+              <label htmlFor='name'>
+                Flow Chart <span className='required'>*</span>
+              </label>
+
+              <div className='flow'>
+                {formData.flowImage ? (
+                  <img
+                    onClick={() => flowFileRef.current?.click()}
+                    src={formData.flowImage || Camera}
+                    onError={setFallbackURL}
+                    alt='logo'
+                  />
+                ) : (
+                  <button
+                    onClick={() => flowFileRef.current?.click()}
+                    className='upload-button'
+                    disabled={isFlowUploading}
+                  >
+                    {isFlowUploading ? (
+                      "Uploading..."
+                    ) : (
+                      <span>
+                        <FiUpload /> Upload Flowchart
+                      </span>
+                    )}
+                  </button>
+                )}
+
+                <input
+                  ref={flowFileRef}
+                  onChange={uploadFlow}
+                  type='file'
+                  accept={IMAGE_FILE_TYPES}
+                  name='img'
+                  style={{ visibility: "hidden", position: "absolute" }}
+                />
               </div>
-            </Popover>
-          </div>
-          {/* <div
+            </div>
+
+            <div className='input_container'>
+              <label htmlFor='agenttype'>
+                Agent Type
+                <span className='required'>*</span>{" "}
+              </label>
+              <Popover
+                content={
+                  <div className='popover_select'>
+                    {[
+                      "none",
+                      "productivity",
+                      "entertainment",
+                      "onchain",
+                      "information",
+                      "creative",
+                    ].map((type) => (
+                      <p
+                        key={type}
+                        onClick={() => handleInputChange("agentType", type)}
+                      >
+                        {type}
+                      </p>
+                    ))}
+                  </div>
+                }
+                trigger='click'
+              >
+                <div className='select'>
+                  <p>{formData.agentType}</p>
+                  <FaChevronDown />
+                </div>
+              </Popover>
+            </div>
+            {/* <div
             className='viewmore'
             style={isViewMore ? { height: "max-content" } : { height: "0px" }}
           >
@@ -798,7 +654,7 @@ export default function CreateAgent() {
             </div>
           </div> */}
 
-          {/* <div className='more_options'>
+            {/* <div className='more_options'>
             <p onClick={() => setIsViewMore(!isViewMore)}>
               {!isViewMore ? "Advance Settings" : "Show less options"}
               <span>
@@ -807,17 +663,71 @@ export default function CreateAgent() {
             </p>
           </div> */}
 
-          <Button
-            disabled={!isCreateAgentDisable}
-            onClick={handleSubmit}
-            type='primary'
-            loading={loading}
-          >
-            Create Agent
-          </Button>
+            <Button
+              disabled={!isCreateAgentDisable}
+              onClick={handleSubmit}
+              type='primary'
+              loading={loading}
+            >
+              Create Agent
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
+      <Modal
+        title=''
+        open={modalVisible}
+        onCancel={() => setModalVisible(false)}
+        footer={null}
+        centered
+        className='chat_modal_carousel_modal'
+      >
+        <CustomCarousel>
+          <div>
+            <div className='chat_modal_carousel_item'>
+              <div>
+                <img src={superchatSS} alt='superchat' />
+              </div>
+              <p>
+                Lorem ipsum dolor sit amet consectetur, adipisicing elit.
+                Molestias sequi incidunt corporis assumenda laborum. Non
+                quisquam voluptate, iure eos quasi natus labore fugit
+                consequatur, nemo molestias praesentium aliquam error minima.
+              </p>
+              <button>Select</button>
+            </div>
+          </div>
+          <div>
+            <div className='chat_modal_carousel_item'>
+              <div>
+                <img src={superchatSS} alt='superchat' />
+              </div>
+              <p>
+                Lorem ipsum dolor sit amet consectetur, adipisicing elit.
+                Molestias sequi incidunt corporis assumenda laborum. Non
+                quisquam voluptate, iure eos quasi natus labore fugit
+                consequatur, nemo molestias praesentium aliquam error minima.
+              </p>
+              <button>Select</button>
+            </div>
+          </div>
+          <div>
+            <div className='chat_modal_carousel_item'>
+              <div>
+                <img src={superchatSS} alt='superchat' />
+              </div>
+              <p>
+                Lorem ipsum dolor sit amet consectetur, adipisicing elit.
+                Molestias sequi incidunt corporis assumenda laborum. Non
+                quisquam voluptate, iure eos quasi natus labore fugit
+                consequatur, nemo molestias praesentium aliquam error minima.
+              </p>
+              <button>Select</button>
+            </div>
+          </div>
+        </CustomCarousel>
+      </Modal>
+    </>
   );
 }
 
