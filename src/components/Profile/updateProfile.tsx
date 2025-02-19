@@ -1,21 +1,16 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import "./updateAgent.scss";
+import "./updateProfile.scss";
 import { Button, Popover, message } from "antd";
-import Camera from "../../../assets/camera.png";
-import { useImageNameValidator } from "../../../hooks/useImageNameValidator.tsx";
-import { uploadSingleFile } from "../../../services/api.ts";
+import Camera from "../../assets/camera.png";
+import { useImageNameValidator } from "../../hooks/useImageNameValidator.tsx";
+import { uploadSingleFile } from "../../services/api.ts";
 import { isAddress } from "viem";
 
-import { updateAgentData } from "../../../services/agent.ts";
-import NotificationMessage from "../../common/notificationMessage.tsx";
+import { updateAgentData } from "../../services/agent.ts";
+import NotificationMessage from "../common/notificationMessage.tsx";
 
 import { IoArrowBack } from "react-icons/io5";
 export const IMAGE_FILE_TYPES = "image/png, image/jpeg, image/webp, image/jpg";
-interface IConversation {
-  id: number;
-  msgFor: string;
-  msg: string;
-}
 
 type FormData = {
   name: string;
@@ -24,15 +19,15 @@ type FormData = {
   contractAddress: string;
   desc: string;
   instructions: string;
-  persona: string;
+  personality: string;
   agentType: string;
 };
 
 export default function UpdateAgent({
-  agentData,
+  userData,
   setIsEditing,
 }: {
-  agentData: any;
+  userData: any;
   setIsEditing: (val: boolean) => void;
 }) {
   const { validateImage, error: err, clearError } = useImageNameValidator();
@@ -44,7 +39,7 @@ export default function UpdateAgent({
     name: "",
     desc: "",
     contractAddress: "",
-    persona: "",
+    personality: "",
   });
   const fileRefs = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState<FormData>({
@@ -54,24 +49,24 @@ export default function UpdateAgent({
     contractAddress: "",
     desc: "",
     instructions: "",
-    persona: "",
+    personality: "",
     agentType: "none",
   });
 
   useEffect(() => {
-    if (agentData) {
+    if (userData) {
       setFormData({
-        name: agentData.name || "",
-        ticker: agentData?.token?.tkr || "",
-        profile: agentData.pic || "",
-        contractAddress: agentData?.token?.tCAddress || "",
-        desc: agentData.desc || "",
-        instructions: agentData.instructions?.join("\n") || "",
-        persona: agentData.persona || "",
-        agentType: agentData.typ || "none",
+        name: userData.name || "",
+        ticker: userData?.token?.tkr || "",
+        profile: userData.pic || "",
+        contractAddress: userData?.token?.tCAddress || "",
+        desc: userData.desc || "",
+        instructions: userData.instructions?.join("\n") || "",
+        personality: userData.personality || "",
+        agentType: userData.typ || "none",
       });
     }
-  }, [agentData]);
+  }, [userData]);
 
   const isCreateAgentDisable =
     formData.name &&
@@ -80,7 +75,7 @@ export default function UpdateAgent({
     formData.ticker &&
     formData.contractAddress &&
     formData.instructions &&
-    formData.persona;
+    formData.personality;
   // (tabs == "new" ? formData.ticker : formData.contractAddress);
   const setFallbackURL = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     console.log("error", e);
@@ -132,7 +127,7 @@ export default function UpdateAgent({
   };
 
   const formValidation = () => {
-    const { name, desc, contractAddress, instructions, persona } = formData;
+    const { name, desc, contractAddress, instructions, personality } = formData;
 
     const validations = [
       {
@@ -155,7 +150,7 @@ export default function UpdateAgent({
       },
       {
         condition: () => {
-          const charLength = String(persona).split("").length;
+          const charLength = String(personality).split("").length;
           console.log(
             "charLength",
             charLength,
@@ -164,9 +159,9 @@ export default function UpdateAgent({
 
           return charLength >= 100 && charLength <= 300; // Example validation range
         },
-        field: "persona",
+        field: "personality",
         errorMsg:
-          "persona must be between 50 and 300 characters (excluding spaces).",
+          "Personality must be between 50 and 300 characters (excluding spaces).",
       },
       {
         condition: () => isAddress(contractAddress),
@@ -199,16 +194,16 @@ export default function UpdateAgent({
     try {
       setLoading(true);
       const updatedData = {
-        name: formData.name || agentData.name,
-        pic: formData.profile || agentData.imageUrl,
-        desc: formData.desc || agentData.desc,
-        persona: formData.persona || agentData.persona,
+        name: formData.name || userData.name,
+        pic: formData.profile || userData.imageUrl,
+        desc: formData.desc || userData.desc,
+        personality: formData.personality || userData.personality,
         instructions: formData.instructions
           ? formData.instructions.split("\n").map((line) => line.trim())
-          : agentData.instructions,
+          : userData.instructions,
       };
       console.log("sendData", updatedData);
-      const response = await updateAgentData(agentData.id, updatedData);
+      const response = await updateAgentData(userData.id, updatedData);
       if (response) {
         NotificationMessage("success", "Agent Updated Successfully!");
       }
@@ -230,7 +225,7 @@ export default function UpdateAgent({
 
   //   const hasModification = fieldsToCheck.some((key) => {
   //     const formValue = formData[key]?.trim() || "";
-  //     let agentValue = agentData[key] ?? "";
+  //     let agentValue = userData[key] ?? "";
 
   //     // if (key === "instructions") {
   //     //   // Normalize instructions to a string before comparison
@@ -244,7 +239,7 @@ export default function UpdateAgent({
 
   //   console.log("Modification detected:", hasModification);
   //   setHasChanged(hasModification);
-  // }, [formData, agentData]);
+  // }, [formData, userData]);
 
   // useEffect(() => {
   //   checkForChanges();
@@ -300,36 +295,7 @@ export default function UpdateAgent({
             />
             <span className='errormsg'>{errorMsg.name}</span>
           </div>
-          {true && (
-            <div className='input_container'>
-              <label htmlFor='ticker'>
-                Ticker <span className='required'>*</span>{" "}
-              </label>
-              <input
-                value={formData.ticker}
-                id='ticker'
-                type='text'
-                placeholder='$'
-                disabled
-              />
-            </div>
-          )}
-          {true && (
-            <div className='input_container'>
-              <label htmlFor='contract_address'>
-                Token Contract Address on BASE Chain{" "}
-                <span className='required'>*</span>{" "}
-              </label>
-              <input
-                id='contract_address'
-                value={formData.contractAddress}
-                type='text'
-                placeholder=' Token Contract Address'
-                disabled
-              />
-              <span className='errormsg'>{errorMsg.contractAddress}</span>
-            </div>
-          )}
+
           <div className='input_container'>
             <label htmlFor='bio'>
               AI Agent Description
@@ -344,76 +310,6 @@ export default function UpdateAgent({
             />
             <span className='errormsg'>{errorMsg.desc}</span>
           </div>
-          <div className='input_container'>
-            <label htmlFor='personality'>
-              Personality
-              <span className='required'>*</span>{" "}
-            </label>
-            <textarea
-              value={formData.persona}
-              onChange={(e) => handleInputChange("persona", e.target.value)}
-              rows={10}
-              id='personality'
-              placeholder='Short information about agent personality'
-            />
-            <span className='errormsg'>{errorMsg.persona}</span>
-          </div>
-          <div className='input_container'>
-            <label htmlFor='instructions'>
-              Instructions
-              <span className='required'>*</span>{" "}
-            </label>
-            <textarea
-              value={formData.instructions}
-              onChange={(e) =>
-                handleInputChange("instructions", e.target.value)
-              }
-              rows={10}
-              id='instructions'
-              placeholder={`- Always stretch certain words with multiple 'o's or 's's
-- Start or end messages with location updates from different parts of your body
-- Use phrases like "speaking from my middle section" or "my tail end agrees"
-- Make frequent references to your length being both a blessing and a curse
-`}
-            />
-            <span className='errormsg'>{errorMsg.desc}</span>
-          </div>
-          <div className='input_container'>
-            <label htmlFor='agenttype'>
-              Agent Type
-              <span className='required'>*</span>{" "}
-            </label>
-            {/* <Popover
-              content={
-                <div className='popover_select'>
-                  {[
-                    "none",
-                    "productivity",
-                    "entertainment",
-                    "onchain",
-                    "information",
-                    "creative",
-                  ].map((type) => (
-                    <p
-                      key={type}
-                      onClick={() => handleInputChange("agentType", type)}
-                    >
-                      {type}
-                    </p>
-                  ))}
-                </div>
-              }
-              trigger='click'
-            >
-              <div className='select'>
-                <p>{formData.agentType}</p>
-                <FaChevronDown />
-              </div>
-            </Popover> */}
-            <div className='select'>
-              <p>{formData.agentType}</p>
-            </div>
-          </div>
 
           <Button
             disabled={!isCreateAgentDisable}
@@ -422,7 +318,7 @@ export default function UpdateAgent({
             type='primary'
             loading={loading}
           >
-            Update Agent
+            Update User
           </Button>
         </div>
       </div>

@@ -57,4 +57,11 @@ export const ROUTES = [
     name: "ErrorPage",
     isPrivate: false,
   },
+  {
+    path: "/profile",
+    exact: true,
+    component: lazy(() => import("../pages/profile/index.tsx")),
+    name: "profile",
+    isPrivate: true,
+  },
 ];

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./agent.scss";
-import { Collapse } from "antd";
+import { Collapse, Modal } from "antd";
 import type { CollapseProps } from "antd";
 import SocialModal from "./socialModal.tsx";
 import KnowledgeBase from "./KnowledgeBase.tsx";
@@ -13,6 +13,7 @@ import CopyButton from "../../common/copyButton.tsx";
 import UpdateAgent from "./updateAgent.tsx";
 import { FiEdit } from "react-icons/fi";
 import { BsCurrencyDollar } from "react-icons/bs";
+import CreditPurchaseModal from "./creditModal/creditModal.tsx";
 interface IProps {
   isEmulatorOpen: boolean;
   toggleEmulator: () => void;
@@ -31,6 +32,11 @@ export default function Agent({
   };
   const changeEdit = () => {
     setEdit((prev) => !prev);
+  };
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const handleOpenModal = () => {
+    setModalVisible(true);
   };
 
   const items: CollapseProps["items"] = [
@@ -57,7 +63,7 @@ export default function Agent({
             rows={10}
             id='bio'
             placeholder='This is the short bio that will be shown at your agents profile.'
-            defaultValue={agentData?.personality}
+            defaultValue={agentData?.persona}
           />
         </div>
       ),
@@ -65,7 +71,7 @@ export default function Agent({
     {
       key: "3",
       label: "Knowledge Base",
-      children: <KnowledgeBase agentId={agentData.id} />,
+      children: <KnowledgeBase agentId={agentData?.id} />,
     },
     {
       key: "4",
@@ -83,7 +89,7 @@ export default function Agent({
           <div className='basic'>
             <div className='content'>
               <div className='tokenlogo'>
-                <img src={agentData.pic} alt='' />
+                <img src={agentData?.pic} alt='' />
               </div>
               <div className='info'>
                 <h2>
@@ -123,7 +129,7 @@ export default function Agent({
                   Credits <span>Active</span>
                 </p>
               </div>
-              <button>
+              <button onClick={handleOpenModal}>
                 <BsCurrencyDollar /> Add Credits
               </button>
             </div>
@@ -136,6 +142,17 @@ export default function Agent({
               items={items}
             />
           </div>
+
+          <Modal
+            title=''
+            open={modalVisible}
+            onCancel={() => setModalVisible(false)}
+            footer={null}
+            centered
+            className='credit-modal'
+          >
+            <CreditPurchaseModal visible={modalVisible} />
+          </Modal>
         </div>
       )}
     </>

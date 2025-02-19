@@ -6,7 +6,7 @@
   padding: 2rem;
   text-align: center; */
   width: 100%;
-
+  height: 100%;
   /* width */
   ::-webkit-scrollbar {
     width: 5px;
@@ -30,5 +30,24 @@
   /* Handle on hover */
   ::-webkit-scrollbar-thumb:hover {
     background: #d1d5db;
+  }
+}
+
+.token_cont {
+  min-height: 70vh;
+}
+
+.container_height {
+  min-height: 70vh;
+}
+
+.gradient-border {
+  background: #000;
+  border: 1px solid transparent;
+  background-clip: padding-box, border-box;
+  background-origin: border-box;
+  background-image: linear-gradient(#000, #000), var(--gradient);
+  &:hover {
+    border: 1px solid var(--primary);
   }
 }

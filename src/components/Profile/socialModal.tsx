@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { Modal, Spin } from "antd";
 import { FaDiscord, FaTelegramPlane } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
-import Telegram from "../social/telegram.tsx";
-import Twitter from "../social/twitter.tsx";
-import Discord from "../social/discord.tsx";
+import Telegram from "./social/telegram.tsx";
+import Twitter from "./social/twitter.tsx";
+import Discord from "./social/discord.tsx";
 import { FaCheck } from "react-icons/fa";
 import { BsDash } from "react-icons/bs";
 

@@ -215,13 +215,11 @@ export default function KnowledgeBase({ agentId }: { agentId: string }) {
         <h2>Add Rich Text</h2>
 
         <div className='input_box'>
-          <h3>
-            <textarea
-              rows={10}
-              id='bio'
-              placeholder='This is the short bio that will be shown at your agents profile.'
-            />
-          </h3>
+          <textarea
+            rows={10}
+            id='bio'
+            placeholder='This is the short bio that will be shown at your agents profile.'
+          />
         </div>
         <div className='btn'>
           <button>Save</button>
@@ -408,13 +406,11 @@ const KBList = ({
         <h2>Add Rich Text</h2>
 
         <div className='input_box'>
-          <h3>
-            <textarea
-              rows={10}
-              id='bio'
-              placeholder='This is the short bio that will be shown at your agents profile.'
-            />
-          </h3>
+          <textarea
+            rows={10}
+            id='bio'
+            placeholder='This is the short bio that will be shown at your agents profile.'
+          />
         </div>
         <div className='btn'>
           <button>Save</button>

@@ -44,22 +44,7 @@ function Navbar() {
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
 
-  const [isSearchExpanded, setSearchExpanded] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
-
-  const handleClickOutside = (event: MouseEvent) => {
-    if (
-      searchRef.current &&
-      !searchRef.current.contains(event.target as Node)
-    ) {
-      setSearchExpanded(false);
-    }
-  };
-
-  useState(() => {
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
-  });
 
   const { isLoading, profile, error } = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
@@ -96,6 +81,11 @@ function Navbar() {
   };
 
   useEffect(() => {
+    console.log(
+      "navbar",
+      isConnected && !cookies.token && profile.isLogedIn == "no"
+    );
+
     if (isConnected && !cookies.token && profile.isLogedIn == "no") {
       handleMsgSign();
     }
@@ -153,9 +143,10 @@ function Navbar() {
     },
   };
 
-  const menuActions = isConnected
-    ? { ...connectedMenuActions, ...defaultMenuActions }
-    : defaultMenuActions;
+  const menuActions =
+    isConnected && cookies.token
+      ? { ...connectedMenuActions, ...defaultMenuActions }
+      : defaultMenuActions;
 
   const handleMenuSelect = (label: string) => {
     const menuItem = menuActions[label];
@@ -183,38 +174,41 @@ function Navbar() {
               ))}
             </div>
 
-            <div className='search' onClick={() => setSearchExpanded(true)}>
+            <div className='search'>
               <IoSearch className='search-icon' size={22} />
               <input
                 ref={searchRef}
                 type='text'
-                className={`search-input ${isSearchExpanded ? "expanded" : ""}`}
+                className={`search-input`}
                 placeholder='Search...'
-                onFocus={() => setSearchExpanded(true)}
+                // onFocus={() => setSearchExpanded(true)}
               />
             </div>
 
             <div className='actions'>
-              {isConnected && (
+              {isConnected && cookies.token && (
                 <a href={`/myagent`}>
-                  <Button className='hidebtn myagent_btn' type='primary'>
-                    My Agents
-                  </Button>
+                  <Button className='hidebtn myagent_btn'>My Agents</Button>
                 </a>
               )}
               <Button className='hidebtn' onClick={showModal}>
                 Create New Agent
               </Button>
               {/* </Link> */}
-              {isConnected ? (
+              {isConnected && cookies.token ? (
                 <CPopup
                   onSelect={(label) => {
                     if (label === "Disconnect") handleDisconnect();
                     if (label === "Switch Network") openChainModal();
+                    if (label === "Profile") navigate("/profile");
                   }}
                   onAction='click'
                   position='bottomRight'
-                  list={[{ label: "Disconnect" }, { label: "Switch Network" }]}
+                  list={[
+                    { label: "Profile" },
+                    { label: "Disconnect" },
+                    { label: "Switch Network" },
+                  ]}
                 >
                   <Button type='primary' className='address'>
                     {address && shortenAddress(address)}
