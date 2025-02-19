@@ -1,18 +1,12 @@
+import { useEffect, useRef, useState } from "react";
 import {
   ConnectButton,
   useConnectModal,
   useChainModal,
 } from "@rainbow-me/rainbowkit";
-import "./index.scss";
-import { Button, message, Modal, Popover } from "antd";
+import { Button, message, Modal } from "antd";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  useAccount,
-  useSignMessage,
-  useDisconnect,
-  useSwitchChain,
-} from "wagmi";
-import { useEffect, useRef, useState } from "react";
+import { useAccount, useSignMessage, useDisconnect } from "wagmi";
 import LammaLogo from "./../../assets/logo.png";
 import {
   handleAuthConnect,
@@ -22,17 +16,25 @@ import { authSignMsg } from "../../utils/contants.ts";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks.tsx";
 import { shortenAddress } from "../../utils/index.ts";
 import { setUserError } from "../../contexts/reducers/index.ts";
-
 import { RxHamburgerMenu } from "react-icons/rx";
 import { clearTokens, getTokens } from "../../services/apiconfig.ts";
 import CPopup from "../common/CPopup/Cpopup.tsx";
 import { IoSearch } from "react-icons/io5";
+import "./index.scss";
 
 function Navbar() {
   const { address, isConnected } = useAccount();
-  const sign = useSignMessage();
+  const { signMessageAsync } = useSignMessage();
   const { disconnect } = useDisconnect();
   const { openChainModal } = useChainModal();
+  const { openConnectModal } = useConnectModal();
+  const navigate = useNavigate();
+  const [openModal, setOpenModal] = useState(false);
+  const searchRef = useRef<HTMLInputElement>(null);
+
+  const { isLoading, profile, error } = useAppSelector((state) => state.user);
+  const dispatch = useAppDispatch();
+  const cookies = getTokens();
 
   const navLinks = [
     { href: "/", label: "Sentient" },
@@ -40,90 +42,72 @@ function Navbar() {
     { href: "#", label: "About" },
   ];
 
-  const { openConnectModal } = useConnectModal();
-  const navigate = useNavigate();
-  const [openModal, setOpenModal] = useState(false);
+  // Handle wallet connection and message signing
+  const handleWalletConnect = async () => {
+    if (!isConnected) {
+      openConnectModal?.();
+    } else if (isConnected && !cookies.token) {
+      try {
+        // Request message signing
+        const signature = await signMessageAsync({ message: authSignMsg });
+        console.log("Signature:", signature);
 
-  const searchRef = useRef<HTMLInputElement>(null);
-
-  const { isLoading, profile, error } = useAppSelector((state) => state.user);
-  const dispatch = useAppDispatch();
-  const cookies = getTokens();
-
-  const showModal = () => {
-    isConnected ? setOpenModal(true) : openConnectModal();
-  };
-
-  const handleOk = () => {
-    setTimeout(() => {
-      setOpenModal(false);
-    }, 3000);
-  };
-
-  const handleCancel = () => {
-    setOpenModal(false);
-  };
-
-  const handleMsgSign = async () => {
-    const hash = sign.signMessage(
-      { message: authSignMsg },
-      {
-        onSuccess(data, variables, context) {
-          console.log(data);
-          handleAuthConnect({ sig: data, msg: authSignMsg, typ: "EVM" });
-        },
-        onError(error, variables, context) {
-          disconnect();
-        },
+        // Authenticate user with the signature
+        await handleAuthConnect({
+          sig: signature,
+          msg: authSignMsg,
+          typ: "EVM",
+        });
+        message.success("Authentication successful!");
+      } catch (error) {
+        console.error("Error during signing:", error);
+        message.error("Failed to sign message. Please try again.");
+        disconnect();
       }
-    );
-    console.log(hash, sign);
+    }
   };
 
-  useEffect(() => {
-    console.log(
-      "navbar",
-      isConnected && !cookies.token && profile.isLogedIn == "no"
-    );
-
-    if (isConnected && !cookies.token && profile.isLogedIn == "no") {
-      handleMsgSign();
-    }
-  }, [isConnected, profile]);
-
-  useEffect(() => {
-    if (isConnected && error.includes("expired") && cookies.token) {
-      message.error("Session Expired,Please Login Again!");
-      navigate("/");
-      disconnect();
-      clearTokens();
-    }
-  }, [isConnected, error]);
-
+  // Handle user disconnect
   const handleDisconnect = async () => {
     try {
       await handleAuthDisconnect();
       dispatch(setUserError("Disconnected"));
-      navigate("/");
       disconnect();
+      clearTokens();
+      message.success("Disconnected successfully!");
+      navigate("/");
       setTimeout(() => {
         window?.location?.reload();
       }, 1000);
     } catch (error) {
-      setTimeout(() => {
-        window?.location?.reload();
-      }, 1000);
+      console.error("Error during disconnect:", error);
+      message.error("Failed to disconnect. Please try again.");
     }
   };
 
+  useEffect(() => {
+    if (isConnected) {
+      handleWalletConnect();
+    }
+  }, [isConnected]);
+
+  // Handle token expiry
+  useEffect(() => {
+    if (isConnected && error.includes("expired") && cookies.token) {
+      message.error("Session Expired, Please Login Again!");
+      navigate("/");
+      disconnect();
+      clearTokens();
+      dispatch(setUserError("")); // Reset the error state
+    }
+  }, [isConnected, error, cookies.token]);
+
+  // Handle menu actions
   const defaultMenuActions: Record<
     string,
     { action: () => void; className?: string }
   > = {
-    Sentient: {
-      action: () => navigate("/sentient"),
-      className: "mobile_hide",
-    },
+    Sentient: { action: () => navigate("/sentient"), className: "mobile_hide" },
     Prototype: {
       action: () => navigate("/prototype"),
       className: "mobile_hide",
@@ -135,12 +119,8 @@ function Navbar() {
     string,
     { action: () => void; className?: string }
   > = {
-    "My Agents": {
-      action: () => navigate("/myagent"),
-    },
-    "Create New Agent": {
-      action: () => setOpenModal(true),
-    },
+    "My Agents": { action: () => navigate("/myagent") },
+    "Create New Agent": { action: () => setOpenModal(true) },
   };
 
   const menuActions =
@@ -179,27 +159,25 @@ function Navbar() {
               <input
                 ref={searchRef}
                 type='text'
-                className={`search-input`}
+                className='search-input'
                 placeholder='Search...'
-                // onFocus={() => setSearchExpanded(true)}
               />
             </div>
 
             <div className='actions'>
               {isConnected && cookies.token && (
-                <a href={`/myagent`}>
+                <a href='/myagent'>
                   <Button className='hidebtn myagent_btn'>My Agents</Button>
                 </a>
               )}
-              <Button className='hidebtn' onClick={showModal}>
+              <Button className='hidebtn' onClick={() => setOpenModal(true)}>
                 Create New Agent
               </Button>
-              {/* </Link> */}
               {isConnected && cookies.token ? (
                 <CPopup
                   onSelect={(label) => {
                     if (label === "Disconnect") handleDisconnect();
-                    if (label === "Switch Network") openChainModal();
+                    if (label === "Switch Network") openChainModal?.();
                     if (label === "Profile") navigate("/profile");
                   }}
                   onAction='click'
@@ -215,7 +193,7 @@ function Navbar() {
                   </Button>
                 </CPopup>
               ) : (
-                <Button onClick={openConnectModal} type='primary'>
+                <Button onClick={handleWalletConnect} type='primary'>
                   Connect Wallet
                 </Button>
               )}
@@ -244,9 +222,9 @@ function Navbar() {
 
       <Modal
         open={openModal}
-        title={"Create New AI Agent"}
-        onOk={handleOk}
-        onCancel={handleCancel}
+        title='Create New AI Agent'
+        onOk={() => setOpenModal(false)}
+        onCancel={() => setOpenModal(false)}
         footer={null}
       >
         <div className='modal_content'>
@@ -256,9 +234,8 @@ function Navbar() {
               Manually input parameters Build your own agent and tailor every
               detail
             </p>
-            <Link onClick={handleCancel} to={"/create-agent"}>
-              {" "}
-              <button>Create AI Agent</button>{" "}
+            <Link onClick={() => setOpenModal(false)} to='/create-agent'>
+              <button>Create AI Agent</button>
             </Link>
           </div>
           <div className='magic'>
@@ -267,7 +244,7 @@ function Navbar() {
               Enter the token's contract address We will design the most
               suitable agent for you
             </p>
-            <Link onClick={handleCancel} to={"/magic-build"}>
+            <Link onClick={() => setOpenModal(false)} to='/magic-build'>
               <button>Create AI Agent</button>
             </Link>
           </div>
