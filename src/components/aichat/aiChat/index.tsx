@@ -9,16 +9,19 @@ import {
   getOnetoOneChatHistoryBySession,
   getOnetoOneChatSession,
 } from "../../../services/agent.ts";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+import PageLoader from "../../common/PageLoader.tsx";
+import { Spin } from "antd";
+import { BsTextareaResize } from "react-icons/bs";
 
-// TODO: loader, typescript, autoscroll
+// TODO: fix autoscroll
 
 export default function AIChat() {
   const { agentId } = useParams();
-  const queryClient = useQueryClient();
   const [chats, setChats] = useState([]);
+  const [viewSize, setViewSize] = useState(1);
 
-  const { data: sessionData, isLoading: sessionLoading } = useQuery({
+  const { data: sessionData } = useQuery({
     queryKey: ["chatSession", agentId],
     queryFn: async () => {
       const res = await getOnetoOneChatSession(agentId as string);
@@ -43,24 +46,46 @@ export default function AIChat() {
 
   const handleReset = useCallback(() => setChats([]), []);
 
+  if (chatLoading) {
+    return (
+      <div className='emulator_container'>
+        <PageLoader />
+      </div>
+    );
+  }
+
   return (
-    <div className='emulator_container'>
-      <div className='emulator_head'>
-        <h3 style={{ textAlign: "center" }}>Chat with AI</h3>
-        <div>
-          <IoReloadSharp
-            size={18}
-            onClick={handleReset}
-            style={{ cursor: "pointer" }}
+    <>
+      {viewSize == 2 && (
+        <div className='emulator_container'>
+          <div className='emulator_head'>
+            <h3 style={{ textAlign: "center" }}>Chat with AI</h3>
+            <div>
+              <IoReloadSharp
+                size={18}
+                onClick={handleReset}
+                style={{ cursor: "pointer" }}
+              />
+              <BsTextareaResize
+                size={18}
+                onClick={() => setViewSize(1)}
+                style={{ cursor: "pointer" }}
+              />
+            </div>
+          </div>
+          <Chat
+            messages={chats}
+            setMessages={setChats}
+            sessionId={sessionData?.id}
           />
         </div>
-      </div>
-      <Chat
-        messages={chats}
-        setMessages={setChats}
-        sessionId={sessionData?.id}
-      />
-    </div>
+      )}
+      {viewSize == 1 && (
+        <div onClick={() => setViewSize(2)} className='view_1'>
+          <p>Chat with AI</p>
+        </div>
+      )}
+    </>
   );
 }
 
@@ -115,7 +140,17 @@ function Chat({
         content: text,
       };
 
-      setMessages((prevMessages: any) => [...prevMessages, newMessage]);
+      const loaderMessage = {
+        role: "assistant",
+        content: "Loading...",
+        isLoading: true,
+      };
+
+      setMessages((prevMessages: any) => [
+        ...prevMessages,
+        newMessage,
+        loaderMessage,
+      ]);
 
       setChatPayload((prevPayload: any) => {
         const updatedHistory = [...(prevPayload.history || []), newMessage];
@@ -156,8 +191,12 @@ function Chat({
         }));
 
         setpId(res?.chatId);
+        setMessages((prevMessages: any) => [
+          ...prevMessages.slice(0, -1),
+          newMessageRes,
+        ]);
 
-        setMessages((prevMessages: any) => [...prevMessages, newMessageRes]);
+        // setMessages((prevMessages: any) => [...prevMessages, newMessageRes]);
       } catch (error) {
         console.log("Error", error);
       } finally {
@@ -172,6 +211,10 @@ function Chat({
       setpId(messages[messages.length - 1]?.id || null);
     }
     setChatPayload(initialPayload);
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop =
+        messagesContainerRef.current.scrollHeight;
+    }
   }, [messages]);
 
   return (
@@ -179,7 +222,6 @@ function Chat({
       <MessageList
         messages={messages}
         isLoading={false}
-        isLoadingAnswer={isLoading}
         setPage={setPage}
         limit={20}
         firstItemIndex={0}
@@ -187,7 +229,7 @@ function Chat({
         setIsInitialLoad={setIsInitialLoad}
         containerRef={messagesContainerRef}
       />
-      <InputField onSend={handleSend} />
+      <InputField onSend={handleSend} isLoading={isLoading} />
     </div>
   );
 }
@@ -196,7 +238,6 @@ function Chat({
 function MessageList({
   messages,
   isLoading,
-  isLoadingAnswer,
   setPage,
   limit,
   firstItemIndex,
@@ -206,7 +247,6 @@ function MessageList({
 }: {
   messages: { sender: string; text: string }[];
   isLoading: boolean;
-  isLoadingAnswer?: boolean;
   setPage: React.Dispatch<React.SetStateAction<number>>;
   limit: number;
   firstItemIndex: number;
@@ -216,11 +256,12 @@ function MessageList({
 }) {
   const renderComponent = (
     index: number,
-    message: { sender: string; text: string }
+    message: any
+    // message: { sender: string; text: string; isLoading?: boolean }
   ) => (
     <Message
       key={index}
-      isLoadingAnswer={isLoadingAnswer as boolean}
+      isLoadingAnswer={message.isLoading as boolean}
       sender={message.role}
       text={message?.content || message?.message || message?.response}
     />
@@ -248,7 +289,7 @@ function MessageList({
 function Message({
   sender,
   text,
-  isLoadingAnswer,
+  isLoadingAnswer = false,
 }: {
   sender: string;
   text: string;
@@ -256,11 +297,13 @@ function Message({
 }) {
   return (
     <>
-      {isLoadingAnswer ? (
-        <div className={`message`}>Loading...</div>
-      ) : (
-        <div className={`message ${sender}`}>{text}</div>
-      )}
+      <div className={`message ${sender}`}>
+        {!isLoadingAnswer ? (
+          text
+        ) : (
+          <Spin style={{ marginLeft: "400%" }} tip='Loading...' size='large' />
+        )}
+      </div>
     </>
   );
 }
@@ -269,10 +312,10 @@ function Message({
 const InputField = React.memo(
   ({
     onSend,
-  }: // isLoading,
-  {
+    isLoading,
+  }: {
     onSend: (text: string) => void;
-    // isLoading: boolean;
+    isLoading: boolean;
   }) => {
     const [input, setInput] = useState("");
     const [history, setHistory] = useState<string[]>([]);
@@ -324,24 +367,30 @@ const InputField = React.memo(
           placeholder='Type a message...'
         />
 
-        <button className='send_btn' onClick={handleSendClick}>
-          <svg
-            width='14'
-            height='14'
-            viewBox='0 0 16 15'
-            fill='none'
-            xmlns='http://www.w3.org/2000/svg'
-            className='send-icon'
-          >
-            <path
-              d='M14.3419 7.64462L0.95119 14.092L3.43095 7.64462L0.95119 1.19725L14.3419 7.64462Z'
-              stroke='white'
-              strokeWidth='1.40276'
-              strokeLinecap='round'
-              strokeLinejoin='round'
-            />
-          </svg>
-        </button>
+        {isLoading ? (
+          <>
+            <Spin tip='Loading...' size='small'></Spin>
+          </>
+        ) : (
+          <button className='send_btn' onClick={handleSendClick}>
+            <svg
+              width='14'
+              height='14'
+              viewBox='0 0 16 15'
+              fill='none'
+              xmlns='http://www.w3.org/2000/svg'
+              className='send-icon'
+            >
+              <path
+                d='M14.3419 7.64462L0.95119 14.092L3.43095 7.64462L0.95119 1.19725L14.3419 7.64462Z'
+                stroke='white'
+                strokeWidth='1.40276'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+              />
+            </svg>
+          </button>
+        )}
       </div>
     );
   }
