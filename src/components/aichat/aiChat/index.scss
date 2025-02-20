@@ -41,6 +41,7 @@
 
     svg {
       color: var(--dark);
+      margin-right: 8px;
       &:hover {
         color: var(--primary);
         cursor: pointer;
@@ -60,7 +61,7 @@
   height: calc(100% - 100px) !important;
   overflow: hidden;
   overflow-y: auto;
-  padding: 12px 0;
+  margin: 10px 0;
 
   // scrollbar-width: none;
   // -ms-overflow-style: none;
@@ -137,18 +138,18 @@ input {
   }
 }
 
-.emulator_popover {
-  width: max-content;
+.view_1 {
+  position: fixed;
+  z-index: 10;
+  right: 24px;
+  bottom: 6vh;
+  cursor: pointer;
 
-  .popover_item {
+  p {
+    background-color: red;
     padding: 4px 8px;
-    border-radius: 4px;
-    color: var(--dark);
-
-    &:hover {
-      cursor: pointer;
-      color: var(--light);
-      background-color: var(--primary);
-    }
+    font-size: 14px;
+    color: #fff;
+    border-radius: 8px;
   }
 }
