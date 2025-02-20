@@ -22,10 +22,7 @@ export default function AIChat() {
   const { agentId } = useParams();
   const [chats, setChats] = useState([]);
   const [viewSize, setViewSize] = useState(2);
-  // const userId = useAppSelector((state) => state.user?.profile?.uid);
-  console.log("LATEST_CHAT", chats);
-
-  const userId = "b74b9b07-0ec3-4f57-b2c3-25f6d76514b0";
+  const userId = useAppSelector((state) => state.user?.profile?.uId);
 
   const { data: sessionData } = useQuery({
     queryKey: ["chatSession", agentId],
