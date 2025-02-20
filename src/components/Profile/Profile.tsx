@@ -75,6 +75,7 @@ export default function UserProfile({ user }: IProps) {
                     discord={userInfo.discord}
                     telegram={userInfo.telegram}
                     x={userInfo.x}
+                    type='user'
                   />
                 </div>
               </div>

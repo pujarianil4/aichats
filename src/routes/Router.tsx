@@ -9,6 +9,7 @@ import Footer from "../components/footer/index.tsx";
 import PageLoader from "../components/common/PageLoader.tsx";
 import { useAppSelector } from "../hooks/reduxHooks.tsx";
 import { getTokens } from "../services/apiconfig.ts";
+import DiscordCallback from "../pages/discordCallback/DiscordCallback.tsx";
 
 interface IRoutesProps {
   children: ReactNode;
@@ -72,6 +73,7 @@ function AppRoutes() {
             />
           )
         )}
+        <Route path='/api/callback/discord' element={<DiscordCallback />} />
         <Route
           path='*'
           element={
