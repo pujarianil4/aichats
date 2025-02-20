@@ -4,7 +4,6 @@ import adminLogo from "../../../assets/admin.svg";
 import membersLogo from "../../../assets/members.svg";
 import muteLogo from "../../../assets/mutedUsers.svg";
 import { MdKeyboardArrowRight } from "react-icons/md";
-import { InstanceData } from "../index.tsx";
 import {
   getAllUsersbyInstanceId,
   getMutedUsersWithInstanceId,
@@ -16,6 +15,7 @@ import { useAccount } from "wagmi";
 
 import MutedList from "./MutedList.tsx";
 import ListItems from "./ListItems.tsx";
+import { InstanceData } from "../publicChat/index.tsx";
 
 interface CachedData {
   data: string[];

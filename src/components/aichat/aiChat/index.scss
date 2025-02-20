@@ -138,22 +138,6 @@ input {
   }
 }
 
-.emulator_popover {
-  width: max-content;
-
-  .popover_item {
-    padding: 4px 8px;
-    border-radius: 4px;
-    color: var(--dark);
-
-    &:hover {
-      cursor: pointer;
-      color: var(--light);
-      background-color: var(--primary);
-    }
-  }
-}
-
 .view_1 {
   position: fixed;
   z-index: 10;

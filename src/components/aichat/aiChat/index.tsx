@@ -13,13 +13,19 @@ import { useQuery } from "@tanstack/react-query";
 import PageLoader from "../../common/PageLoader.tsx";
 import { Spin } from "antd";
 import { BsTextareaResize } from "react-icons/bs";
+import { socketAgent } from "../../../services/socket.ts";
+import { useAppSelector } from "../../../hooks/reduxHooks.tsx";
 
 // TODO: fix autoscroll
 
 export default function AIChat() {
   const { agentId } = useParams();
   const [chats, setChats] = useState([]);
-  const [viewSize, setViewSize] = useState(1);
+  const [viewSize, setViewSize] = useState(2);
+  // const userId = useAppSelector((state) => state.user?.profile?.uid);
+  console.log("LATEST_CHAT", chats);
+
+  const userId = "b74b9b07-0ec3-4f57-b2c3-25f6d76514b0";
 
   const { data: sessionData } = useQuery({
     queryKey: ["chatSession", agentId],
@@ -45,6 +51,16 @@ export default function AIChat() {
   }, [chatHistory]);
 
   const handleReset = useCallback(() => setChats([]), []);
+
+  useEffect(() => {
+    if (userId) {
+      socketAgent.emit("registerUser", userId);
+      console.log("SOCKET_REGISTER_EMMITED", userId);
+    }
+    return () => {
+      socketAgent.off("registerUser");
+    };
+  }, [userId]);
 
   if (chatLoading) {
     return (
@@ -128,6 +144,42 @@ function Chat({
   const [chatPayload, setChatPayload] = useState(initialPayload);
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    if (!socketAgent) return;
+    // socketAgent.emit("registerUser", userId); //"b74b9b07-0ec3-4f57-b2c3-25f6d76514b0"
+    socketAgent.on("chatResponse", (data) => {
+      console.log("AI Response:", data);
+      const assistantMessage = {
+        role: "assistant",
+        content: data?.response,
+      };
+
+      const newMessageRes = {
+        role: "assistant",
+        message: data?.response,
+        id: data?.chatId,
+        cSessionId: sessionId,
+      };
+
+      setChatPayload((prevPayload: any) => ({
+        ...prevPayload,
+        history: [...prevPayload.history, assistantMessage],
+        pId: data?.chatId,
+        cSessionId: sessionId,
+      }));
+
+      setpId(data?.chatId);
+      setMessages((prevMessages: any) => [
+        ...prevMessages.slice(0, -1),
+        newMessageRes,
+      ]);
+    });
+
+    return () => {
+      socketAgent.off("chatResponse");
+    };
+  }, [socketAgent]);
+
   const handleSend = useCallback(
     async (text: string) => {
       if (!text.trim()) return;
@@ -171,34 +223,35 @@ function Chat({
 
       try {
         const res = await chatWithOnetoOneAgent(latestPayload);
-        const assistantMessage = {
-          role: "assistant",
-          content: res?.response,
-        };
+        // const assistantMessage = {
+        //   role: "assistant",
+        //   content: res?.response,
+        // };
 
-        const newMessageRes = {
-          role: "assistant",
-          message: res?.response,
-          id: res?.chatId,
-          cSessionId: sessionId,
-        };
+        // const newMessageRes = {
+        //   role: "assistant",
+        //   message: res?.response,
+        //   id: res?.chatId,
+        //   cSessionId: sessionId,
+        // };
 
-        setChatPayload((prevPayload: any) => ({
-          ...prevPayload,
-          history: [...prevPayload.history, assistantMessage],
-          pId: res?.chatId,
-          cSessionId: sessionId,
-        }));
+        // setChatPayload((prevPayload: any) => ({
+        //   ...prevPayload,
+        //   history: [...prevPayload.history, assistantMessage],
+        //   pId: res?.chatId,
+        //   cSessionId: sessionId,
+        // }));
 
-        setpId(res?.chatId);
-        setMessages((prevMessages: any) => [
-          ...prevMessages.slice(0, -1),
-          newMessageRes,
-        ]);
+        // setpId(res?.chatId);
+        // setMessages((prevMessages: any) => [
+        //   ...prevMessages.slice(0, -1),
+        //   newMessageRes,
+        // ]);
 
         // setMessages((prevMessages: any) => [...prevMessages, newMessageRes]);
       } catch (error) {
         console.log("Error", error);
+        setMessages((prevMessages: any) => prevMessages.slice(0, -1));
       } finally {
         setIsLoading(false);
       }
@@ -266,6 +319,7 @@ function MessageList({
       text={message?.content || message?.message || message?.response}
     />
   );
+  console.log("MESSAGES_LIST", messages);
 
   return (
     <div className='messages' ref={containerRef}>
