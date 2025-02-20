@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import "./index.scss";
 import VirtualizedContainer from "../../common/virtualList.tsx";
-import { IoReloadSharp } from "react-icons/io5";
 import { useParams } from "react-router-dom";
 import {
   chatWithOnetoOneAgent,
   createOnetoOneChatSession,
+  deleteOnetoOneChatHistory,
   getOnetoOneChatHistoryBySession,
   getOnetoOneChatSession,
 } from "../../../services/agent.ts";
@@ -13,16 +13,14 @@ import { useQuery } from "@tanstack/react-query";
 import PageLoader from "../../common/PageLoader.tsx";
 import { Spin } from "antd";
 import { BsTextareaResize } from "react-icons/bs";
-import { socketAgent } from "../../../services/socket.ts";
-import { useAppSelector } from "../../../hooks/reduxHooks.tsx";
-
-// TODO: fix autoscroll
+import ReactMarkdown from "react-markdown";
+import { MdDeleteOutline } from "react-icons/md";
+import NoData from "../../common/noData.tsx";
 
 export default function AIChat() {
   const { agentId } = useParams();
   const [chats, setChats] = useState([]);
   const [viewSize, setViewSize] = useState(2);
-  const userId = useAppSelector((state) => state.user?.profile?.uId);
 
   const { data: sessionData } = useQuery({
     queryKey: ["chatSession", agentId],
@@ -47,17 +45,19 @@ export default function AIChat() {
     setChats(chatHistory || []);
   }, [chatHistory]);
 
-  const handleReset = useCallback(() => setChats([]), []);
+  const handleReset = async () => {
+    await deleteOnetoOneChatHistory(sessionData?.id);
+    setChats([]);
+  };
 
-  useEffect(() => {
-    if (userId) {
-      socketAgent.emit("registerUser", userId);
-      console.log("SOCKET_REGISTER_EMMITED", userId);
-    }
-    return () => {
-      socketAgent.off("registerUser");
-    };
-  }, [userId]);
+  // useEffect(() => {
+  //   if (userId) {
+  //     socketAgent.emit("registerUser", userId);
+  //   }
+  //   return () => {
+  //     socketAgent.off("registerUser");
+  //   };
+  // }, [userId]);
 
   if (chatLoading) {
     return (
@@ -74,7 +74,7 @@ export default function AIChat() {
           <div className='emulator_head'>
             <h3 style={{ textAlign: "center" }}>Chat with AI</h3>
             <div>
-              <IoReloadSharp
+              <MdDeleteOutline
                 size={18}
                 onClick={handleReset}
                 style={{ cursor: "pointer" }}
@@ -141,10 +141,21 @@ function Chat({
   const [chatPayload, setChatPayload] = useState(initialPayload);
   const [isLoading, setIsLoading] = useState(false);
 
+  const scrollToBottom = useCallback(() => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTo({
+        top: messagesContainerRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, []);
+
   useEffect(() => {
-    if (!socketAgent) return;
-    // socketAgent.emit("registerUser", userId); //"b74b9b07-0ec3-4f57-b2c3-25f6d76514b0"
-    socketAgent.on("chatResponse", (data) => {
+    const eventSource = new EventSource(
+      `https://ai-agent-r139.onrender.com/chat-message/sse/${sessionId}`
+    );
+    eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data);
       console.log("AI Response:", data);
       const assistantMessage = {
         role: "assistant",
@@ -154,33 +165,80 @@ function Chat({
       const newMessageRes = {
         role: "assistant",
         message: data?.response,
-        id: data?.chatId,
+        id: data?.id,
         cSessionId: sessionId,
       };
 
       setChatPayload((prevPayload: any) => ({
         ...prevPayload,
         history: [...prevPayload.history, assistantMessage],
-        pId: data?.chatId,
+        pId: data?.id,
         cSessionId: sessionId,
       }));
 
-      setpId(data?.chatId);
+      setpId(data?.id);
       setMessages((prevMessages: any) => [
         ...prevMessages.slice(0, -1),
         newMessageRes,
       ]);
-    });
+      setIsLoading(false);
+      setTimeout(scrollToBottom, 100);
+    };
+
+    eventSource.onerror = (err) => {
+      console.error("SSE error:", err);
+      eventSource.close();
+    };
 
     return () => {
-      socketAgent.off("chatResponse");
+      eventSource.close();
     };
-  }, [socketAgent]);
+  }, [sessionId, scrollToBottom, setMessages]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, []);
+
+  // useEffect(() => {
+  //   if (!socketAgent) return;
+  //   socketAgent.on("chatResponse", (data) => {
+  //     console.log("AI Response:", data);
+  //     const assistantMessage = {
+  //       role: "assistant",
+  //       content: data?.response,
+  //     };
+
+  //     const newMessageRes = {
+  //       role: "assistant",
+  //       message: data?.response,
+  //       id: data?.chatId,
+  //       cSessionId: sessionId,
+  //     };
+
+  //     setChatPayload((prevPayload: any) => ({
+  //       ...prevPayload,
+  //       history: [...prevPayload.history, assistantMessage],
+  //       pId: data?.chatId,
+  //       cSessionId: sessionId,
+  //     }));
+
+  //     setpId(data?.chatId);
+  //     setMessages((prevMessages: any) => [
+  //       ...prevMessages.slice(0, -1),
+  //       newMessageRes,
+  //     ]);
+  //     setIsLoading(false);
+  //   });
+
+  //   return () => {
+  //     socketAgent.off("chatResponse");
+  //   };
+  // }, [socketAgent]);
 
   const handleSend = useCallback(
     async (text: string) => {
       if (!text.trim()) return;
-
+      setTimeout(scrollToBottom, 100);
       setIsLoading(true);
 
       const newMessage = {
@@ -220,37 +278,9 @@ function Chat({
 
       try {
         const res = await chatWithOnetoOneAgent(latestPayload);
-        // const assistantMessage = {
-        //   role: "assistant",
-        //   content: res?.response,
-        // };
-
-        // const newMessageRes = {
-        //   role: "assistant",
-        //   message: res?.response,
-        //   id: res?.chatId,
-        //   cSessionId: sessionId,
-        // };
-
-        // setChatPayload((prevPayload: any) => ({
-        //   ...prevPayload,
-        //   history: [...prevPayload.history, assistantMessage],
-        //   pId: res?.chatId,
-        //   cSessionId: sessionId,
-        // }));
-
-        // setpId(res?.chatId);
-        // setMessages((prevMessages: any) => [
-        //   ...prevMessages.slice(0, -1),
-        //   newMessageRes,
-        // ]);
-
-        // setMessages((prevMessages: any) => [...prevMessages, newMessageRes]);
       } catch (error) {
         console.log("Error", error);
         setMessages((prevMessages: any) => prevMessages.slice(0, -1));
-      } finally {
-        setIsLoading(false);
       }
     },
     [pId, sessionId, chatPayload, setMessages]
@@ -261,10 +291,10 @@ function Chat({
       setpId(messages[messages.length - 1]?.id || null);
     }
     setChatPayload(initialPayload);
-    if (messagesContainerRef.current) {
-      messagesContainerRef.current.scrollTop =
-        messagesContainerRef.current.scrollHeight;
-    }
+    // if (messagesContainerRef.current) {
+    //   messagesContainerRef.current.scrollTop =
+    //     messagesContainerRef.current.scrollHeight;
+    // }
   }, [messages]);
 
   return (
@@ -316,7 +346,10 @@ function MessageList({
       text={message?.content || message?.message || message?.response}
     />
   );
-  console.log("MESSAGES_LIST", messages);
+
+  if (messages?.length == 0) {
+    return <NoData />;
+  }
 
   return (
     <div className='messages' ref={containerRef}>
@@ -350,9 +383,13 @@ function Message({
     <>
       <div className={`message ${sender}`}>
         {!isLoadingAnswer ? (
-          text
+          <ReactMarkdown>{text}</ReactMarkdown>
         ) : (
-          <Spin style={{ marginLeft: "400%" }} tip='Loading...' size='large' />
+          <Spin
+            style={{ marginLeft: "45%", marginTop: "8px" }}
+            tip='Loading...'
+            size='large'
+          />
         )}
       </div>
     </>
@@ -420,7 +457,7 @@ const InputField = React.memo(
 
         {isLoading ? (
           <>
-            <Spin tip='Loading...' size='small'></Spin>
+            <Spin size='small'></Spin>
           </>
         ) : (
           <button className='send_btn' onClick={handleSendClick}>

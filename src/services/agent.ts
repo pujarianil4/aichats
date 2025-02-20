@@ -108,6 +108,15 @@ export const getOnetoOneChatHistoryBySession = async (sessionID: string) => {
   }
 };
 
+export const deleteOnetoOneChatHistory = async (sessionID: string) => {
+  try {
+    await api.delete(`/chat-message/${sessionID}`);
+  } catch (error) {
+    console.log("Error", error);
+    throw error;
+  }
+};
+
 export const createOnetoOneChatSession = async (agentID: string) => {
   try {
     const { data } = await api.post(`/chat-session`, { aId: agentID });
