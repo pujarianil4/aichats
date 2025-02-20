@@ -73,11 +73,159 @@
 
 .message {
   padding: 8px;
-  max-width: 70%;
+  max-width: 80%;
   width: fit-content;
   word-wrap: break-word;
   margin: 8px 0;
   font-size: 14px;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: bold;
+    // margin-bottom: 0.25rem;
+    line-height: 1.3;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+  h2 {
+    font-size: 1.75rem;
+  }
+  h3 {
+    font-size: 1.5rem;
+  }
+  h4 {
+    font-size: 1.25rem;
+  }
+  h5 {
+    font-size: 1rem;
+  }
+  h6 {
+    font-size: 0.875rem;
+  }
+
+  span {
+    color: inherit;
+  }
+
+  strong,
+  b {
+    font-weight: bold;
+  }
+
+  em,
+  i {
+    font-style: italic;
+  }
+
+  u {
+    text-decoration: underline;
+  }
+
+  s {
+    text-decoration: line-through;
+  }
+
+  mark {
+    background-color: yellow;
+    padding: 0 0.2rem;
+  }
+
+  code {
+    color: var(--dark);
+    padding: 0.2rem 0.4rem;
+    line-height: 1.2;
+    overflow-wrap: break-word;
+  }
+
+  pre {
+    background: #f4f4f4;
+    overflow-x: auto;
+    font-size: 0.9rem;
+    padding: 4px 8px;
+    // width: max-content;
+    border-radius: 4px;
+    //   background-color: var(--tertiary-bg);
+    margin: 1rem 0;
+  }
+
+  // Lists
+  ul,
+  ol {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+  }
+
+  ul {
+    list-style-type: disc;
+  }
+
+  ol {
+    list-style-type: decimal;
+  }
+
+  li {
+    margin-bottom: 0.5rem;
+  }
+
+  // Blockquotes
+  blockquote {
+    border-left: 4px solid #ccc;
+    font-style: italic;
+    background: #f9f9f9;
+    // background-color: var(--tertiary-bg);
+    line-height: 1.2;
+    overflow-wrap: break-word;
+    border-left: 2px solid var(--divider);
+    margin: 1rem 0;
+  }
+
+  // Links
+  a {
+    color: #007bff;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  // Additional Styling for Sections
+  div,
+  section {
+    margin-bottom: 1rem;
+  }
+
+  // code,
+  // blockquote {
+  //   color: var(--dark);
+  //   line-height: 1.2;
+  //   overflow-wrap: break-word;
+  // }
+  // pre {
+  //   padding: 2px 8px;
+  //   width: max-content;
+  //   border-radius: 4px;
+  //   background-color: var(--tertiary-bg);
+  //   margin: 1rem 0;
+  // }
+  // code {
+  //   padding: 2px 8px;
+  //   width: max-content;
+  //   background-color: var(--tertiary-bg);
+  // }
+  // blockquote {
+  //   padding: 2px 8px;
+  //   width: fit-content;
+  //   border-left: 2px solid var(--divider);
+  //   background-color: var(--tertiary-bg);
+  //   margin: 1rem 0;
+  // }
 }
 
 .message.user {
@@ -85,25 +233,27 @@
   border-radius: 8px 8px 1px 8px;
   // background-color: var(--dark);
   // color: white;
-  background-color: transparent;
+  background-color: var(--chat-secondary-bg);
   color: var(--dark);
   margin-left: auto;
   margin-right: 8px;
 }
 
 .message.assistant {
+  width: 80%;
   align-self: flex-start;
   border-radius: 8px 8px 8px 1px;
   // background-color: var(--dark);
   // color: white;
   margin-left: 8px;
-  background-color: transparent;
+  background-color: var(--chat-secondary-bg);
   color: var(--dark);
 }
 
 .input_container {
   position: absolute;
   bottom: 12px;
+  left: 3%;
   width: calc(100% - 44px);
   display: flex;
   align-items: center;
