@@ -56,7 +56,7 @@ export default function Agent({
     },
     {
       key: "2",
-      label: "Personality",
+      label: "Persona",
       children: (
         <div className='collapse_item'>
           <textarea

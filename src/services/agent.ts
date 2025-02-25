@@ -61,7 +61,9 @@ export const updateAgentData = async (agentId: string, data: any) => {
 export const getKBbyAgentID = async (agentID: string) => {
   try {
     const response = await api.get(`/upload/kb/${agentID}`);
-    return response.data;
+    console.log("getKBbyAgentID", response);
+    
+    return response.data.knowledge_base;
   } catch (error) {
     console.error("Error", error);
     throw error;
@@ -71,6 +73,16 @@ export const getKBbyAgentID = async (agentID: string) => {
 export const uploadTextByAgent = async (agentID: string, payload: any) => {
   try {
     const response = await api.post(`/upload/kb/txt/${agentID}`, payload);
+    return response.data;
+  } catch (error) {
+    console.error("Error", error);
+    throw error;
+  }
+};
+
+export const uploadURLByAgent = async (agentID: string, payload: any) => {
+  try {
+    const response = await api.post(`/upload/kb/url/${agentID}`, payload);
     return response.data;
   } catch (error) {
     console.error("Error", error);
