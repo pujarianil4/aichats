@@ -15,6 +15,7 @@ import {
   deleteKbByAgent,
   getKBbyAgentID,
   uploadTextByAgent,
+  uploadURLByAgent,
 } from "../../../services/agent.ts";
 import { timeAgo } from "../../../utils/index.ts";
 import { useQuery } from "@tanstack/react-query";
@@ -39,11 +40,12 @@ import { useQuery } from "@tanstack/react-query";
 
 interface IKBData {
   id: number;
-  aId: string;
-  filename: string;
-  content: string;
-  typ: string;
-  createdAt: string;
+  source: string;
+  // aId: string;
+  // filename: string;
+  // content: string;
+  // typ: string;
+  // createdAt: string;
 }
 
 const icons: any = {
@@ -65,6 +67,8 @@ export default function KnowledgeBase({ agentId }: { agentId: string }) {
     queryFn: () => getKBbyAgentID(agentId!),
     enabled: !!agentId,
   });
+
+  // const kbData: IKBData[] = [];
 
   const showModal = (tab: string) => {
     setTabModalContent(tab);
@@ -114,21 +118,40 @@ export default function KnowledgeBase({ agentId }: { agentId: string }) {
   };
 
   const modalContent: any = {
-    website: (
-      <div className='add_website_modal'>
-        <h2>Add A Website Source</h2>
-        <p>
-          Your chat bot will answer quetions from the content found on website
-        </p>
-        <div className='input_box'>
-          <label htmlFor='website'>Website</label>
-          <input type='text' id='website' placeholder='unilend.finance' />
+    website: (() => {
+      const [url, setURL] = useState("");
+      const handleUploadURL = async () => {
+        try {
+          await uploadURLByAgent(agentId, {
+            url: url,
+          });
+          handleCancel();
+        } catch (error) {
+          console.log("URL Upload Error:", error);
+        }
+      };
+      return (
+        <div className='add_website_modal'>
+          <h2>Add A Website Source</h2>
+          <p>
+            Your chat bot will answer quetions from the content found on website
+          </p>
+          <div className='input_box'>
+            <label htmlFor='website'>Website</label>
+            <input
+              value={url}
+              onChange={(e) => setURL(e.target.value)}
+              type='text'
+              id='website'
+              placeholder='unilend.finance'
+            />
+          </div>
+          <div className='btn'>
+            <button onClick={handleUploadURL}>Save</button>
+          </div>
         </div>
-        <div className='btn'>
-          <button>Save</button>
-        </div>
-      </div>
-    ),
+      );
+    })(),
     documents: (
       <div className='add_doc_modal'>
         <h2>Add Documents</h2>
@@ -349,13 +372,13 @@ const KBList = ({
           // dangerouslySetInnerHTML={{ __html: item.content }}
           className='doc'
         >
-          {item.content.split("\n").map((line, index) =>
+          {/* {item.content.split("\n").map((line, index) =>
             line.trim() ? (
               <p key={index}>{line}</p>
             ) : (
               <br key={index} /> // For blank lines
             )
-          )}
+          )} */}
         </div>
       </div>
     ),
@@ -382,7 +405,7 @@ const KBList = ({
           <textarea
             rows={10}
             id='bio'
-            value={item.content}
+            // value={item.content}
             placeholder='This is the short bio that will be shown at your agents profile.'
           />
         </div>
@@ -428,11 +451,14 @@ const KBList = ({
             checked={checkedList.includes(item.id)}
           />
         </div>
-        <div onClick={() => showModal(item.typ)} className='item'>
-          <div className='icon'>{icons[item.typ]}</div>
+        <div
+          //  onClick={() => showModal(item.typ)}
+          className='item'
+        >
+          <div className='icon'>{icons["file"]}</div>
           <div className='content'>
-            <p>{item.filename}</p>
-            <span>{timeAgo(item.createdAt)}</span>
+            <p>{item.source}</p>
+            {/* <span>{timeAgo(item.createdAt)}</span> */}
           </div>
         </div>
       </div>
