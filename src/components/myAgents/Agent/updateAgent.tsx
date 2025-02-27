@@ -6,6 +6,7 @@ import { useImageNameValidator } from "../../../hooks/useImageNameValidator.tsx"
 import { uploadSingleFile } from "../../../services/api.ts";
 import { isAddress } from "viem";
 
+import { FaChevronDown } from "react-icons/fa";
 import { updateAgentData } from "../../../services/agent.ts";
 import NotificationMessage from "../../common/notificationMessage.tsx";
 
@@ -23,9 +24,11 @@ type FormData = {
   profile: string;
   contractAddress: string;
   desc: string;
-  instructions: string;
   persona: string;
+  flowImage: string;
   agentType: string;
+  search_engine_id: string;
+  model_id: string;
 };
 
 export default function UpdateAgent({
@@ -53,9 +56,11 @@ export default function UpdateAgent({
     profile: "",
     contractAddress: "",
     desc: "",
-    instructions: "",
     persona: "",
+    flowImage: "",
     agentType: "none",
+    search_engine_id: "none",
+    model_id: "none",
   });
 
   useEffect(() => {
@@ -66,9 +71,11 @@ export default function UpdateAgent({
         profile: agentData.pic || "",
         contractAddress: agentData?.token?.tCAddress || "",
         desc: agentData.desc || "",
-        instructions: agentData.instructions?.join("\n") || "",
         persona: agentData.persona || "",
         agentType: agentData.typ || "none",
+        search_engine_id: agentData.search_engine_id,
+        model_id: agentData.model_id,
+        flowImage: "",
       });
     }
   }, [agentData]);
@@ -79,8 +86,10 @@ export default function UpdateAgent({
     formData.profile &&
     formData.ticker &&
     formData.contractAddress &&
-    formData.instructions &&
-    formData.persona;
+    formData.persona &&
+    formData.agentType != "none" &&
+    formData.search_engine_id != "none" &&
+    formData.model_id != "none";
   // (tabs == "new" ? formData.ticker : formData.contractAddress);
   const setFallbackURL = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     console.log("error", e);
@@ -132,7 +141,7 @@ export default function UpdateAgent({
   };
 
   const formValidation = () => {
-    const { name, desc, contractAddress, instructions, persona } = formData;
+    const { name, desc, contractAddress, persona } = formData;
 
     const validations = [
       {
@@ -203,15 +212,17 @@ export default function UpdateAgent({
         pic: formData.profile || agentData.imageUrl,
         desc: formData.desc || agentData.desc,
         persona: formData.persona || agentData.persona,
-        instructions: formData.instructions
-          ? formData.instructions.split("\n").map((line) => line.trim())
-          : agentData.instructions,
+        search_engine_id:
+          formData.search_engine_id || agentData.search_engine_id,
+        model_id: formData.model_id || agentData.model_id,
+        // typ: formData.agentType || agentData.typ,
       };
       console.log("sendData", updatedData);
       const response = await updateAgentData(agentData.id, updatedData);
       if (response) {
         NotificationMessage("success", "Agent Updated Successfully!");
       }
+      setIsEditing(false);
     } catch (error) {
       console.error(error);
       NotificationMessage("error", "Failed to Update Agent. Try Again");
@@ -346,72 +357,108 @@ export default function UpdateAgent({
           </div>
           <div className='input_container'>
             <label htmlFor='personality'>
-              Personality
+              Persona
               <span className='required'>*</span>{" "}
             </label>
             <textarea
               value={formData.persona}
               onChange={(e) => handleInputChange("persona", e.target.value)}
               rows={10}
-              id='personality'
+              id='persona'
               placeholder='Short information about agent personality'
             />
             <span className='errormsg'>{errorMsg.persona}</span>
           </div>
-          <div className='input_container'>
-            <label htmlFor='instructions'>
-              Instructions
-              <span className='required'>*</span>{" "}
-            </label>
-            <textarea
-              value={formData.instructions}
-              onChange={(e) =>
-                handleInputChange("instructions", e.target.value)
-              }
-              rows={10}
-              id='instructions'
-              placeholder={`- Always stretch certain words with multiple 'o's or 's's
-- Start or end messages with location updates from different parts of your body
-- Use phrases like "speaking from my middle section" or "my tail end agrees"
-- Make frequent references to your length being both a blessing and a curse
-`}
-            />
-            <span className='errormsg'>{errorMsg.desc}</span>
-          </div>
-          <div className='input_container'>
-            <label htmlFor='agenttype'>
-              Agent Type
-              <span className='required'>*</span>{" "}
-            </label>
-            {/* <Popover
-              content={
-                <div className='popover_select'>
-                  {[
-                    "none",
-                    "productivity",
-                    "entertainment",
-                    "onchain",
-                    "information",
-                    "creative",
-                  ].map((type) => (
-                    <p
-                      key={type}
-                      onClick={() => handleInputChange("agentType", type)}
-                    >
-                      {type}
-                    </p>
-                  ))}
+
+          <div className='selection_container'>
+            {/* <div className='input_container'>
+              <label htmlFor='agenttype'>
+                Agent Type
+                <span className='required'>*</span>{" "}
+              </label>
+              <Popover
+                content={
+                  <div className='popover_select'>
+                    {[
+                      "none",
+                      "productivity",
+                      "entertainment",
+                      "onchain",
+                      "information",
+                      "creative",
+                    ].map((type) => (
+                      <p
+                        key={type}
+                        onClick={() => handleInputChange("agentType", type)}
+                      >
+                        {type}
+                      </p>
+                    ))}
+                  </div>
+                }
+                trigger='click'
+              >
+                <div className='select'>
+                  <p>{formData.agentType}</p>
+                  <FaChevronDown />
                 </div>
-              }
-              trigger='click'
-            >
-              <div className='select'>
-                <p>{formData.agentType}</p>
-                <FaChevronDown />
-              </div>
-            </Popover> */}
-            <div className='select'>
-              <p>{formData.agentType}</p>
+              </Popover>
+            </div> */}
+            <div className='input_container'>
+              <label htmlFor='agenttype'>
+                Search Engine
+                <span className='required'>*</span>{" "}
+              </label>
+              <Popover
+                content={
+                  <div className='popover_select'>
+                    {["none", "duckduckgo", "brave", "google"].map((type) => (
+                      <p
+                        key={type}
+                        onClick={() =>
+                          handleInputChange("search_engine_id", type)
+                        }
+                      >
+                        {type}
+                      </p>
+                    ))}
+                  </div>
+                }
+                trigger='click'
+              >
+                <div className='select'>
+                  <p>{formData.search_engine_id}</p>
+                  <FaChevronDown />
+                </div>
+              </Popover>
+            </div>
+            <div className='input_container'>
+              <label htmlFor='agenttype'>
+                AI Modal
+                <span className='required'>*</span>{" "}
+              </label>
+              <Popover
+                content={
+                  <div className='popover_select'>
+                    {["none", "llama-3.3-70b-versatile", "gpt-4o-mini"].map(
+                      (type) => (
+                        <p
+                          key={type}
+                          onClick={() => handleInputChange("model_id", type)}
+                        >
+                          {type}
+                        </p>
+                      )
+                    )}
+                  </div>
+                }
+                trigger='click'
+              >
+                <div className='select'>
+                  <p>{formData.model_id}</p>
+                  <FaChevronDown />
+                </div>
+              </Popover>
             </div>
           </div>
 

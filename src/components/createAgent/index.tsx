@@ -297,7 +297,7 @@ export default function CreateAgent() {
   };
 
   const formValidation = () => {
-    const { desc, contractAddress, instructions, persona } = formData;
+    const { desc, contractAddress, persona } = formData;
 
     const validations = [
       {
@@ -630,7 +630,7 @@ export default function CreateAgent() {
                 <Popover
                   content={
                     <div className='popover_select'>
-                      {["none", "brave"].map((type) => (
+                      {["none", "duckduckgo", "brave", "google"].map((type) => (
                         <p
                           key={type}
                           onClick={() =>
@@ -658,14 +658,16 @@ export default function CreateAgent() {
                 <Popover
                   content={
                     <div className='popover_select'>
-                      {["none", "openai"].map((type) => (
-                        <p
-                          key={type}
-                          onClick={() => handleInputChange("model_id", type)}
-                        >
-                          {type}
-                        </p>
-                      ))}
+                      {["none", "llama-3.3-70b-versatile", "gpt-4o-mini"].map(
+                        (type) => (
+                          <p
+                            key={type}
+                            onClick={() => handleInputChange("model_id", type)}
+                          >
+                            {type}
+                          </p>
+                        )
+                      )}
                     </div>
                   }
                   trigger='click'

@@ -272,26 +272,26 @@ export default function KnowledgeBase({ agentId }: { agentId: string }) {
                 <IoIosGlobe size={18} />
                 <p>Website</p>
               </div>
-              <div onClick={() => showModal("table")} className='item'>
+              {/* <div onClick={() => showModal("table")} className='item'>
                 <BsTable size={16} />
                 <p>Table</p>
               </div>
               <div onClick={() => showModal("richText")} className='item'>
                 <RxText size={18} />
                 <p>Rich Text</p>
-              </div>
+              </div> */}
               <div onClick={() => showModal("documents")} className='item'>
                 <IoDocumentTextOutline size={18} />
                 <p>Documents</p>
               </div>
-              <div onClick={() => showModal("webSearch")} className='item'>
+              {/* <div onClick={() => showModal("webSearch")} className='item'>
                 <IoIosSearch size={18} />
                 <p>Web Search</p>
               </div>
               <div onClick={() => showModal("uploadFromApi")} className='item'>
                 <MdOutlineUploadFile size={18} />
                 <p>Upload From Api</p>
-              </div>
+              </div> */}
             </>
           )}
         </div>
