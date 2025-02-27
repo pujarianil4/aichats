@@ -4,10 +4,12 @@
   position: relative;
   flex-grow: 1;
   min-height: 500px;
+  max-width: 80%;
   background-color: var(--primary-bg);
   border-radius: 15px;
   padding: 20px;
-  margin: 0 1rem;
+  margin: 0 auto;
+
   min-width: 300px;
 
   .basic {
