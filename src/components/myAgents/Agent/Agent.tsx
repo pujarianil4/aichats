@@ -86,7 +86,7 @@ export default function Agent({
   return (
     <>
       {edit ? (
-        <UpdateAgent agentData={agentData} setIsEditing={setEdit} />
+        <UpdateAgent agentData={agentData} setIsEditing={changeEdit} />
       ) : (
         <div className='agent_container'>
           <div className='basic'>

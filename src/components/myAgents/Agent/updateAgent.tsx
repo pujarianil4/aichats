@@ -73,8 +73,8 @@ export default function UpdateAgent({
         desc: agentData.desc || "",
         persona: agentData.persona || "",
         agentType: agentData.typ || "none",
-        search_engine_id: "none",
-        model_id: "none",
+        search_engine_id: agentData.search_engine_id,
+        model_id: agentData.model_id,
         flowImage: "",
       });
     }
@@ -215,13 +215,14 @@ export default function UpdateAgent({
         search_engine_id:
           formData.search_engine_id || agentData.search_engine_id,
         model_id: formData.model_id || agentData.model_id,
-        typ: formData.agentType || agentData.typ,
+        // typ: formData.agentType || agentData.typ,
       };
       console.log("sendData", updatedData);
       const response = await updateAgentData(agentData.id, updatedData);
       if (response) {
         NotificationMessage("success", "Agent Updated Successfully!");
       }
+      setIsEditing(false);
     } catch (error) {
       console.error(error);
       NotificationMessage("error", "Failed to Update Agent. Try Again");
@@ -370,7 +371,7 @@ export default function UpdateAgent({
           </div>
 
           <div className='selection_container'>
-            <div className='input_container'>
+            {/* <div className='input_container'>
               <label htmlFor='agenttype'>
                 Agent Type
                 <span className='required'>*</span>{" "}
@@ -402,7 +403,7 @@ export default function UpdateAgent({
                   <FaChevronDown />
                 </div>
               </Popover>
-            </div>
+            </div> */}
             <div className='input_container'>
               <label htmlFor='agenttype'>
                 Search Engine

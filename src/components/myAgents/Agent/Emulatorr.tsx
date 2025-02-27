@@ -167,6 +167,12 @@ function Chat({
   }, []);
 
   useEffect(() => {
+    if (messages.length == 0) {
+      setpId(null);
+    }
+  }, [messages]);
+
+  useEffect(() => {
     const eventSource = new EventSource(
       `https://ai-agent-r139.onrender.com/chat-message/sse/${sessionId}`
     );
@@ -426,7 +432,8 @@ function Message({
         </div>
       ) : (
         <div style={{}}>
-          <Skeleton.Input className='msg_skeleton' active />
+          <p>Loading...</p>
+          {/* <Skeleton.Input className='msg_skeleton' active /> */}
         </div>
       )}
 
