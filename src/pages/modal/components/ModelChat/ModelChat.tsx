@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef } from "react";
-import styles from "./ModelChat.module.css";
+// import styles from "./ModelChat.module.css";
+import "./index.scss";
 import { ScrollShadow } from "@nextui-org/react";
 
 const ModelChat = ({ messages, selectedCharacter }: any) => {
@@ -15,27 +16,27 @@ const ModelChat = ({ messages, selectedCharacter }: any) => {
 
   return (
     <ScrollShadow
-      className={`no_scrollbar ${styles.shadow}`}
+      className={`no_scrollbar shadow`}
       visibility='top'
       size={100}
       ref={scrollRef}
       onWheel={(e) => e.stopPropagation()}
     >
-      <div className={styles.chatContainer}>
-        <div className={styles.chat}>
+      <div className={`chatContainer`}>
+        <div className={`chat`}>
           {messages &&
             messages?.map((message: any, index: number) => (
-              <div className={styles.chatMessageContainer} key={index}>
-                <div className={styles.chatMessageAvatar}>
+              <div className={`chatMessageContainer`} key={index}>
+                <div className={`chatMessageAvatar`}>
                   <img src='./images/user.png' width={20} height={20}></img>
                 </div>
-                <div className={styles.chatMessage}>
-                  <p className={styles.role}>
+                <div className={`chatMessage`}>
+                  <p className={`role`}>
                     {message.role === "assistant"
                       ? selectedCharacter?.name
                       : message?.role}
                   </p>
-                  <div className={styles.chatMessageText}>
+                  <div className={`chatMessageText`}>
                     {message?.content?.trim()}
                   </div>
                 </div>

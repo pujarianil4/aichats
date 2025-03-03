@@ -2,7 +2,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Html, useFBX } from "@react-three/drei";
 import { AnimationMixer, Group, Vector3 } from "three";
-import styles from "./CustomCanvas.module.css";
+// import styles from "./CustomCanvas.module.css";
+import "./index.scss";
 import axios from "axios";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
@@ -140,7 +141,7 @@ const CustomCanvas = ({
   return (
     <group ref={groupRef} position={position} dispose={null}>
       <Html position={[0, 190, 0]} center>
-        <div className={styles.text}>
+        <div className={`text`}>
           {characterLabel.slice(0, 200) +
             (characterLabel.length > 200 ? "..." : "")}
         </div>
