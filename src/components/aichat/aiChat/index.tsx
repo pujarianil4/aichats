@@ -6,6 +6,7 @@ import {
   chatWithOnetoOneAgent,
   createOnetoOneChatSession,
   deleteOnetoOneChatHistory,
+  getMyAgentData,
   getOnetoOneChatHistoryBySession,
   getOnetoOneChatSession,
 } from "../../../services/agent.ts";
@@ -130,6 +131,12 @@ function Chat({
         content: item?.message || item?.content,
       };
     }
+  });
+  const { agentId } = useParams();
+  const agent = useQuery({
+    queryKey: ["privateagent", agentId],
+    queryFn: () => getMyAgentData(agentId!),
+    enabled: !!agentId,
   });
 
   const initialPayload = {
@@ -274,6 +281,12 @@ function Chat({
         history: [...chatPayload?.history, newMessage],
         pId,
         cSessionId: sessionId,
+        model_id: "llama-3.3-70b-versatile",
+        search_engine_id: agent?.data?.search_engine_id,
+        kbId: agent?.data?.id,
+        action: false,
+        name: agent?.data?.name,
+        persona: agent?.data?.persona,
       };
 
       try {
