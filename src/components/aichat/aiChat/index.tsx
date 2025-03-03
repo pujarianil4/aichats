@@ -163,7 +163,7 @@ function Chat({
     );
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      console.log("AI Response:", data);
+      console.log("AI RESPONSE:", data);
       const assistantMessage = {
         role: "assistant",
         content: data?.response,
@@ -193,7 +193,7 @@ function Chat({
     };
 
     eventSource.onerror = (err) => {
-      console.error("SSE error:", err);
+      console.error("SSE ERROR:", err);
       eventSource.close();
     };
 
@@ -289,6 +289,8 @@ function Chat({
         persona: agent?.data?.persona,
       };
 
+      console.log("CHAT_PAYLOAD", latestPayload);
+
       try {
         const res = await chatWithOnetoOneAgent(latestPayload);
       } catch (error) {
@@ -296,7 +298,7 @@ function Chat({
         setMessages((prevMessages: any) => prevMessages.slice(0, -1));
       }
     },
-    [pId, sessionId, chatPayload, setMessages]
+    [pId, sessionId, chatPayload, setMessages, agent]
   );
 
   useEffect(() => {
