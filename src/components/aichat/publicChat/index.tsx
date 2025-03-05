@@ -156,6 +156,7 @@ export default function PublicAiChats({
     }
   };
 
+  // TODO: FIX CALLING Many times
   const getInstanceData = async () => {
     try {
       const data = await getChatInstanceWithAgentId(agentId as string);
@@ -299,7 +300,7 @@ export default function PublicAiChats({
                 ) : (
                   <>
                     <ChatFeed
-                      chatInstanceId={instanceData?.id}
+                      chatInstanceData={instanceData}
                       adminAddress={instanceData?.adminAddress}
                       mutedUsers={mutedUsers}
                       isModerator={isModerator}
@@ -307,7 +308,7 @@ export default function PublicAiChats({
                     <ChatInput
                       adminAddress={instanceData?.adminAddress}
                       tokenAddress={instanceData?.tokenAddress}
-                      chatInstanceId={instanceData?.id}
+                      chatInstanceData={instanceData}
                       mutedUsers={mutedUsers}
                     />
                   </>
@@ -333,6 +334,7 @@ export default function PublicAiChats({
               <AdminReply />
             ) : (
               <YoutubeVideo youtubeLink={instanceData?.streamUrl} />
+              // <></>
             )}
 
             {/* {isModerator ||
@@ -373,7 +375,7 @@ export default function PublicAiChats({
             ) : (
               <>
                 <ChatFeed
-                  chatInstanceId={instanceData?.id}
+                  chatInstanceData={instanceData}
                   adminAddress={instanceData?.adminAddress}
                   mutedUsers={mutedUsers}
                   isModerator={isModerator}
@@ -381,7 +383,7 @@ export default function PublicAiChats({
                 <ChatInput
                   adminAddress={instanceData?.adminAddress}
                   tokenAddress={instanceData?.tokenAddress}
-                  chatInstanceId={instanceData?.id}
+                  chatInstanceData={instanceData}
                   mutedUsers={mutedUsers}
                 />
               </>

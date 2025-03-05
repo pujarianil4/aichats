@@ -1,8 +1,6 @@
-//import * as THREE from "three";
 import { useEffect, useRef, useState } from "react";
 import { Html, useFBX } from "@react-three/drei";
 import { AnimationMixer, Group, Vector3 } from "three";
-// import styles from "./CustomCanvas.module.css";
 import "./index.scss";
 import axios from "axios";
 import { useFrame } from "@react-three/fiber";

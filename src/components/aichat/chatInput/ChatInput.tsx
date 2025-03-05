@@ -10,18 +10,19 @@ import { parseUnits } from "viem";
 import TipPopup from "./TipPanel.tsx";
 import EmojiPicker from "../emoji/EmojiPicker.tsx";
 import NotificationMessage from "../../common/notificationMessage.tsx";
+import { sendPublicChat } from "../../../services/api.ts";
 
 interface IProps {
   adminAddress: string;
   tokenAddress: string;
-  chatInstanceId: number;
+  chatInstanceData: any;
   mutedUsers: string[];
 }
 
 export default function ChatInput({
   adminAddress,
   tokenAddress,
-  chatInstanceId,
+  chatInstanceData,
   mutedUsers,
 }: IProps) {
   const { isConnected, address } = useAccount();
@@ -75,7 +76,7 @@ export default function ChatInput({
         );
         socket.emit(
           "getSuperChat",
-          { instanceId: chatInstanceId },
+          { instanceId: chatInstanceData?.id },
           (response: any) => {
             if (!response.success) {
               console.error("Failed to message:", response.error);
@@ -115,7 +116,13 @@ export default function ChatInput({
           args: [adminAddress, parseUnits(customAmount, decimals)], // TODO: Update later
         });
       } else if (message.trim() !== "") {
-        socket.emit("message", { content: message });
+        // socket.emit("message", { content: message });
+        const payload = {
+          instanceId: chatInstanceData?.id,
+          senderAddress: "0x79821a0F47e0c9598413b12FE4882b33326B0cF8",
+          content: message,
+        };
+        await sendPublicChat(payload);
         setMessage("");
         setShowTipPopup(false);
       }

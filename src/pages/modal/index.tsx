@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader.js";
 import { useLoader } from "@react-three/fiber";
-import { Select, SelectItem } from "@nextui-org/react";
-// import styles from "./model.module.css";
 import { ACTIONMAP, FBXMAP } from "../../utils/contants.ts";
 import { CsOrbitControls } from "./components/CustomCanvas/Environment/CsOrbitControls.tsx";
 import CustomCanvas from "./components/CustomCanvas/CustomCanvas.tsx";

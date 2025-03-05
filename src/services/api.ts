@@ -57,7 +57,7 @@ function extractPoolData(data: any) {
     pools: data.included,
   };
 }
-
+const BASE_URL = "https://ai-agent-r139.onrender.com"; // grp-message/instance
 const BASE_URL_BALANCE = "https://balance-servie.onrender.com";
 const BASE_URL_CHAT = "https://chat-service-rq16.onrender.com";
 export const getMessages = async (
@@ -98,12 +98,26 @@ export const createInstance = async (payload: any) => {
   delete payload?.chainId; // TODO: REMOVE THIS AFTER BE ADDS CHAINID
   try {
     const { data } = await axios.post(
-      `${BASE_URL_BALANCE}/address/instance`,
+      `${BASE_URL}/grp-message/grp-instance`,
       payload
     );
     return data;
   } catch (error) {
     console.log("ADD_ADDRESS_Error", error);
+    throw error;
+  }
+};
+
+export const sendPublicChat = async (payload: any) => {
+  try {
+    console.log("POST_MSG_BODY", payload);
+    const { data } = await axios.post(
+      `${BASE_URL}/grp-message/message`,
+      payload
+    );
+    console.log("POST_MSG", data);
+  } catch (error) {
+    console.log("Error", error);
     throw error;
   }
 };
@@ -115,7 +129,7 @@ export const updateChatInstance = async (
 ) => {
   try {
     const { data } = await axios.patch(
-      `${BASE_URL_BALANCE}/address/instance/${instanceId}`,
+      `${BASE_URL_BALANCE}/grp-message/grp-instance/${instanceId}`,
       {
         streamUrl: link,
         minTokenValue: Number(minTokenValue),
@@ -143,8 +157,9 @@ export const getChatInstanceAdmin = async (instance: number = 1) => {
 export const getChatInstanceWithAgentId = async (agentId: string) => {
   try {
     const { data } = await axios.get(
-      `${BASE_URL_BALANCE}/address/instance/agent/${agentId}`
+      `${BASE_URL}/grp-message/grp-instance?aId=${agentId}`
     );
+    console.log("GET_CHAT_INSTANCE", data);
     return data;
   } catch (error) {
     console.log(error);
@@ -264,8 +279,6 @@ export const getAllAgents = async () => {
     throw error;
   }
 };
-
-
 
 export const getAllAgentByUser = async () => {
   try {

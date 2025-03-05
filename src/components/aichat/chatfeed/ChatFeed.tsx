@@ -15,13 +15,13 @@ import { useAccount } from "wagmi";
 import NotificationMessage from "../../common/notificationMessage.tsx";
 
 interface IProps {
-  chatInstanceId: number;
+  chatInstanceData: any;
   adminAddress: string;
   mutedUsers: string[];
   isModerator: boolean;
 }
 export default function ChatFeed({
-  chatInstanceId,
+  chatInstanceData,
   adminAddress,
   mutedUsers,
   isModerator,
@@ -51,7 +51,7 @@ export default function ChatFeed({
   const fetchData = async (page: number, limit: number) => {
     setIsLoading(true);
     try {
-      const data = await getMessages(page, limit, chatInstanceId);
+      const data = await getMessages(page, limit, chatInstanceData?.id);
       if (!data || data.length === 0) {
         return;
       }
@@ -71,7 +71,7 @@ export default function ChatFeed({
 
   const getSuperChats = async () => {
     try {
-      const data = await getSuperChatsWithInstanceId(chatInstanceId);
+      const data = await getSuperChatsWithInstanceId(chatInstanceData?.id);
       setSuperChat(data);
     } catch (error) {
       console.log("Get SuperChat Error", error);
@@ -88,7 +88,7 @@ export default function ChatFeed({
     }
   }, [page]);
 
-  // const { data: chatData, isLoading } = useQuery(["chatMessages", chatInstanceId, page], () => getMessages(page, limit, chatInstanceId), {
+  // const { data: chatData, isLoading } = useQuery(["chatMessages", chatInstanceData?.id, page], () => getMessages(page, limit, chatInstanceData?.id), {
   //   keepPreviousData: true,
   //   onSuccess: (data) => {
   //     if (page === 1) setChat(data.reverse());
@@ -96,7 +96,7 @@ export default function ChatFeed({
   //   },
   // });
 
-  // const { data: superChat = [] } = useQuery(["superChats", chatInstanceId], () => getSuperChatsWithInstanceId(chatInstanceId));
+  // const { data: superChat = [] } = useQuery(["superChats", chatInstanceData?.id], () => getSuperChatsWithInstanceId(chatInstanceData?.id));
 
   const handleView = () => {
     if (superChat.length > 0) {
@@ -110,41 +110,76 @@ export default function ChatFeed({
     );
   };
 
+  // useEffect(() => {
+  //   if (!socket) return;
+  //   const newMessageHandler = (data: any) => {
+  //     console.log("New message received:", data);
+  //     if (mutedUsers?.includes(data?.senderAddress as string)) {
+  //       throw new Error("You are muted");
+  //     }
+  //     if (data.amnt) {
+  //       setSuperChat((prevChat) => [data, ...prevChat]);
+  //     }
+  //     setChat((prevChat) => [...prevChat, data]);
+  //     setIsInitialLoad(true);
+  //   };
+
+  //   // const newSuperChatHandler = (data: any) => {
+  //   //   try {
+  //   //     setSuperChat(data.messages);
+  //   //   } catch (error: any) {
+  //   //     NotificationMessage("error", error.message);
+  //   //   }
+  //   // };
+
+  //   const errorHandler = (err: any) => {
+  //     NotificationMessage("error", err.message);
+  //   };
+
+  //   socket.on("newMessage", newMessageHandler);
+  //   // socket.on("filteredMessages", newSuperChatHandler);
+  //   socket.on("error", errorHandler);
+  //   return () => {
+  //     socket.off("newMessage");
+  //     // socket.off("filteredMessages");
+  //     socket.off("error");
+  //   };
+  // }, [socket]);
+
   useEffect(() => {
-    if (!socket) return;
-    const newMessageHandler = (data: any) => {
-      console.log("New message received:", data);
-      if (mutedUsers?.includes(data?.senderAddress as string)) {
-        throw new Error("You are muted");
-      }
-      if (data.amnt) {
-        setSuperChat((prevChat) => [data, ...prevChat]);
-      }
+    console.log(
+      "URL_SS",
+      `https://ai-agent-r139.onrender.com/grp-message/sse/${chatInstanceData?.id}`
+    );
+    const eventSource = new EventSource(
+      `https://ai-agent-r139.onrender.com/grp-message/sse/${chatInstanceData?.id}`
+    );
+    eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      console.log("PUBLIC AI RESPONSE:", data);
+      // const assistantMessage = {
+      //   role: "assistant",
+      //   content: data?.response,
+      // };
+
+      // const newMessageRes = {
+      //   role: "assistant",
+      //   message: data?.response,
+      //   id: data?.id,
+      //   cSessionId: 1,
+      // };
       setChat((prevChat) => [...prevChat, data]);
-      setIsInitialLoad(true);
     };
 
-    // const newSuperChatHandler = (data: any) => {
-    //   try {
-    //     setSuperChat(data.messages);
-    //   } catch (error: any) {
-    //     NotificationMessage("error", error.message);
-    //   }
-    // };
-
-    const errorHandler = (err: any) => {
-      NotificationMessage("error", err.message);
+    eventSource.onerror = (err) => {
+      console.error("SSE ERROR:", err);
+      eventSource.close();
     };
 
-    socket.on("newMessage", newMessageHandler);
-    // socket.on("filteredMessages", newSuperChatHandler);
-    socket.on("error", errorHandler);
     return () => {
-      socket.off("newMessage");
-      // socket.off("filteredMessages");
-      socket.off("error");
+      eventSource.close();
     };
-  }, [socket]);
+  }, []);
 
   return (
     <div
@@ -252,7 +287,7 @@ export default function ChatFeed({
                 <UserMessage
                   key={index}
                   data={chat}
-                  instance={chatInstanceId}
+                  instance={chatInstanceData?.id}
                   adminAddress={adminAddress}
                   isAdmin={isAdmin}
                   isModerator={isModerator}
