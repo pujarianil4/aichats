@@ -60,7 +60,7 @@ export default function AIChat() {
   //   };
   // }, [userId]);
 
-  if (chatLoading) {
+  if (chatLoading || !sessionData) {
     return (
       <div className='emulator_container'>
         <PageLoader />
