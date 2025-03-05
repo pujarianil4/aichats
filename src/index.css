@@ -65,6 +65,20 @@ button {
   color: var(--light);
   height: max-content;
 }
+
+.primary {
+  border-radius: 20px !important;
+  border: 1px solid var(--primary);
+  padding: 8px 20px;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: var(--primary);
+  cursor: pointer;
+  transition: border-color 0.25s;
+  color: var(--light);
+  height: max-content;
+}
 /* button > div {
   display: none !important;
 } */
@@ -73,7 +87,7 @@ button:disabled {
 }
 button:hover {
   border-color: var(--primary);
-  color: var(--primary);
+  filter: contrast(80%);
 }
 
 button[data-testid="rk-account-button"] {

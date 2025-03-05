@@ -19,9 +19,11 @@ import { MdDeleteOutline } from "react-icons/md";
 import NoData from "../../common/noData.tsx";
 
 export default function Emulatorr({
+  isEmulatorOpen,
   agentInfo,
   toggleEmulator,
 }: {
+  isEmulatorOpen: boolean;
   agentInfo: any;
   toggleEmulator: () => void;
 }) {
@@ -41,7 +43,11 @@ export default function Emulatorr({
     staleTime: 1000 * 30 * 1,
   });
 
-  const { data: chatHistory, isLoading: chatLoading } = useQuery({
+  const {
+    data: chatHistory,
+    isLoading: chatLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["chatHistory", sessionData?.id],
     queryFn: () => getOnetoOneChatHistoryBySession(sessionData?.id),
     enabled: !!sessionData?.id,
@@ -49,9 +55,15 @@ export default function Emulatorr({
   });
 
   useEffect(() => {
-    console.log("agentInfo", agentInfo);
+    console.log("agentInfo", chatHistory, agentInfo);
     setChats(chatHistory || []);
   }, [chatHistory]);
+
+  // useEffect(() => {
+  //   if (isEmulatorOpen) {
+  //     refetch();
+  //   }
+  // }, [isEmulatorOpen, refetch]);
 
   const handleReset = async () => {
     await deleteOnetoOneChatHistory(sessionData?.id);
@@ -85,7 +97,7 @@ export default function Emulatorr({
               className='toggle-btn'
               onClick={toggleEmulator}
             />
-            <h3 style={{ textAlign: "center" }}>Chat with AI</h3>
+            <h3 style={{ textAlign: "center" }}>Emulator</h3>
             <div>
               <MdDeleteOutline
                 size={18}
@@ -109,7 +121,7 @@ export default function Emulatorr({
       )}
       {viewSize == 1 && (
         <div onClick={() => setViewSize(2)} className='view_1'>
-          <p>Chat with AI</p>
+          <p>Emulator</p>
         </div>
       )}
     </>
