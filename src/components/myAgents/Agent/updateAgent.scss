@@ -1,6 +1,7 @@
 @import "/src/styles/breakPoints";
 .update_agent_container {
   flex-grow: 1;
+  max-width: 80%;
   margin: 0 auto;
   min-height: 500px;
   background-color: var(--primary-bg);
@@ -229,12 +230,18 @@
 
 .popover_select {
   color: var(--dark);
+  width: 150px;
   p {
     font-size: 13px;
+    text-transform: capitalize;
     padding: 5px;
     font-weight: 600;
     border-radius: 5px;
+    color: var(--light);
     cursor: pointer;
+    @include lessThan(md) {
+      font-size: 11px;
+    }
     &:hover {
       background-color: var(--primary);
     }

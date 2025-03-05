@@ -39,6 +39,8 @@ type FormData = {
   persona: string;
   flowImage: string;
   agentType: string;
+  search_engine_id: string;
+  model_id: string;
   // greeting: string;
   // environmentPrompts: EnvironmentPrompts;
   // sampleConversations: IConversation[];
@@ -72,6 +74,8 @@ export default function CreateAgent() {
     persona: "",
     flowImage: "",
     agentType: "none",
+    search_engine_id: "none",
+    model_id: "none",
     // greeting: "",
     // environmentPrompts: {
     //   forum: { prefix: "", suffix: "" },
@@ -92,9 +96,11 @@ export default function CreateAgent() {
     formData.profile &&
     formData.ticker &&
     formData.contractAddress &&
-    formData.instructions &&
     formData.persona &&
-    formData.agentType != "none";
+    formData.agentType != "none" &&
+    formData.search_engine_id != "none" &&
+    formData.model_id != "none";
+
   // (tabs == "new" ? formData.ticker : formData.contractAddress);
   const setFallbackURL = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     console.log("error", e);
@@ -113,6 +119,8 @@ export default function CreateAgent() {
       persona: "",
       flowImage: "",
       agentType: "none",
+      search_engine_id: "none",
+      model_id: "none",
     });
   };
 
@@ -289,7 +297,7 @@ export default function CreateAgent() {
   };
 
   const formValidation = () => {
-    const { desc, contractAddress, instructions, persona } = formData;
+    const { desc, contractAddress, persona } = formData;
 
     const validations = [
       {
@@ -306,6 +314,7 @@ export default function CreateAgent() {
           const charLength = String(persona).split("").length;
           console.log(
             "charLength",
+            String(persona).split(""),
             charLength,
             charLength >= 50 && charLength <= 300
           );
@@ -355,9 +364,12 @@ export default function CreateAgent() {
           },
           desc: formData.desc,
           persona: formData.persona,
-          instructions: formData.instructions
-            .split("\n")
-            .map((line) => line.replace(/^-\s*/, "").trim()),
+          search_engine_id: formData.search_engine_id,
+          model_id: formData.model_id,
+
+          // instructions: formData.instructions
+          //   .split("\n")
+          //   .map((line) => line.replace(/^-\s*/, "").trim()),
           // flowImage: formData.flowImage,
           typ: formData.agentType,
         };
@@ -500,7 +512,7 @@ export default function CreateAgent() {
             </div>
             <div className='input_container'>
               <label htmlFor='persona'>
-                persona
+                Persona
                 <span className='required'>*</span>{" "}
               </label>
               <textarea
@@ -512,10 +524,10 @@ export default function CreateAgent() {
               />
               <span className='errormsg'>{errorMsg.persona}</span>
             </div>
-            <div>
+            {/* <div>
               <button onClick={handleOpenModal}>Open Modal</button>
-            </div>
-            <div className='input_container'>
+            </div> */}
+            {/* <div className='input_container'>
               <label htmlFor='instructions'>
                 Instructions
                 <span className='required'>*</span>{" "}
@@ -534,9 +546,9 @@ export default function CreateAgent() {
 `}
               />
               <span className='errormsg'>{errorMsg.desc}</span>
-            </div>
+            </div> */}
 
-            <div className='input_container'>
+            {/* <div className='input_container'>
               <label htmlFor='name'>
                 Flow Chart <span className='required'>*</span>
               </label>
@@ -574,40 +586,98 @@ export default function CreateAgent() {
                   style={{ visibility: "hidden", position: "absolute" }}
                 />
               </div>
-            </div>
+            </div> */}
 
-            <div className='input_container'>
-              <label htmlFor='agenttype'>
-                Agent Type
-                <span className='required'>*</span>{" "}
-              </label>
-              <Popover
-                content={
-                  <div className='popover_select'>
-                    {[
-                      "none",
-                      "productivity",
-                      "entertainment",
-                      "onchain",
-                      "information",
-                      "creative",
-                    ].map((type) => (
-                      <p
-                        key={type}
-                        onClick={() => handleInputChange("agentType", type)}
-                      >
-                        {type}
-                      </p>
-                    ))}
+            <div className='selection_container'>
+              <div className='input_container'>
+                <label htmlFor='agenttype'>
+                  Agent Type
+                  <span className='required'>*</span>{" "}
+                </label>
+                <Popover
+                  content={
+                    <div className='popover_select'>
+                      {[
+                        "none",
+                        "productivity",
+                        "entertainment",
+                        "onchain",
+                        "information",
+                        "creative",
+                      ].map((type) => (
+                        <p
+                          key={type}
+                          onClick={() => handleInputChange("agentType", type)}
+                        >
+                          {type}
+                        </p>
+                      ))}
+                    </div>
+                  }
+                  trigger='click'
+                >
+                  <div className='select'>
+                    <p>{formData.agentType}</p>
+                    <FaChevronDown />
                   </div>
-                }
-                trigger='click'
-              >
-                <div className='select'>
-                  <p>{formData.agentType}</p>
-                  <FaChevronDown />
-                </div>
-              </Popover>
+                </Popover>
+              </div>
+              <div className='input_container'>
+                <label htmlFor='agenttype'>
+                  Search Engine
+                  <span className='required'>*</span>{" "}
+                </label>
+                <Popover
+                  content={
+                    <div className='popover_select'>
+                      {["none", "duckduckgo", "brave", "google"].map((type) => (
+                        <p
+                          key={type}
+                          onClick={() =>
+                            handleInputChange("search_engine_id", type)
+                          }
+                        >
+                          {type}
+                        </p>
+                      ))}
+                    </div>
+                  }
+                  trigger='click'
+                >
+                  <div className='select'>
+                    <p>{formData.search_engine_id}</p>
+                    <FaChevronDown />
+                  </div>
+                </Popover>
+              </div>
+              <div className='input_container'>
+                <label htmlFor='agenttype'>
+                  AI Modal
+                  <span className='required'>*</span>{" "}
+                </label>
+                <Popover
+                  content={
+                    <div className='popover_select'>
+                      {["none", "llama-3.3-70b-versatile", "gpt-4o-mini"].map(
+                        (type) => (
+                          <p
+                            key={type}
+                            onClick={() => handleInputChange("model_id", type)}
+                          >
+                            {type}
+                          </p>
+                        )
+                      )}
+                    </div>
+                  }
+                  trigger='click'
+                >
+                  <div className='select'>
+                    <p>{formData.model_id}</p>
+                    <FaChevronDown />
+                  </div>
+                </Popover>
+              </div>
             </div>
             {/* <div
             className='viewmore'

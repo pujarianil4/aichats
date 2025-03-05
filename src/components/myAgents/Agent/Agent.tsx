@@ -16,7 +16,7 @@ import { BsCurrencyDollar } from "react-icons/bs";
 import CreditPurchaseModal from "./creditModal/creditModal.tsx";
 interface IProps {
   isEmulatorOpen: boolean;
-  toggleEmulator: () => void;
+  toggleEmulator: (bool?: boolean) => void;
   agent: any;
 }
 
@@ -30,8 +30,11 @@ export default function Agent({
   const onChange = (key: string | string[]) => {
     // console.log(key);
   };
-  const changeEdit = () => {
-    setEdit((prev) => !prev);
+  const changeEdit = (bool: boolean) => {
+    setEdit(bool);
+    if (bool) {
+      toggleEmulator(false);
+    }
   };
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -56,7 +59,7 @@ export default function Agent({
     },
     {
       key: "2",
-      label: "Personality",
+      label: "Persona",
       children: (
         <div className='collapse_item'>
           <textarea
@@ -83,7 +86,7 @@ export default function Agent({
   return (
     <>
       {edit ? (
-        <UpdateAgent agentData={agentData} setIsEditing={setEdit} />
+        <UpdateAgent agentData={agentData} setIsEditing={changeEdit} />
       ) : (
         <div className='agent_container'>
           <div className='basic'>
@@ -94,7 +97,7 @@ export default function Agent({
               <div className='info'>
                 <h2>
                   {agentData?.name} <span>@{agentData?.token?.tkr}</span>
-                  <span className='edit_btn' onClick={changeEdit}>
+                  <span className='edit_btn' onClick={() => changeEdit(true)}>
                     <FiEdit /> Edit
                   </span>
                 </h2>
@@ -119,7 +122,7 @@ export default function Agent({
               <LuPanelLeftClose
                 size={18}
                 className='toggle_btn'
-                onClick={toggleEmulator}
+                onClick={() => toggleEmulator()}
               />
             )}
             <div className='credits_card'>

@@ -7,6 +7,7 @@ import Twitter from "./social/twitter.tsx";
 import Discord from "./social/discord.tsx";
 import { FaCheck } from "react-icons/fa";
 import { BsDash } from "react-icons/bs";
+import { handleDiscordLogin, handleTelegramAuth } from "../../services/auth.ts";
 
 interface SocialData {
   id: string;
@@ -18,9 +19,15 @@ interface SocialModalProps {
   discord?: SocialData;
   telegram?: SocialData;
   x?: SocialData;
+  type?: "user" | "agent";
 }
 
-const SocialModal: React.FC<SocialModalProps> = ({ discord, telegram, x }) => {
+const SocialModal: React.FC<SocialModalProps> = ({
+  discord,
+  telegram,
+  x,
+  type = "agent",
+}) => {
   const [connectedAccounts, setConnectedAccounts] = useState({
     Twitter: discord?.username as string | null,
     Telegram: telegram?.username as string | null,
@@ -33,9 +40,19 @@ const SocialModal: React.FC<SocialModalProps> = ({ discord, telegram, x }) => {
   >(null);
   const [loading, setLoading] = useState(false);
 
-  const handleOpenModal = (platform: "Twitter" | "Telegram" | "Discord") => {
-    setActivePlatform(platform);
-    setModalVisible(true);
+  const handleOpenModal = async (
+    platform: "Twitter" | "Telegram" | "Discord"
+  ) => {
+    if (type == "agent") {
+      setActivePlatform(platform);
+      setModalVisible(true);
+    } else {
+      if (platform == "Telegram") {
+        await handleTeleAuth();
+      } else if (platform == "Discord") {
+        await handleDiscordAuth();
+      }
+    }
   };
 
   const handleConnectionSuccess = (
@@ -52,6 +69,18 @@ const SocialModal: React.FC<SocialModalProps> = ({ discord, telegram, x }) => {
 
   const handleConnectionFailure = () => {
     setLoading(false);
+  };
+
+  const handleTeleAuth = async () => {
+    try {
+      const data = await handleTelegramAuth();
+    } catch (error) {}
+  };
+
+  const handleDiscordAuth = async () => {
+    try {
+      const data = await handleDiscordLogin();
+    } catch (error) {}
   };
 
   const renderActivePlatformComponent = () => {

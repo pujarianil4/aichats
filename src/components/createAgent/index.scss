@@ -165,7 +165,7 @@
           display: flex;
           align-items: center;
           justify-content: space-between;
-          width: 120px;
+          width: 150px;
           background-color: var(--dark);
           font-size: 13px;
           padding: 8px 20px;
@@ -219,8 +219,10 @@
 
 .popover_select {
   color: var(--dark);
+  width: 150px;
   p {
     font-size: 13px;
+    text-transform: capitalize;
     padding: 5px;
     font-weight: 600;
     border-radius: 5px;
@@ -348,6 +350,11 @@
   }
 }
 
+.selection_container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
 // .chat_modal_carousel_modal {
 //   width: 700px;
 // }

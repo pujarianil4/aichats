@@ -23,7 +23,7 @@ const CustomUpload = ({ onSuccess }: IProps) => {
     headers: {
       Authorization: `Bearer ${cookies.token}`, // Example token
     },
-    accept: ".pdf,.txt,.doc,.docx",
+    accept: ".pdf",
     fileList, // Controlled file list
     defaultFileList: [
       {
@@ -71,7 +71,7 @@ const CustomUpload = ({ onSuccess }: IProps) => {
         Click or drag file to this area to upload
       </p>
       <p className='ant-upload-text'>
-        Only files with the following formats are allowed: PDF, TXT, DOC, DOCX.
+        Only files with the following formats are allowed: PDF.
       </p>
     </Dragger>
   );

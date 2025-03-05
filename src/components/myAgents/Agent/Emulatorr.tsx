@@ -1,24 +1,30 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import "./index.scss";
+import "./emulatorr.scss";
 import VirtualizedContainer from "../../common/virtualList.tsx";
 import { useParams } from "react-router-dom";
+import { LuPanelRightClose } from "react-icons/lu";
 import {
   chatWithOnetoOneAgent,
   createOnetoOneChatSession,
   deleteOnetoOneChatHistory,
-  getMyAgentData,
   getOnetoOneChatHistoryBySession,
   getOnetoOneChatSession,
 } from "../../../services/agent.ts";
 import { useQuery } from "@tanstack/react-query";
 import PageLoader from "../../common/PageLoader.tsx";
-import { Spin } from "antd";
+import { Spin, Skeleton } from "antd";
 import { BsTextareaResize } from "react-icons/bs";
 import ReactMarkdown from "react-markdown";
 import { MdDeleteOutline } from "react-icons/md";
 import NoData from "../../common/noData.tsx";
 
-export default function AIChat() {
+export default function Emulatorr({
+  agentInfo,
+  toggleEmulator,
+}: {
+  agentInfo: any;
+  toggleEmulator: () => void;
+}) {
   const { agentId } = useParams();
   const [chats, setChats] = useState([]);
   const [viewSize, setViewSize] = useState(2);
@@ -43,6 +49,7 @@ export default function AIChat() {
   });
 
   useEffect(() => {
+    console.log("agentInfo", agentInfo);
     setChats(chatHistory || []);
   }, [chatHistory]);
 
@@ -73,6 +80,11 @@ export default function AIChat() {
       {viewSize == 2 && (
         <div className='emulator_container'>
           <div className='emulator_head'>
+            <LuPanelRightClose
+              size={18}
+              className='toggle-btn'
+              onClick={toggleEmulator}
+            />
             <h3 style={{ textAlign: "center" }}>Chat with AI</h3>
             <div>
               <MdDeleteOutline
@@ -80,17 +92,18 @@ export default function AIChat() {
                 onClick={handleReset}
                 style={{ cursor: "pointer" }}
               />
-              <BsTextareaResize
+              {/* <BsTextareaResize
                 size={18}
                 onClick={() => setViewSize(1)}
                 style={{ cursor: "pointer" }}
-              />
+              /> */}
             </div>
           </div>
           <Chat
             messages={chats}
             setMessages={setChats}
             sessionId={sessionData?.id}
+            agentInfo={agentInfo}
           />
         </div>
       )}
@@ -108,10 +121,12 @@ function Chat({
   messages,
   setMessages,
   sessionId,
+  agentInfo,
 }: {
   messages: any;
   setMessages: any;
   sessionId: string;
+  agentInfo: any;
 }) {
   const [page, setPage] = useState(0);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
@@ -131,12 +146,6 @@ function Chat({
         content: item?.message || item?.content,
       };
     }
-  });
-  const { agentId } = useParams();
-  const agent = useQuery({
-    queryKey: ["privateagent", agentId],
-    queryFn: () => getMyAgentData(agentId!),
-    enabled: !!agentId,
   });
 
   const initialPayload = {
@@ -158,12 +167,18 @@ function Chat({
   }, []);
 
   useEffect(() => {
+    if (messages.length == 0) {
+      setpId(null);
+    }
+  }, [messages]);
+
+  useEffect(() => {
     const eventSource = new EventSource(
       `https://ai-agent-r139.onrender.com/chat-message/sse/${sessionId}`
     );
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      console.log("AI RESPONSE:", data);
+      console.log("AI Response:", data);
       const assistantMessage = {
         role: "assistant",
         content: data?.response,
@@ -193,7 +208,7 @@ function Chat({
     };
 
     eventSource.onerror = (err) => {
-      console.error("SSE ERROR:", err);
+      console.error("SSE error:", err);
       eventSource.close();
     };
 
@@ -241,6 +256,23 @@ function Chat({
   //     socketAgent.off("chatResponse");
   //   };
   // }, [socketAgent]);
+  //   {
+  //     "name": "albert newton",
+  //     "persona": "You are a phicist, working in relativity",
+  //     "history": [
+  //         {
+  //             "role": "user",
+  //             "name": "shubham",
+  //             "content": "give law's of motion"
+  //         }
+  //     ],
+  //     "kbId": null,
+  //     "action": true,
+  //     "model_id": "llama-3.3-70b-versatile",
+  //     "search_engine_id": null,
+  //     "pId": null,
+  //     "cSessionId": "f35fe4f2-92cd-4350-9a56-0286a384d2e8"
+  // }
 
   const handleSend = useCallback(
     async (text: string) => {
@@ -282,14 +314,12 @@ function Chat({
         pId,
         cSessionId: sessionId,
         model_id: "llama-3.3-70b-versatile",
-        search_engine_id: agent?.data?.search_engine_id,
-        kbId: agent?.data?.id,
+        search_engine_id: agentInfo.search_engine_id,
+        kbId: agentInfo.id,
         action: false,
-        name: agent?.data?.name,
-        persona: agent?.data?.persona,
+        name: agentInfo.name,
+        persona: agentInfo.persona,
       };
-
-      console.log("CHAT_PAYLOAD", latestPayload);
 
       try {
         const res = await chatWithOnetoOneAgent(latestPayload);
@@ -298,7 +328,7 @@ function Chat({
         setMessages((prevMessages: any) => prevMessages.slice(0, -1));
       }
     },
-    [pId, sessionId, chatPayload, setMessages, agent]
+    [pId, sessionId, chatPayload, setMessages]
   );
 
   useEffect(() => {
@@ -396,17 +426,26 @@ function Message({
 }) {
   return (
     <>
-      <div className={`message ${sender}`}>
+      {!isLoadingAnswer ? (
+        <div className={`message ${sender}`}>
+          <ReactMarkdown>{text}</ReactMarkdown>
+        </div>
+      ) : (
+        <div style={{}}>
+          <p>Loading...</p>
+          {/* <Skeleton.Input className='msg_skeleton' active /> */}
+        </div>
+      )}
+
+      {/* <div className={`message ${sender}`}>
         {!isLoadingAnswer ? (
           <ReactMarkdown>{text}</ReactMarkdown>
         ) : (
-          <Spin
-            style={{ marginLeft: "45%", marginTop: "8px" }}
-            tip='Loading...'
-            size='large'
-          />
+          <div style={{ width: "100px", height: "20px" }}>
+            <Skeleton active paragraph={{ rows: 1 }} />
+          </div>
         )}
-      </div>
+      </div> */}
     </>
   );
 }
@@ -465,6 +504,7 @@ const InputField = React.memo(
         <input
           type='text'
           value={input}
+          disabled={isLoading}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyPress}
           placeholder='Type a message...'
