@@ -2,11 +2,11 @@
 .emulator_container {
   box-sizing: border-box;
   position: absolute;
-  max-width: 400px;
+  max-width: 800px;
   width: 92%;
   background-color: var(--light);
   border-radius: 16px;
-  padding: 12px 2px 12px 4px;
+  
   height: 80vh;
   min-height: 300px;
   position: fixed;
@@ -14,12 +14,28 @@
   right: 16px;
   overflow: hidden;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
 
   // @media screen and (max-width: 600px) {
   @include lessThan(sm) {
     border-radius: 12px;
     height: 75vh;
+  }
+
+  .emulator_video_container{
+    width: 100%;
+    height: 100%;
+  }
+  .emulator_video{
+    width: 100%;
+    height: 100%;
+  }
+  .emulator_body{
+    position: relative;
+    padding: 12px 2px 12px 4px;
+    display: flex;
+    flex-direction: column; 
+    width: 100%;
   }
 
   .emulator_head {
@@ -291,15 +307,34 @@ input {
 .view_1 {
   position: fixed;
   z-index: 10;
-  right: 24px;
+  right: 100px;
   bottom: 6vh;
-  cursor: pointer;
+  width: 200px;
+  height: 300px;
 
-  p {
-    background-color: red;
-    padding: 4px 8px;
-    font-size: 14px;
-    color: #fff;
-    border-radius: 8px;
+  iframe {
+    pointer-events: none;
   }
+  
+  .emulator_video_view_1{
+    width: 200px;
+    height: 300px;
+    border-radius: 10px;
+  }
+  
+  .view_1_btn{
+    cursor: pointer;
+    position: absolute;
+    top: 0px;
+    right:0px;
+    padding: 4px 8px;
+    p {
+        background-color: red;
+        font-size: 14px;
+        color: #fff;
+        border-radius: 8px;
+      }
+  }
+
+  
 }

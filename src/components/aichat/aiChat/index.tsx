@@ -62,7 +62,7 @@ export default function AIChat() {
 
   if (chatLoading) {
     return (
-      <div className='emulator_container'>
+      <div className="emulator_container">
         <PageLoader />
       </div>
     );
@@ -71,15 +71,53 @@ export default function AIChat() {
   return (
     <>
       {viewSize == 2 && (
-        <div className='emulator_container'>
-          <div className='emulator_head'>
-            <h3 style={{ textAlign: "center" }}>Chat with AI</h3>
-            <div>
-              <MdDeleteOutline
-                size={18}
-                onClick={handleReset}
-                style={{ cursor: "pointer" }}
-              />
+        <div className="emulator_container">
+          <div className="emulator_video_container">
+            <iframe
+              className="emulator_video"
+              src={`https://www.youtube.com/embed/P81BpUNlev0?autoplay=1&mute=1&rel=0&controls=0&modestbranding=1`}
+              title="YouTube video player"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            ></iframe>
+          </div>
+          <div className="emulator_body">
+            <div className="emulator_head">
+              <h3 style={{ textAlign: "center" }}>Chat with AI</h3>
+              <div>
+                <MdDeleteOutline
+                  size={18}
+                  onClick={handleReset}
+                  style={{ cursor: "pointer" }}
+                />
+                <BsTextareaResize
+                  size={18}
+                  onClick={() => setViewSize(1)}
+                  style={{ cursor: "pointer" }}
+                />
+              </div>
+            </div>
+            <Chat
+              messages={chats}
+              setMessages={setChats}
+              sessionId={sessionData?.id}
+            />
+          </div>
+        </div>
+      )}
+      {viewSize == 1 && (
+        <>
+          <div className="view_1">
+            <iframe
+              className="emulator_video_view_1"
+              src={`https://www.youtube.com/embed/P81BpUNlev0?autoplay=1&mute=1&rel=0&controls=0&modestbranding=1`}
+              title="YouTube video player"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            ></iframe>
+            <div onClick={() => setViewSize(2)} className="view_1_btn">
               <BsTextareaResize
                 size={18}
                 onClick={() => setViewSize(1)}
@@ -87,17 +125,7 @@ export default function AIChat() {
               />
             </div>
           </div>
-          <Chat
-            messages={chats}
-            setMessages={setChats}
-            sessionId={sessionData?.id}
-          />
-        </div>
-      )}
-      {viewSize == 1 && (
-        <div onClick={() => setViewSize(2)} className='view_1'>
-          <p>Chat with AI</p>
-        </div>
+        </>
       )}
     </>
   );
@@ -313,7 +341,7 @@ function Chat({
   }, [messages]);
 
   return (
-    <div className='chat_container'>
+    <div className="chat_container">
       <MessageList
         messages={messages}
         isLoading={false}
@@ -367,7 +395,7 @@ function MessageList({
   }
 
   return (
-    <div className='messages' ref={containerRef}>
+    <div className="messages" ref={containerRef}>
       <VirtualizedContainer
         listData={messages}
         isLoading={isLoading}
@@ -377,7 +405,7 @@ function MessageList({
         isInitialLoad={isInitialLoad}
         setIsInitialLoad={setIsInitialLoad}
         renderComponent={renderComponent}
-        customScrollSelector='messages'
+        customScrollSelector="messages"
         footerHeight={90}
       />
     </div>
@@ -402,8 +430,8 @@ function Message({
         ) : (
           <Spin
             style={{ marginLeft: "45%", marginTop: "8px" }}
-            tip='Loading...'
-            size='large'
+            tip="Loading..."
+            size="large"
           />
         )}
       </div>
@@ -461,35 +489,35 @@ const InputField = React.memo(
     );
 
     return (
-      <div className='input_container'>
+      <div className="input_container">
         <input
-          type='text'
+          type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyPress}
-          placeholder='Type a message...'
+          placeholder="Type a message..."
         />
 
         {isLoading ? (
           <>
-            <Spin size='small'></Spin>
+            <Spin size="small"></Spin>
           </>
         ) : (
-          <button className='send_btn' onClick={handleSendClick}>
+          <button className="send_btn" onClick={handleSendClick}>
             <svg
-              width='14'
-              height='14'
-              viewBox='0 0 16 15'
-              fill='none'
-              xmlns='http://www.w3.org/2000/svg'
-              className='send-icon'
+              width="14"
+              height="14"
+              viewBox="0 0 16 15"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="send-icon"
             >
               <path
-                d='M14.3419 7.64462L0.95119 14.092L3.43095 7.64462L0.95119 1.19725L14.3419 7.64462Z'
-                stroke='white'
-                strokeWidth='1.40276'
-                strokeLinecap='round'
-                strokeLinejoin='round'
+                d="M14.3419 7.64462L0.95119 14.092L3.43095 7.64462L0.95119 1.19725L14.3419 7.64462Z"
+                stroke="white"
+                strokeWidth="1.40276"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               />
             </svg>
           </button>
