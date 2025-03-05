@@ -1,0 +1,19 @@
+.chatContainer {
+  @apply z-0 w-[330px] text-sm opacity-70;
+}
+
+.chatMessageContainer {
+  @apply flex flex-row bg-transparent rounded-lg my-2;
+}
+
+.chatMessageAvatar {
+  @apply w-7 min-w-7 rounded-full;
+}
+
+.chatMessage {
+  @apply flex flex-col bg-transparent;
+}
+
+.shadow {
+  @apply h-[300px] overflow-y-auto bg-gradient-to-t from-[#000000c7] to-[#00000000];
+}

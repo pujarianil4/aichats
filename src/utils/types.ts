@@ -20,3 +20,30 @@ export interface Token {
   tkr: string;
   tCAddress: string;
 }
+
+export interface ICharacter {
+  id: string;
+  name: string;
+  persona: string;
+}
+
+export interface IMessage {
+  role: string;
+  content: string;
+}
+
+export interface IMessageData {
+  characterId: string;
+  messages: IMessage[];
+}
+
+export interface IModel {
+  id: string;
+  name: string;
+  is_internet: boolean;
+}
+export interface ISearchEngine {
+  id: string;
+  name: string;
+  function: string;
+}

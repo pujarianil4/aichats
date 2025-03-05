@@ -67,7 +67,7 @@ export default function Emulatorr({
   //   };
   // }, [userId]);
 
-  if (chatLoading) {
+  if (chatLoading || !sessionData) {
     return (
       <div className='emulator_container'>
         <PageLoader />
