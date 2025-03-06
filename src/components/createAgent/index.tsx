@@ -323,7 +323,7 @@ export default function CreateAgent() {
         },
         field: "persona",
         errorMsg:
-          "persona must be between 50 and 300 characters (excluding spaces).",
+          "persona must be between 100 and 300 characters (excluding spaces).",
       },
       {
         condition: () => isAddress(contractAddress),
