@@ -113,7 +113,11 @@ export default function AgentHome() {
       {isEmulatorOpen && (
         <div className='emulator'>
           {/* <Emulator toggleEmulator={toggleEmulator} /> */}
-          <Emulatorr toggleEmulator={toggleEmulator} agentInfo={agent.data} />
+          <Emulatorr
+            isEmulatorOpen={isEmulatorOpen}
+            toggleEmulator={toggleEmulator}
+            agentInfo={agent.data}
+          />
         </div>
       )}
     </div>

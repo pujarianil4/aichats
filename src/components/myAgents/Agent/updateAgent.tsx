@@ -1,16 +1,23 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import "./updateAgent.scss";
-import { Button, Popover, message } from "antd";
+import { Button, Modal, Popover, message } from "antd";
 import Camera from "../../../assets/camera.png";
 import { useImageNameValidator } from "../../../hooks/useImageNameValidator.tsx";
 import { uploadSingleFile } from "../../../services/api.ts";
 import { isAddress } from "viem";
 
 import { FaChevronDown } from "react-icons/fa";
-import { updateAgentData } from "../../../services/agent.ts";
+import {
+  deleteOnetoOneChatHistory,
+  getOnetoOneChatSession,
+  updateAgentData,
+} from "../../../services/agent.ts";
 import NotificationMessage from "../../common/notificationMessage.tsx";
 
 import { IoArrowBack } from "react-icons/io5";
+import { useQuery } from "@tanstack/react-query";
+import { useAppDispatch } from "../../../hooks/reduxHooks.tsx";
+import { setClearHistory } from "../../../contexts/reducers/index.ts";
 export const IMAGE_FILE_TYPES = "image/png, image/jpeg, image/webp, image/jpg";
 interface IConversation {
   id: number;
@@ -38,10 +45,21 @@ export default function UpdateAgent({
   agentData: any;
   setIsEditing: (val: boolean) => void;
 }) {
+  const { data: sessionData } = useQuery({
+    queryKey: ["sessionId", agentData.id],
+    queryFn: async () => {
+      const res = await getOnetoOneChatSession(agentData.id as string);
+
+      return res[0];
+    },
+    staleTime: 1000 * 30 * 1,
+  });
   const { validateImage, error: err, clearError } = useImageNameValidator();
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
 
   const [hasChanged, setHasChanged] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
 
   const [errorMsg, setErrorMsg] = useState({
     name: "",
@@ -112,6 +130,10 @@ export default function UpdateAgent({
     // Join the lines back together with newlines
     console.log("instructions", formattedLines, formattedLines.join("\n"));
     return formattedLines.join("\n");
+  };
+
+  const handleReset = async () => {
+    await deleteOnetoOneChatHistory(sessionData?.id);
   };
 
   const handleInputChange = (key: keyof FormData, value: string) => {
@@ -201,7 +223,7 @@ export default function UpdateAgent({
     return isValidate;
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (action: "update" | "clear&update") => {
     console.log("Submitting Form Data:", formData);
     if (!formValidation()) return;
 
@@ -219,6 +241,10 @@ export default function UpdateAgent({
       };
       console.log("sendData", updatedData);
       const response = await updateAgentData(agentData.id, updatedData);
+      if (action == "clear&update") {
+        await handleReset();
+        dispatch(setClearHistory(true));
+      }
       if (response) {
         NotificationMessage("success", "Agent Updated Successfully!");
       }
@@ -263,115 +289,116 @@ export default function UpdateAgent({
 
   console.log("has chnages", hasChanged);
   return (
-    <div className='update_agent_container'>
-      <div className='update_title'>
-        <span className='back_button' onClick={() => setIsEditing(false)}>
-          <IoArrowBack />
-        </span>
-        <span className='heading'>Update AI Agent</span>
-      </div>
-      <div className='form'>
-        <div className='profile'>
-          <h4>Agent Details</h4>
-          <div>
-            <img
-              onClick={() => fileRefs.current?.click()}
-              src={formData.profile || Camera}
-              onError={setFallbackURL}
-              alt='logo'
-            />
-            <input
-              ref={fileRefs}
-              onChange={uploadProfile}
-              type='file'
-              accept={IMAGE_FILE_TYPES}
-              name='img'
-              style={{ visibility: "hidden", position: "absolute" }}
-            />
+    <>
+      <div className='update_agent_container'>
+        <div className='update_title'>
+          <span className='back_button' onClick={() => setIsEditing(false)}>
+            <IoArrowBack />
+          </span>
+          <span className='heading'>Update AI Agent</span>
+        </div>
+        <div className='form'>
+          <div className='profile'>
+            <h4>Agent Details</h4>
             <div>
-              <p>AI Agent</p>
-              <p className='pic'>
-                Profile Picture <span className='required'>*</span>{" "}
-              </p>
+              <img
+                onClick={() => fileRefs.current?.click()}
+                src={formData.profile || Camera}
+                onError={setFallbackURL}
+                alt='logo'
+              />
+              <input
+                ref={fileRefs}
+                onChange={uploadProfile}
+                type='file'
+                accept={IMAGE_FILE_TYPES}
+                name='img'
+                style={{ visibility: "hidden", position: "absolute" }}
+              />
+              <div>
+                <p>AI Agent</p>
+                <p className='pic'>
+                  Profile Picture <span className='required'>*</span>{" "}
+                </p>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className='update_info'>
-          <div className='input_container'>
-            <label htmlFor='name'>
-              AI Agent Name <span className='required'>*</span>{" "}
-            </label>
-            <input
-              value={formData.name}
-              onChange={(e) => handleInputChange("name", e.target.value)}
-              id='name'
-              type='text'
-              placeholder='Agent Name'
-            />
-            <span className='errormsg'>{errorMsg.name}</span>
-          </div>
-          {true && (
+          <div className='update_info'>
             <div className='input_container'>
-              <label htmlFor='ticker'>
-                Ticker <span className='required'>*</span>{" "}
+              <label htmlFor='name'>
+                AI Agent Name <span className='required'>*</span>{" "}
               </label>
               <input
-                value={formData.ticker}
-                id='ticker'
+                value={formData.name}
+                onChange={(e) => handleInputChange("name", e.target.value)}
+                id='name'
                 type='text'
-                placeholder='$'
-                disabled
+                placeholder='Agent Name'
               />
+              <span className='errormsg'>{errorMsg.name}</span>
             </div>
-          )}
-          {true && (
+            {true && (
+              <div className='input_container'>
+                <label htmlFor='ticker'>
+                  Ticker <span className='required'>*</span>{" "}
+                </label>
+                <input
+                  value={formData.ticker}
+                  id='ticker'
+                  type='text'
+                  placeholder='$'
+                  disabled
+                />
+              </div>
+            )}
+            {true && (
+              <div className='input_container'>
+                <label htmlFor='contract_address'>
+                  Token Contract Address on BASE Chain{" "}
+                  <span className='required'>*</span>{" "}
+                </label>
+                <input
+                  id='contract_address'
+                  value={formData.contractAddress}
+                  type='text'
+                  placeholder=' Token Contract Address'
+                  disabled
+                />
+                <span className='errormsg'>{errorMsg.contractAddress}</span>
+              </div>
+            )}
             <div className='input_container'>
-              <label htmlFor='contract_address'>
-                Token Contract Address on BASE Chain{" "}
+              <label htmlFor='bio'>
+                AI Agent Description
                 <span className='required'>*</span>{" "}
               </label>
-              <input
-                id='contract_address'
-                value={formData.contractAddress}
-                type='text'
-                placeholder=' Token Contract Address'
-                disabled
+              <textarea
+                value={formData.desc}
+                onChange={(e) => handleInputChange("desc", e.target.value)}
+                rows={10}
+                id='bio'
+                placeholder='This is the short bio that will be shown at your agents profile.'
               />
-              <span className='errormsg'>{errorMsg.contractAddress}</span>
+              <span className='errormsg'>{errorMsg.desc}</span>
             </div>
-          )}
-          <div className='input_container'>
-            <label htmlFor='bio'>
-              AI Agent Description
-              <span className='required'>*</span>{" "}
-            </label>
-            <textarea
-              value={formData.desc}
-              onChange={(e) => handleInputChange("desc", e.target.value)}
-              rows={10}
-              id='bio'
-              placeholder='This is the short bio that will be shown at your agents profile.'
-            />
-            <span className='errormsg'>{errorMsg.desc}</span>
-          </div>
-          <div className='input_container'>
-            <label htmlFor='personality'>
-              Persona
-              <span className='required'>*</span>{" "}
-            </label>
-            <textarea
-              value={formData.persona}
-              onChange={(e) => handleInputChange("persona", e.target.value)}
-              rows={10}
-              id='persona'
-              placeholder='Short information about agent personality'
-            />
-            <span className='errormsg'>{errorMsg.persona}</span>
-          </div>
+            <div className='input_container'>
+              <label htmlFor='personality'>
+                Persona
+                <span className='required'>*</span>{" "}
+              </label>
+              <textarea
+                value={formData.persona}
+                onChange={(e) => handleInputChange("persona", e.target.value)}
+                rows={10}
+                id='persona'
+                placeholder='Short information about agent personality'
+              />
+              <span className='errormsg'>{errorMsg.persona}</span>
+            </div>
 
-          <div className='selection_container'>
-            {/* <div className='input_container'>
+            <div className='selection_container'>
+              {/* <div className='input_container'>
               <label htmlFor='agenttype'>
                 Agent Type
                 <span className='required'>*</span>{" "}
@@ -404,75 +431,106 @@ export default function UpdateAgent({
                 </div>
               </Popover>
             </div> */}
-            <div className='input_container'>
-              <label htmlFor='agenttype'>
-                Search Engine
-                <span className='required'>*</span>{" "}
-              </label>
-              <Popover
-                content={
-                  <div className='popover_select'>
-                    {["none", "duckduckgo", "brave", "google"].map((type) => (
-                      <p
-                        key={type}
-                        onClick={() =>
-                          handleInputChange("search_engine_id", type)
-                        }
-                      >
-                        {type}
-                      </p>
-                    ))}
-                  </div>
-                }
-                trigger='click'
-              >
-                <div className='select'>
-                  <p>{formData.search_engine_id}</p>
-                  <FaChevronDown />
-                </div>
-              </Popover>
-            </div>
-            <div className='input_container'>
-              <label htmlFor='agenttype'>
-                AI Modal
-                <span className='required'>*</span>{" "}
-              </label>
-              <Popover
-                content={
-                  <div className='popover_select'>
-                    {["none", "llama-3.3-70b-versatile", "gpt-4o-mini"].map(
-                      (type) => (
+              <div className='input_container'>
+                <label htmlFor='agenttype'>
+                  Search Engine
+                  <span className='required'>*</span>{" "}
+                </label>
+                <Popover
+                  content={
+                    <div className='popover_select'>
+                      {["none", "duckduckgo", "brave", "google"].map((type) => (
                         <p
                           key={type}
-                          onClick={() => handleInputChange("model_id", type)}
+                          onClick={() =>
+                            handleInputChange("search_engine_id", type)
+                          }
                         >
                           {type}
                         </p>
-                      )
-                    )}
+                      ))}
+                    </div>
+                  }
+                  trigger='click'
+                >
+                  <div className='select'>
+                    <p>{formData.search_engine_id}</p>
+                    <FaChevronDown />
                   </div>
-                }
-                trigger='click'
-              >
-                <div className='select'>
-                  <p>{formData.model_id}</p>
-                  <FaChevronDown />
-                </div>
-              </Popover>
+                </Popover>
+              </div>
+              <div className='input_container'>
+                <label htmlFor='agenttype'>
+                  AI Modal
+                  <span className='required'>*</span>{" "}
+                </label>
+                <Popover
+                  content={
+                    <div className='popover_select'>
+                      {["none", "llama-3.3-70b-versatile", "gpt-4o-mini"].map(
+                        (type) => (
+                          <p
+                            key={type}
+                            onClick={() => handleInputChange("model_id", type)}
+                          >
+                            {type}
+                          </p>
+                        )
+                      )}
+                    </div>
+                  }
+                  trigger='click'
+                >
+                  <div className='select'>
+                    <p>{formData.model_id}</p>
+                    <FaChevronDown />
+                  </div>
+                </Popover>
+              </div>
             </div>
-          </div>
 
-          <Button
-            disabled={!isCreateAgentDisable}
-            // disabled={!isCreateAgentDisable || !hasChanged}
-            onClick={handleSubmit}
-            type='primary'
-            loading={loading}
-          >
-            Update Agent
-          </Button>
+            <Button
+              disabled={!isCreateAgentDisable}
+              // disabled={!isCreateAgentDisable || !hasChanged}
+              onClick={() => setOpenModal(true)}
+              type='primary'
+              loading={loading}
+            >
+              Update Agent
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
+
+      <Modal
+        open={openModal}
+        title='Update Agent Information'
+        onOk={() => setOpenModal(false)}
+        onCancel={() => setOpenModal(false)}
+        footer={
+          <div className='update_agent_modal_footer'>
+            <button
+              onClick={() => handleSubmit("update")}
+              className='secondary'
+            >
+              Update
+            </button>
+            <button
+              onClick={() => handleSubmit("clear&update")}
+              className='primary'
+            >
+              Clear & Update
+            </button>
+          </div>
+        }
+      >
+        <div className='update_agent_modal'>
+          <p>
+            Updating agent details will result in the loss of emulator chat data
+            with the agents. Would you like to proceed with the update?
+          </p>
+        </div>
+      </Modal>
+    </>
   );
 }

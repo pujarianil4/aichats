@@ -51,6 +51,8 @@ export default function Agent({
           <textarea
             rows={10}
             id='bio'
+            value={agentData?.desc}
+            disabled
             placeholder='This is the short bio that will be shown at your agents profile.'
             defaultValue={agentData?.desc}
           />
@@ -65,6 +67,7 @@ export default function Agent({
           <textarea
             rows={10}
             id='bio'
+            disabled
             placeholder='This is the short bio that will be shown at your agents profile.'
             defaultValue={agentData?.persona}
           />
