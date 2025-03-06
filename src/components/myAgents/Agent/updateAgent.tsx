@@ -16,6 +16,8 @@ import NotificationMessage from "../../common/notificationMessage.tsx";
 
 import { IoArrowBack } from "react-icons/io5";
 import { useQuery } from "@tanstack/react-query";
+import { useAppDispatch } from "../../../hooks/reduxHooks.tsx";
+import { setClearHistory } from "../../../contexts/reducers/index.ts";
 export const IMAGE_FILE_TYPES = "image/png, image/jpeg, image/webp, image/jpg";
 interface IConversation {
   id: number;
@@ -53,6 +55,7 @@ export default function UpdateAgent({
     staleTime: 1000 * 30 * 1,
   });
   const { validateImage, error: err, clearError } = useImageNameValidator();
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
 
   const [hasChanged, setHasChanged] = useState(false);
@@ -240,6 +243,7 @@ export default function UpdateAgent({
       const response = await updateAgentData(agentData.id, updatedData);
       if (action == "clear&update") {
         await handleReset();
+        dispatch(setClearHistory(true));
       }
       if (response) {
         NotificationMessage("success", "Agent Updated Successfully!");

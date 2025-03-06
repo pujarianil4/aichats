@@ -17,6 +17,8 @@ import { BsTextareaResize } from "react-icons/bs";
 import ReactMarkdown from "react-markdown";
 import { MdDeleteOutline } from "react-icons/md";
 import NoData from "../../common/noData.tsx";
+import { useAppDispatch, useAppSelector } from "../../../hooks/reduxHooks.tsx";
+import { setClearHistory } from "../../../contexts/reducers/index.ts";
 
 export default function Emulatorr({
   isEmulatorOpen,
@@ -30,6 +32,9 @@ export default function Emulatorr({
   const { agentId } = useParams();
   const [chats, setChats] = useState([]);
   const [viewSize, setViewSize] = useState(2);
+  const clearHistory = useAppSelector(
+    (state) => state.user.currentAgent.clearHistory
+  );
 
   const { data: sessionData } = useQuery({
     queryKey: ["chatSession", agentId],
@@ -53,17 +58,18 @@ export default function Emulatorr({
     enabled: !!sessionData?.id,
     select: (data) => data.reverse(),
   });
-
+  const dispatch = useAppDispatch();
   useEffect(() => {
     console.log("agentInfo", chatHistory, agentInfo);
     setChats(chatHistory || []);
   }, [chatHistory]);
 
-  // useEffect(() => {
-  //   if (isEmulatorOpen) {
-  //     refetch();
-  //   }
-  // }, [isEmulatorOpen, refetch]);
+  useEffect(() => {
+    if (clearHistory) {
+      setChats([]);
+      dispatch(setClearHistory(false));
+    }
+  }, [clearHistory, refetch]);
 
   const handleReset = async () => {
     await deleteOnetoOneChatHistory(sessionData?.id);
@@ -325,7 +331,7 @@ function Chat({
         history: [...chatPayload?.history, newMessage],
         pId,
         cSessionId: sessionId,
-        model_id: "llama-3.3-70b-versatile",
+        model_id: agentInfo.model_id,
         search_engine_id: agentInfo.search_engine_id,
         kbId: agentInfo.id,
         action: false,
