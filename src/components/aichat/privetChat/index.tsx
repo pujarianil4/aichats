@@ -18,10 +18,11 @@ import ReactMarkdown from "react-markdown";
 import { MdDeleteOutline } from "react-icons/md";
 import NoData from "../../common/noData.tsx";
 
-export default function AIChat() {
+export default function PrivetChat() {
   const { agentId } = useParams();
   const [chats, setChats] = useState([]);
   const [viewSize, setViewSize] = useState(2);
+  const [pId, setpId] = useState(null);
 
   const { data: sessionData } = useQuery({
     queryKey: ["chatSession", agentId],
@@ -49,6 +50,7 @@ export default function AIChat() {
   const handleReset = async () => {
     await deleteOnetoOneChatHistory(sessionData?.id);
     setChats([]);
+    setpId(null);
   };
 
   // useEffect(() => {
@@ -91,6 +93,8 @@ export default function AIChat() {
             messages={chats}
             setMessages={setChats}
             sessionId={sessionData?.id}
+            pId={pId}
+            setpId={setpId}
           />
         </div>
       )}
@@ -108,15 +112,18 @@ function Chat({
   messages,
   setMessages,
   sessionId,
+  pId,
+  setpId,
 }: {
   messages: any;
   setMessages: any;
   sessionId: string;
+  pId: number | null;
+  setpId: any;
 }) {
   const [page, setPage] = useState(0);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
-  const [pId, setpId] = useState(null);
   const getLastElements = (arr: any, count = 40) => arr.slice(-count);
   const latestHistory = getLastElements(messages).map((item: any) => {
     if (item?.role === "assistant") {
@@ -281,7 +288,7 @@ function Chat({
         history: [...chatPayload?.history, newMessage],
         pId,
         cSessionId: sessionId,
-        model_id: "llama-3.3-70b-versatile",
+        model_id: agent?.data?.model_id,
         search_engine_id: agent?.data?.search_engine_id,
         kbId: agent?.data?.id,
         action: false,

@@ -333,6 +333,7 @@ export default function PublicAiChats({
               <AdminReply />
             ) : (
               <YoutubeVideo youtubeLink={instanceData?.streamUrl} />
+              // <></>
             )}
 
             {/* {isModerator ||
