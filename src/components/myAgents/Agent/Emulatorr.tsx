@@ -313,7 +313,7 @@ function Chat({
         history: [...chatPayload?.history, newMessage],
         pId,
         cSessionId: sessionId,
-        model_id: "llama-3.3-70b-versatile",
+        model_id: agentInfo?.model_id,
         search_engine_id: agentInfo.search_engine_id,
         kbId: agentInfo.id,
         action: false,

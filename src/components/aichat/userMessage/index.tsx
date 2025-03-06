@@ -13,6 +13,7 @@ interface UserMessageProps {
   adminAddress: string;
   isAdmin: boolean;
   mutedUsers: string[];
+  agentData: any;
   isModerator: boolean;
   onDeleteMessage: (messageId: number) => void;
 }
@@ -27,6 +28,7 @@ export default function UserMessage({
   adminAddress,
   isAdmin,
   mutedUsers,
+  agentData,
   isModerator,
   onDeleteMessage,
 }: UserMessageProps) {
@@ -96,19 +98,32 @@ export default function UserMessage({
         <div className='user-message-container'>
           <div className='user-message'>
             <img
-              src={`https://effigy.im/a/${data.senderAddress}.svg`}
+              src={
+                data?.role == "user"
+                  ? `https://effigy.im/a/${data.senderAddress}.svg`
+                  : agentData?.pic
+              }
               alt={`${data.senderAddress}'s icon`}
               className='user-message__icon'
             />
             <div className='user-message__content'>
               <span
                 className={`user-message__name ${
-                  adminAddress === data.senderAddress ? "adminUser" : ""
+                  adminAddress === data.senderAddress && data?.role == "user"
+                    ? "adminUser"
+                    : ""
                 }`}
               >
-                {!ensName ? shortenAddress(data.senderAddress) : ensName}:
+                {data?.role == "agent"
+                  ? agentData?.name
+                  : !ensName
+                  ? shortenAddress(data.senderAddress)
+                  : ensName}
+                :
               </span>
-              <span className='user-message__text'>{data.content}</span>
+              <span className='user-message__text'>
+                {data.content?.response}
+              </span>
             </div>
           </div>
           {adminAddress != data.senderAddress && (isAdmin || isModerator) && (
