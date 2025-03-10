@@ -17,10 +17,14 @@ import { BsTextareaResize } from "react-icons/bs";
 import ReactMarkdown from "react-markdown";
 import { MdDeleteOutline } from "react-icons/md";
 import NoData from "../../common/noData.tsx";
+import { EventSourcePolyfill } from "event-source-polyfill";
+import Cookies from "js-cookie";
+import { decryptToken } from "../../../services/apiconfig.ts";
 
 export default function PrivetChat() {
   const { agentId } = useParams();
   const [chats, setChats] = useState([]);
+  console.log("CHATS", chats);
   const [viewSize, setViewSize] = useState(2);
   const [pId, setpId] = useState(null);
 
@@ -164,11 +168,23 @@ function Chat({
     }
   }, []);
 
+  // TODO: re run on tabSwitch
   useEffect(() => {
-    const eventSource = new EventSource(
-      `https://ai-agent-r139.onrender.com/chat-message/sse/${sessionId}`
+    // const eventSource = new EventSource(
+    //   `https://ai-agent-r139.onrender.com/chat-message/sse/${sessionId}`
+    // );
+    const encryptedToken = Cookies.get("token");
+    const token = encryptedToken ? decryptToken(encryptedToken) : null;
+    console.log("TOKEN", token);
+    const eventSource = new EventSourcePolyfill(
+      `https://ai-agent-r139.onrender.com/chat-message/sse/${sessionId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
-    eventSource.onmessage = (event) => {
+    eventSource.onmessage = (event: any) => {
       const data = JSON.parse(event.data);
       console.log("AI RESPONSE:", data);
       const assistantMessage = {
@@ -199,10 +215,24 @@ function Chat({
       setTimeout(scrollToBottom, 100);
     };
 
-    eventSource.onerror = (err) => {
+    eventSource.onerror = (err: any) => {
       console.error("SSE ERROR:", err);
       eventSource.close();
+      // setMessages((prevMessages: any) => [...prevMessages.slice(0, -1)]);
+      setMessages((prevMessages: any) => {
+        if (prevMessages.length === 0) return prevMessages;
+        const lastMessage = prevMessages[prevMessages.length - 1];
+        if (lastMessage?.isLoading) {
+          return prevMessages.slice(0, -1);
+        }
+        return prevMessages;
+      });
+      setIsLoading(false);
     };
+
+    // if (messages[messages.length - 1]?.isLoading) {
+    //   setMessages((prevMessages: any) => [...prevMessages.slice(0, -1)]);
+    // }
 
     return () => {
       eventSource.close();
@@ -288,6 +318,7 @@ function Chat({
         history: [...chatPayload?.history, newMessage],
         pId,
         cSessionId: sessionId,
+        // model_id: "llama-3.3-70b-versatile",
         model_id: agent?.data?.model_id,
         search_engine_id: agent?.data?.search_engine_id,
         kbId: agent?.data?.id,
@@ -407,11 +438,7 @@ function Message({
         {!isLoadingAnswer ? (
           <ReactMarkdown>{text}</ReactMarkdown>
         ) : (
-          <Spin
-            style={{ marginLeft: "45%", marginTop: "8px" }}
-            tip='Loading...'
-            size='large'
-          />
+          <Spin style={{ marginLeft: "45%", marginTop: "8px" }} size='large' />
         )}
       </div>
     </>
