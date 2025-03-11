@@ -36,11 +36,16 @@ export default function ChatFeed({
   const [superChat, setSuperChat] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [symbol, setSymbol] = useState();
   const limit = 50;
   const [isInitialLoad, setIsInitialLoad] = useState(false);
   const [firstItemIndex, setFirstItemIndex] = useState(0);
   const loadingArray = Array(10).fill(() => 0);
-  const symbol = JSON.parse(localStorage?.getItem("tokenData") || "")?.symbol;
+
+  useEffect(() => {
+    const data = JSON.parse(localStorage?.getItem("tokenData") || "")?.symbol;
+    setSymbol(data);
+  }, [agentData]);
 
   const getAgentData = async () => {
     const res = await getAgentByID(agentId as string);
