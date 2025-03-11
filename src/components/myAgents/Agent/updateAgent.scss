@@ -334,3 +334,15 @@
     font-size: 12px;
   }
 }
+
+.update_agent_modal {
+  p {
+    font-size: 18px;
+    margin: 20px;
+  }
+}
+.update_agent_modal_footer {
+  display: flex;
+  gap: 20px;
+  justify-content: end;
+}

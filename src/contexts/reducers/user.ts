@@ -9,11 +9,16 @@ export interface User {
   ip: string | null;
 }
 
+interface ICurrentAgent{
+  clearHistory: boolean
+}
+
 interface state {
   myagents: Array<any>;
   profile: User;
   isLoading: boolean;
   error: string;
+  currentAgent: ICurrentAgent
 }
 
 //TODO update Later
@@ -24,6 +29,7 @@ const initialState: state = {
   } as User,
   isLoading: false,
   error: "",
+  currentAgent: {} as ICurrentAgent
 };
 
 export const userSlice = createSlice({
@@ -36,7 +42,8 @@ export const userSlice = createSlice({
     },
     setMyAgents: (state, action: PayloadAction<any>) => {
       state.myagents = action.payload;
-      (state.isLoading = false), (state.error = "");
+      state.isLoading = false;
+       state.error = "";
     },
     setUserLoading: (state) => {
       state.isLoading = true;
@@ -51,6 +58,10 @@ export const userSlice = createSlice({
         ip: null,
         isLogedIn: "no",
       } as User;
+    },
+    setClearHistory: (state, action: PayloadAction<any>) => {
+      state.currentAgent.clearHistory = action.payload;
+     
     },
   },
 });

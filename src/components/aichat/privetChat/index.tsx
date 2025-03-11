@@ -355,7 +355,6 @@ function Chat({
         history: [...chatPayload?.history, newMessage],
         pId,
         cSessionId: sessionId,
-        // model_id: "llama-3.3-70b-versatile",
         model_id: agent?.data?.model_id,
         search_engine_id: agent?.data?.search_engine_id,
         kbId: agent?.data?.id,
