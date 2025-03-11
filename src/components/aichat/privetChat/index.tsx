@@ -17,7 +17,7 @@ import { BsTextareaResize } from "react-icons/bs";
 import ReactMarkdown from "react-markdown";
 import { MdDeleteOutline } from "react-icons/md";
 import NoData from "../../common/noData.tsx";
-import { EventSourcePolyfill } from "event-source-polyfill";
+import { EventSource } from "eventsource";
 import Cookies from "js-cookie";
 import { decryptToken } from "../../../services/apiconfig.ts";
 
@@ -40,15 +40,25 @@ export default function PrivetChat() {
     staleTime: 1000 * 30 * 1,
   });
 
+  console.log("sessionData", sessionData);
+
   const { data: chatHistory, isLoading: chatLoading } = useQuery({
     queryKey: ["chatHistory", sessionData?.id],
     queryFn: () => getOnetoOneChatHistoryBySession(sessionData?.id),
     enabled: !!sessionData?.id,
-    select: (data) => data.reverse(),
+    // select: (data) => data.reverse(),
+  });
+
+  const agent = useQuery({
+    queryKey: ["privateagent", agentId],
+    queryFn: () => getMyAgentData(agentId!),
+    enabled: !!agentId,
   });
 
   useEffect(() => {
-    setChats(chatHistory || []);
+    if (chatHistory?.length > 0) {
+      setChats(chatHistory?.reverse() || []);
+    }
   }, [chatHistory]);
 
   const handleReset = async () => {
@@ -79,7 +89,9 @@ export default function PrivetChat() {
       {viewSize == 2 && (
         <div className='emulator_container'>
           <div className='emulator_head'>
-            <h3 style={{ textAlign: "center" }}>Chat with AI</h3>
+            <h3 style={{ textAlign: "center" }}>
+              Chat with {agent?.data?.name}
+            </h3>
             <div>
               <MdDeleteOutline
                 size={18}
@@ -99,6 +111,7 @@ export default function PrivetChat() {
             sessionId={sessionData?.id}
             pId={pId}
             setpId={setpId}
+            agent={agent}
           />
         </div>
       )}
@@ -118,12 +131,14 @@ function Chat({
   sessionId,
   pId,
   setpId,
+  agent,
 }: {
   messages: any;
   setMessages: any;
   sessionId: string;
   pId: number | null;
   setpId: any;
+  agent: any;
 }) {
   const [page, setPage] = useState(0);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
@@ -143,12 +158,12 @@ function Chat({
       };
     }
   });
-  const { agentId } = useParams();
-  const agent = useQuery({
-    queryKey: ["privateagent", agentId],
-    queryFn: () => getMyAgentData(agentId!),
-    enabled: !!agentId,
-  });
+  // const { agentId } = useParams();
+  // const agent = useQuery({
+  //   queryKey: ["privateagent", agentId],
+  //   queryFn: () => getMyAgentData(agentId!),
+  //   enabled: !!agentId,
+  // });
 
   const initialPayload = {
     history: latestHistory,
@@ -176,17 +191,37 @@ function Chat({
     const encryptedToken = Cookies.get("token");
     const token = encryptedToken ? decryptToken(encryptedToken) : null;
     console.log("TOKEN", token);
-    const eventSource = new EventSourcePolyfill(
+    const eventSource = new EventSource(
       `https://ai-agent-r139.onrender.com/chat-message/sse/${sessionId}`,
       {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        fetch: (input, init: any) =>
+          fetch(input, {
+            ...init,
+            headers: {
+              ...init.headers,
+              Authorization: `Bearer ${token}`,
+            },
+          }),
       }
     );
+    // const eventSource = new EventSource(
+    //   `https://ai-agent-r139.onrender.com/chat-message/sse/${sessionId}`,
+    //   {
+    //     headers: { Authorization: `Bearer ${token}` },
+    //   }
+    // );
+    // const eventSource = new EventSourcePolyfill(
+    //   `https://ai-agent-r139.onrender.com/chat-message/sse/${sessionId}`,
+    //   {
+    //     headers: {
+    //       Authorization: `Bearer ${token}`,
+    //     },
+    //   }
+    // );
     eventSource.onmessage = (event: any) => {
       const data = JSON.parse(event.data);
       console.log("AI RESPONSE:", data);
+
       const assistantMessage = {
         role: "assistant",
         content: data?.response,
@@ -199,20 +234,22 @@ function Chat({
         cSessionId: sessionId,
       };
 
-      setChatPayload((prevPayload: any) => ({
-        ...prevPayload,
-        history: [...prevPayload.history, assistantMessage],
-        pId: data?.id,
-        cSessionId: sessionId,
-      }));
+      if (data?.message != "Connected to SSE") {
+        setChatPayload((prevPayload: any) => ({
+          ...prevPayload,
+          history: [...prevPayload.history, assistantMessage],
+          pId: data?.id,
+          cSessionId: sessionId,
+        }));
 
-      setpId(data?.id);
-      setMessages((prevMessages: any) => [
-        ...prevMessages.slice(0, -1),
-        newMessageRes,
-      ]);
-      setIsLoading(false);
-      setTimeout(scrollToBottom, 100);
+        setpId(data?.id);
+        setMessages((prevMessages: any) => [
+          ...prevMessages.slice(0, -1),
+          newMessageRes,
+        ]);
+        setIsLoading(false);
+        setTimeout(scrollToBottom, 100);
+      }
     };
 
     eventSource.onerror = (err: any) => {
