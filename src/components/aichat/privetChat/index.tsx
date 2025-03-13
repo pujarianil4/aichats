@@ -12,7 +12,7 @@ import {
 } from "../../../services/agent.ts";
 import { useQuery } from "@tanstack/react-query";
 import PageLoader from "../../common/PageLoader.tsx";
-import { Spin } from "antd";
+import { Button, Spin } from "antd";
 import { BsTextareaResize } from "react-icons/bs";
 import ReactMarkdown from "react-markdown";
 import { MdDeleteOutline } from "react-icons/md";
@@ -20,8 +20,10 @@ import NoData from "../../common/noData.tsx";
 import { EventSource } from "eventsource";
 import Cookies from "js-cookie";
 import { decryptToken } from "../../../services/apiconfig.ts";
+import { useAccount } from "wagmi";
 
 export default function PrivetChat() {
+  const { isConnected } = useAccount();
   const { agentId } = useParams();
   const [chats, setChats] = useState([]);
   console.log("CHATS", chats);
@@ -67,6 +69,30 @@ export default function PrivetChat() {
     setpId(null);
   };
 
+  // const handleWalletConnect = async () => {
+  //   if (!isConnected) {
+  //     openConnectModal?.();
+  //   } else if (isConnected && !cookies.token) {
+  //     try {
+  //       // Request message signing
+  //       const signature = await signMessageAsync({ message: authSignMsg });
+  //       console.log("Signature:", signature);
+
+  //       // Authenticate user with the signature
+  //       await handleAuthConnect({
+  //         sig: signature,
+  //         msg: authSignMsg,
+  //         typ: "EVM",
+  //       });
+  //       message.success("Authentication successful!");
+  //     } catch (error) {
+  //       console.error("Error during signing:", error);
+  //       message.error("Failed to sign message. Please try again.");
+  //       disconnect();
+  //     }
+  //   }
+  // };
+
   // useEffect(() => {
   //   if (userId) {
   //     socketAgent.emit("registerUser", userId);
@@ -75,6 +101,17 @@ export default function PrivetChat() {
   //     socketAgent.off("registerUser");
   //   };
   // }, [userId]);
+
+  if (!isConnected) {
+    return (
+      <div className='emulator_container'>
+        {/* <Button onClick={handleWalletConnect} type='primary'>
+          Connect Wallet
+        </Button> */}
+        Please connect your wallet to start chat
+      </div>
+    );
+  }
 
   if (chatLoading || !sessionData) {
     return (
