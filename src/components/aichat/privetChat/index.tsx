@@ -30,7 +30,6 @@ export default function PrivetChat() {
   const { isConnected } = useAccount();
   const { agentId } = useParams();
   const [chats, setChats] = useState([]);
-  console.log("CHATS", chats);
   const [viewSize, setViewSize] = useState(2);
   const [pId, setpId] = useState(null);
   const { openConnectModal } = useConnectModal();
@@ -51,8 +50,6 @@ export default function PrivetChat() {
     staleTime: 1000 * 30 * 1,
     refetchOnWindowFocus: true,
   });
-
-  console.log("sessionData", sessionData);
 
   const { data: chatHistory, isLoading: chatLoading } = useQuery({
     queryKey: ["chatHistory", sessionData?.id],
@@ -194,6 +191,7 @@ function Chat({
   const [page, setPage] = useState(0);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [showGoToBottom, setShowGoToBottom] = useState(false);
+  // console.log("showGoToBottom", showGoToBottom);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const getLastElements = (arr: any, count = 40) => arr.slice(-count);
   const latestHistory = getLastElements(messages).map((item: any) => {
@@ -233,7 +231,6 @@ function Chat({
     const encryptedToken = Cookies.get("token");
     const token = encryptedToken ? decryptToken(encryptedToken) : null;
     let eventSource: EventSource | null = null;
-    console.log("TOKEN", token);
     const connectSSE = () => {
       if (eventSource) eventSource.close();
 
@@ -355,13 +352,11 @@ function Chat({
 
   const handleScroll = useCallback(() => {
     if (!messagesContainerRef.current) return;
-
     const { scrollTop, scrollHeight, clientHeight } =
       messagesContainerRef.current;
     const isAtBottom = scrollHeight - clientHeight <= scrollTop + 10;
-
     setShowGoToBottom(!isAtBottom);
-  }, []);
+  }, [messages]);
 
   useEffect(() => {
     const container = messagesContainerRef.current;
