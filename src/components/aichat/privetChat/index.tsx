@@ -29,7 +29,7 @@ import { IoIosArrowDropdown } from "react-icons/io";
 export default function PrivetChat() {
   const { isConnected } = useAccount();
   const { agentId } = useParams();
-  const [chats, setChats] = useState([]);
+  const [chats, setChats] = useState<any[]>([]);
   const [viewSize, setViewSize] = useState(2);
   const [pId, setpId] = useState(null);
   const { openConnectModal } = useConnectModal();
@@ -67,7 +67,7 @@ export default function PrivetChat() {
 
   useEffect(() => {
     if (chatHistory?.length > 0) {
-      setChats(chatHistory?.reverse() || []);
+      setChats([...chatHistory].reverse());
     }
   }, [chatHistory]);
 
