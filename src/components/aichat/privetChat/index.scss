@@ -16,6 +16,20 @@
   display: flex;
   flex-direction: column;
 
+  .emulator_container_connect {
+    box-sizing: border-box;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    p {
+      color: var(--dark);
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+  }
+
   // @media screen and (max-width: 600px) {
   @include lessThan(sm) {
     border-radius: 12px;
@@ -53,15 +67,36 @@
 .chat_container {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  // padding: 10px;
+  flex-grow: 1;
+  overflow: hidden;
+  // height: 100%;
+  // justify-content: space-between;
+  // position: relative;
+
+  .go_to_bottom {
+    position: absolute;
+    right: 16px;
+    bottom: 64px;
+    z-index: 10;
+    :hover {
+      path {
+        color: var(--primary);
+      }
+    }
+    svg {
+      cursor: pointer;
+    }
+  }
 }
 
 .messages {
-  height: calc(100% - 100px) !important;
+  // height: calc(100% - 92px) !important;
+  // max-height: calc(100% - 92px) !important;
+  flex-grow: 1;
   overflow: hidden;
   overflow-y: auto;
   margin: 10px 0;
+  // position: relative;
 
   // scrollbar-width: none;
   // -ms-overflow-style: none;
@@ -231,8 +266,6 @@
 .message.user {
   align-self: flex-end;
   border-radius: 8px 8px 1px 8px;
-  // background-color: var(--dark);
-  // color: white;
   background-color: var(--chat-secondary-bg);
   color: var(--dark);
   margin-left: auto;
@@ -243,24 +276,23 @@
   width: 80%;
   align-self: flex-start;
   border-radius: 8px 8px 8px 1px;
-  // background-color: var(--dark);
-  // color: white;
   margin-left: 8px;
   background-color: var(--chat-secondary-bg);
   color: var(--dark);
 }
 
 .input_container {
-  position: absolute;
-  bottom: 12px;
-  left: 3%;
-  width: calc(100% - 44px);
+  margin-left: 2%;
+  width: calc(100% - 40px);
   display: flex;
   align-items: center;
   padding: 10px;
   gap: 8px;
   background-color: var(--dark);
   border-radius: 12px;
+  position: sticky;
+  bottom: 0;
+  left: 0;
 }
 
 input {

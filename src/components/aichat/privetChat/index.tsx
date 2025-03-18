@@ -10,17 +10,21 @@ import {
   getOnetoOneChatHistoryBySession,
   getOnetoOneChatSession,
 } from "../../../services/agent.ts";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import PageLoader from "../../common/PageLoader.tsx";
-import { Button, Spin } from "antd";
+import { Button, message, Spin } from "antd";
 import { BsTextareaResize } from "react-icons/bs";
 import ReactMarkdown from "react-markdown";
 import { MdDeleteOutline } from "react-icons/md";
 import NoData from "../../common/noData.tsx";
 import { EventSource } from "eventsource";
 import Cookies from "js-cookie";
-import { decryptToken } from "../../../services/apiconfig.ts";
-import { useAccount } from "wagmi";
+import { decryptToken, getTokens } from "../../../services/apiconfig.ts";
+import { useAccount, useDisconnect, useSignMessage } from "wagmi";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { authSignMsg } from "../../../utils/contants.ts";
+import { handleAuthConnect } from "../../../services/auth.ts";
+import { IoIosArrowDropdown } from "react-icons/io";
 
 export default function PrivetChat() {
   const { isConnected } = useAccount();
@@ -29,6 +33,11 @@ export default function PrivetChat() {
   console.log("CHATS", chats);
   const [viewSize, setViewSize] = useState(2);
   const [pId, setpId] = useState(null);
+  const { openConnectModal } = useConnectModal();
+  const { signMessageAsync } = useSignMessage();
+  const { disconnect } = useDisconnect();
+  const cookies = getTokens();
+  const queryClient = useQueryClient();
 
   const { data: sessionData } = useQuery({
     queryKey: ["chatSession", agentId],
@@ -40,6 +49,7 @@ export default function PrivetChat() {
       return res[0];
     },
     staleTime: 1000 * 30 * 1,
+    refetchOnWindowFocus: true,
   });
 
   console.log("sessionData", sessionData);
@@ -49,6 +59,7 @@ export default function PrivetChat() {
     queryFn: () => getOnetoOneChatHistoryBySession(sessionData?.id),
     enabled: !!sessionData?.id,
     // select: (data) => data.reverse(),
+    refetchOnWindowFocus: true,
   });
 
   const agent = useQuery({
@@ -69,29 +80,30 @@ export default function PrivetChat() {
     setpId(null);
   };
 
-  // const handleWalletConnect = async () => {
-  //   if (!isConnected) {
-  //     openConnectModal?.();
-  //   } else if (isConnected && !cookies.token) {
-  //     try {
-  //       // Request message signing
-  //       const signature = await signMessageAsync({ message: authSignMsg });
-  //       console.log("Signature:", signature);
+  const handleWalletConnect = async () => {
+    if (!isConnected) {
+      openConnectModal?.();
+    } else if (isConnected && !cookies.token) {
+      try {
+        const signature = await signMessageAsync({ message: authSignMsg });
+        console.log("Signature:", signature);
 
-  //       // Authenticate user with the signature
-  //       await handleAuthConnect({
-  //         sig: signature,
-  //         msg: authSignMsg,
-  //         typ: "EVM",
-  //       });
-  //       message.success("Authentication successful!");
-  //     } catch (error) {
-  //       console.error("Error during signing:", error);
-  //       message.error("Failed to sign message. Please try again.");
-  //       disconnect();
-  //     }
-  //   }
-  // };
+        await handleAuthConnect({
+          sig: signature,
+          msg: authSignMsg,
+          typ: "EVM",
+        });
+        message.success("Authentication successful!");
+        queryClient.invalidateQueries({ queryKey: ["chatSession"] });
+        queryClient.invalidateQueries({ queryKey: ["chatHistory"] });
+        queryClient.invalidateQueries({ queryKey: ["privateagent"] });
+      } catch (error) {
+        console.error("Error during signing:", error);
+        message.error("Failed to sign message. Please try again.");
+        disconnect();
+      }
+    }
+  };
 
   // useEffect(() => {
   //   if (userId) {
@@ -105,10 +117,12 @@ export default function PrivetChat() {
   if (!isConnected) {
     return (
       <div className='emulator_container'>
-        {/* <Button onClick={handleWalletConnect} type='primary'>
-          Connect Wallet
-        </Button> */}
-        Please connect your wallet to start chat
+        <div className='emulator_container_connect'>
+          <p>Please connect your wallet to start chat</p>
+          <Button onClick={handleWalletConnect} type='primary'>
+            Connect Wallet
+          </Button>
+        </div>
       </div>
     );
   }
@@ -179,6 +193,7 @@ function Chat({
 }) {
   const [page, setPage] = useState(0);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [showGoToBottom, setShowGoToBottom] = useState(false);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const getLastElements = (arr: any, count = 40) => arr.slice(-count);
   const latestHistory = getLastElements(messages).map((item: any) => {
@@ -195,12 +210,6 @@ function Chat({
       };
     }
   });
-  // const { agentId } = useParams();
-  // const agent = useQuery({
-  //   queryKey: ["privateagent", agentId],
-  //   queryFn: () => getMyAgentData(agentId!),
-  //   enabled: !!agentId,
-  // });
 
   const initialPayload = {
     history: latestHistory,
@@ -220,96 +229,87 @@ function Chat({
     }
   }, []);
 
-  // TODO: re run on tabSwitch
   useEffect(() => {
-    // const eventSource = new EventSource(
-    //   `https://ai-agent-r139.onrender.com/chat-message/sse/${sessionId}`
-    // );
     const encryptedToken = Cookies.get("token");
     const token = encryptedToken ? decryptToken(encryptedToken) : null;
+    let eventSource: EventSource | null = null;
     console.log("TOKEN", token);
-    const eventSource = new EventSource(
-      `https://ai-agent-r139.onrender.com/chat-message/sse/${sessionId}`,
-      {
-        fetch: (input, init: any) =>
-          fetch(input, {
-            ...init,
-            headers: {
-              ...init.headers,
-              Authorization: `Bearer ${token}`,
-            },
-          }),
-      }
-    );
-    // const eventSource = new EventSource(
-    //   `https://ai-agent-r139.onrender.com/chat-message/sse/${sessionId}`,
-    //   {
-    //     headers: { Authorization: `Bearer ${token}` },
-    //   }
-    // );
-    // const eventSource = new EventSourcePolyfill(
-    //   `https://ai-agent-r139.onrender.com/chat-message/sse/${sessionId}`,
-    //   {
-    //     headers: {
-    //       Authorization: `Bearer ${token}`,
-    //     },
-    //   }
-    // );
-    eventSource.onmessage = (event: any) => {
-      const data = JSON.parse(event.data);
-      console.log("AI RESPONSE:", data);
+    const connectSSE = () => {
+      if (eventSource) eventSource.close();
 
-      const assistantMessage = {
-        role: "assistant",
-        content: data?.response,
-      };
-
-      const newMessageRes = {
-        role: "assistant",
-        message: data?.response,
-        id: data?.id,
-        cSessionId: sessionId,
-      };
-
-      if (data?.message != "Connected to SSE") {
-        setChatPayload((prevPayload: any) => ({
-          ...prevPayload,
-          history: [...prevPayload.history, assistantMessage],
-          pId: data?.id,
-          cSessionId: sessionId,
-        }));
-
-        setpId(data?.id);
-        setMessages((prevMessages: any) => [
-          ...prevMessages.slice(0, -1),
-          newMessageRes,
-        ]);
-        setIsLoading(false);
-        setTimeout(scrollToBottom, 100);
-      }
-    };
-
-    eventSource.onerror = (err: any) => {
-      console.error("SSE ERROR:", err);
-      eventSource.close();
-      // setMessages((prevMessages: any) => [...prevMessages.slice(0, -1)]);
-      setMessages((prevMessages: any) => {
-        if (prevMessages.length === 0) return prevMessages;
-        const lastMessage = prevMessages[prevMessages.length - 1];
-        if (lastMessage?.isLoading) {
-          return prevMessages.slice(0, -1);
+      eventSource = new EventSource(
+        `https://ai-agent-r139.onrender.com/chat-message/sse/${sessionId}`,
+        {
+          fetch: (input, init: any) =>
+            fetch(input, {
+              ...init,
+              headers: {
+                ...init.headers,
+                Authorization: `Bearer ${token}`,
+              },
+            }),
         }
-        return prevMessages;
-      });
-      setIsLoading(false);
+      );
+      eventSource.onmessage = (event: any) => {
+        const data = JSON.parse(event.data);
+        console.log("AI RESPONSE:", data);
+
+        const assistantMessage = {
+          role: "assistant",
+          content: data?.response,
+        };
+
+        const newMessageRes = {
+          role: "assistant",
+          message: data?.response,
+          id: data?.id,
+          cSessionId: sessionId,
+        };
+
+        if (data?.message != "Connected to SSE") {
+          setChatPayload((prevPayload: any) => ({
+            ...prevPayload,
+            history: [...prevPayload.history, assistantMessage],
+            pId: data?.id,
+            cSessionId: sessionId,
+          }));
+
+          setpId(data?.id);
+          setMessages((prevMessages: any) => [
+            ...prevMessages.slice(0, -1),
+            newMessageRes,
+          ]);
+          setIsLoading(false);
+          setTimeout(scrollToBottom, 100);
+        }
+      };
+
+      eventSource.onerror = (err: any) => {
+        console.error("SSE ERROR:", err);
+        eventSource?.close();
+        setMessages((prevMessages: any) => {
+          if (prevMessages.length === 0) return prevMessages;
+          const lastMessage = prevMessages[prevMessages.length - 1];
+          if (lastMessage?.isLoading) {
+            return prevMessages.slice(0, -1);
+          }
+          return prevMessages;
+        });
+        setIsLoading(false);
+      };
     };
 
-    // if (messages[messages.length - 1]?.isLoading) {
-    //   setMessages((prevMessages: any) => [...prevMessages.slice(0, -1)]);
-    // }
+    connectSSE();
+
+    const handleTabFocus = () => {
+      if (!document.hidden) connectSSE();
+    };
+
+    document.addEventListener("visibilitychange", handleTabFocus);
 
     return () => {
-      eventSource.close();
+      eventSource?.close();
+      document.removeEventListener("visibilitychange", handleTabFocus);
     };
   }, [sessionId, scrollToBottom, setMessages]);
 
@@ -352,6 +352,26 @@ function Chat({
   //     socketAgent.off("chatResponse");
   //   };
   // }, [socketAgent]);
+
+  const handleScroll = useCallback(() => {
+    if (!messagesContainerRef.current) return;
+
+    const { scrollTop, scrollHeight, clientHeight } =
+      messagesContainerRef.current;
+    const isAtBottom = scrollHeight - clientHeight <= scrollTop + 10;
+
+    setShowGoToBottom(!isAtBottom);
+  }, []);
+
+  useEffect(() => {
+    const container = messagesContainerRef.current;
+    if (!container) return;
+    handleScroll();
+    container.addEventListener("scroll", handleScroll);
+    return () => {
+      container.removeEventListener("scroll", handleScroll);
+    };
+  }, [handleScroll]);
 
   const handleSend = useCallback(
     async (text: string) => {
@@ -417,10 +437,6 @@ function Chat({
       setpId(messages[messages.length - 1]?.id || null);
     }
     setChatPayload(initialPayload);
-    // if (messagesContainerRef.current) {
-    //   messagesContainerRef.current.scrollTop =
-    //     messagesContainerRef.current.scrollHeight;
-    // }
   }, [messages]);
 
   return (
@@ -435,6 +451,11 @@ function Chat({
         setIsInitialLoad={setIsInitialLoad}
         containerRef={messagesContainerRef}
       />
+      {showGoToBottom && (
+        <div className='go_to_bottom' onClick={scrollToBottom}>
+          <IoIosArrowDropdown color='black' size={28} />
+        </div>
+      )}
       <InputField onSend={handleSend} isLoading={isLoading} />
     </div>
   );
