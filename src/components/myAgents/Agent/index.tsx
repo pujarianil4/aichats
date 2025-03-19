@@ -89,7 +89,6 @@ export default function AgentHome() {
   });
   const [isEmulatorOpen, setIsEmulatorOpen] = useState(false);
   const [edit, setEdit] = useState<boolean>(false);
-  console.log("EDIT", edit);
   const toggleEmulator = (bool?: boolean) => {
     if (typeof bool === "boolean") {
       setIsEmulatorOpen(bool);
