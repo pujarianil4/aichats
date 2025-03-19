@@ -18,15 +18,19 @@ interface IProps {
   isEmulatorOpen: boolean;
   toggleEmulator: (bool?: boolean) => void;
   agent: any;
+  edit: boolean;
+  setEdit: (bool: boolean) => void;
 }
 
 export default function Agent({
   isEmulatorOpen,
   toggleEmulator,
   agent,
+  edit,
+  setEdit,
 }: IProps) {
   const { data: agentData, isLoading } = agent;
-  const [edit, setEdit] = useState<boolean>(false);
+  // const [edit, setEdit] = useState<boolean>(false);
   const onChange = (key: string | string[]) => {
     // console.log(key);
   };
