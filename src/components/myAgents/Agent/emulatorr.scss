@@ -54,6 +54,24 @@
   flex-direction: column;
   height: 100%;
   // padding: 10px;
+
+  .go_to_bottom {
+    position: absolute;
+    right: 16px;
+    bottom: 76px;
+    z-index: 10;
+    background-color: var(--primary-bg);
+    border-radius: 24px;
+    height: 32px;
+    :hover {
+      path {
+        color: var(--primary);
+      }
+    }
+    svg {
+      cursor: pointer;
+    }
+  }
 }
 
 .messages {

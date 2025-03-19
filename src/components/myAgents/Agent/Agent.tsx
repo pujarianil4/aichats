@@ -122,11 +122,10 @@ export default function Agent({
               </div>
             </div>
             {!isEmulatorOpen && (
-              <LuPanelLeftClose
-                size={18}
-                className='toggle_btn'
-                onClick={() => toggleEmulator()}
-              />
+              <p className='toggle_btn'>
+                <span>View Emulator</span>
+                <LuPanelLeftClose size={18} onClick={() => toggleEmulator()} />
+              </p>
             )}
             <div className='credits_card'>
               <div>

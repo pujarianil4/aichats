@@ -10,6 +10,7 @@ import {
   getOnetoOneChatHistoryBySession,
   getOnetoOneChatSession,
 } from "../../../services/agent.ts";
+import { EventSource } from "eventsource";
 import { useQuery } from "@tanstack/react-query";
 import PageLoader from "../../common/PageLoader.tsx";
 import { Spin, Skeleton } from "antd";
@@ -19,6 +20,9 @@ import { MdDeleteOutline } from "react-icons/md";
 import NoData from "../../common/noData.tsx";
 import { useAppDispatch, useAppSelector } from "../../../hooks/reduxHooks.tsx";
 import { setClearHistory } from "../../../contexts/reducers/index.ts";
+import Cookies from "js-cookie";
+import { IoIosArrowDropdown } from "react-icons/io";
+import { decryptToken } from "../../../services/apiconfig.ts";
 
 export default function Emulatorr({
   isEmulatorOpen,
@@ -30,8 +34,9 @@ export default function Emulatorr({
   toggleEmulator: () => void;
 }) {
   const { agentId } = useParams();
-  const [chats, setChats] = useState([]);
+  const [chats, setChats] = useState<any[]>([]);
   const [viewSize, setViewSize] = useState(2);
+  const [pId, setpId] = useState(null);
   const clearHistory = useAppSelector(
     (state) => state.user.currentAgent.clearHistory
   );
@@ -46,6 +51,7 @@ export default function Emulatorr({
       return res[0];
     },
     staleTime: 1000 * 30 * 1,
+    refetchOnWindowFocus: true,
   });
 
   const {
@@ -56,12 +62,16 @@ export default function Emulatorr({
     queryKey: ["chatHistory", sessionData?.id],
     queryFn: () => getOnetoOneChatHistoryBySession(sessionData?.id),
     enabled: !!sessionData?.id,
-    select: (data) => data.reverse(),
+    // select: (data) => data.reverse(),
+    refetchOnWindowFocus: true,
   });
   const dispatch = useAppDispatch();
   useEffect(() => {
-    console.log("agentInfo", chatHistory, agentInfo);
-    setChats(chatHistory || []);
+    // console.log("agentInfo", chatHistory, agentInfo);
+    // setChats(chatHistory || []);
+    if (chatHistory?.length > 0) {
+      setChats([...chatHistory].reverse());
+    }
   }, [chatHistory]);
 
   useEffect(() => {
@@ -74,6 +84,7 @@ export default function Emulatorr({
   const handleReset = async () => {
     await deleteOnetoOneChatHistory(sessionData?.id);
     setChats([]);
+    setpId(null);
   };
 
   // useEffect(() => {
@@ -121,6 +132,8 @@ export default function Emulatorr({
             messages={chats}
             setMessages={setChats}
             sessionId={sessionData?.id}
+            pId={pId}
+            setpId={setpId}
             agentInfo={agentInfo}
           />
         </div>
@@ -139,17 +152,22 @@ function Chat({
   messages,
   setMessages,
   sessionId,
+  pId,
+  setpId,
   agentInfo,
 }: {
   messages: any;
   setMessages: any;
   sessionId: string;
+  pId: number | null;
+  setpId: any;
   agentInfo: any;
 }) {
   const [page, setPage] = useState(0);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [showGoToBottom, setShowGoToBottom] = useState(false);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
-  const [pId, setpId] = useState(null);
+  // const [pId, setpId] = useState(null);
   const getLastElements = (arr: any, count = 40) => arr.slice(-count);
   const latestHistory = getLastElements(messages).map((item: any) => {
     if (item?.role === "assistant") {
@@ -184,54 +202,92 @@ function Chat({
     }
   }, []);
 
-  useEffect(() => {
-    if (messages.length == 0) {
-      setpId(null);
-    }
-  }, [messages]);
+  // useEffect(() => {
+  //   if (messages.length == 0) {
+  //     setpId(null);
+  //   }
+  // }, [messages]);
 
   useEffect(() => {
-    const eventSource = new EventSource(
-      `https://ai-agent-r139.onrender.com/chat-message/sse/${sessionId}`
-    );
-    eventSource.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      console.log("AI Response:", data);
-      const assistantMessage = {
-        role: "assistant",
-        content: data?.response,
+    const encryptedToken = Cookies.get("token");
+    const token = encryptedToken ? decryptToken(encryptedToken) : null;
+    let eventSource: EventSource | null = null;
+    const connectSSE = () => {
+      if (eventSource) eventSource.close();
+
+      eventSource = new EventSource(
+        `https://ai-agent-r139.onrender.com/chat-message/sse/${sessionId}`,
+        {
+          fetch: (input, init: any) =>
+            fetch(input, {
+              ...init,
+              headers: {
+                ...init.headers,
+                Authorization: `Bearer ${token}`,
+              },
+            }),
+        }
+      );
+      eventSource.onmessage = (event: any) => {
+        const data = JSON.parse(event.data);
+        console.log("AI RESPONSE:", data);
+
+        const assistantMessage = {
+          role: "assistant",
+          content: data?.response,
+        };
+
+        const newMessageRes = {
+          role: "assistant",
+          message: data?.response,
+          id: data?.id,
+          cSessionId: sessionId,
+        };
+
+        if (data?.message != "Connected to SSE") {
+          setChatPayload((prevPayload: any) => ({
+            ...prevPayload,
+            history: [...prevPayload.history, assistantMessage],
+            pId: data?.id,
+            cSessionId: sessionId,
+          }));
+
+          setpId(data?.id);
+          setMessages((prevMessages: any) => [
+            ...prevMessages.slice(0, -1),
+            newMessageRes,
+          ]);
+          setIsLoading(false);
+          setTimeout(scrollToBottom, 100);
+        }
       };
 
-      const newMessageRes = {
-        role: "assistant",
-        message: data?.response,
-        id: data?.id,
-        cSessionId: sessionId,
+      eventSource.onerror = (err: any) => {
+        console.error("SSE ERROR:", err);
+        eventSource?.close();
+        setMessages((prevMessages: any) => {
+          if (prevMessages.length === 0) return prevMessages;
+          const lastMessage = prevMessages[prevMessages.length - 1];
+          if (lastMessage?.isLoading) {
+            return prevMessages.slice(0, -1);
+          }
+          return prevMessages;
+        });
+        setIsLoading(false);
       };
-
-      setChatPayload((prevPayload: any) => ({
-        ...prevPayload,
-        history: [...prevPayload.history, assistantMessage],
-        pId: data?.id,
-        cSessionId: sessionId,
-      }));
-
-      setpId(data?.id);
-      setMessages((prevMessages: any) => [
-        ...prevMessages.slice(0, -1),
-        newMessageRes,
-      ]);
-      setIsLoading(false);
-      setTimeout(scrollToBottom, 100);
     };
 
-    eventSource.onerror = (err) => {
-      console.error("SSE error:", err);
-      eventSource.close();
+    connectSSE();
+
+    const handleTabFocus = () => {
+      if (!document.hidden) connectSSE();
     };
+
+    document.addEventListener("visibilitychange", handleTabFocus);
 
     return () => {
-      eventSource.close();
+      eventSource?.close();
+      document.removeEventListener("visibilitychange", handleTabFocus);
     };
   }, [sessionId, scrollToBottom, setMessages]);
 
@@ -292,6 +348,24 @@ function Chat({
   //     "cSessionId": "f35fe4f2-92cd-4350-9a56-0286a384d2e8"
   // }
 
+  const handleScroll = useCallback(() => {
+    if (!messagesContainerRef.current) return;
+    const { scrollTop, scrollHeight, clientHeight } =
+      messagesContainerRef.current;
+    const isAtBottom = scrollHeight - clientHeight <= scrollTop + 10;
+    setShowGoToBottom(!isAtBottom);
+  }, [messages]);
+
+  useEffect(() => {
+    const container = messagesContainerRef.current;
+    if (!container) return;
+    handleScroll();
+    container.addEventListener("scroll", handleScroll);
+    return () => {
+      container.removeEventListener("scroll", handleScroll);
+    };
+  }, [handleScroll]);
+
   const handleSend = useCallback(
     async (text: string) => {
       if (!text.trim()) return;
@@ -346,7 +420,7 @@ function Chat({
         setMessages((prevMessages: any) => prevMessages.slice(0, -1));
       }
     },
-    [pId, sessionId, chatPayload, setMessages]
+    [pId, sessionId, chatPayload, setMessages, agentInfo]
   );
 
   useEffect(() => {
@@ -354,10 +428,6 @@ function Chat({
       setpId(messages[messages.length - 1]?.id || null);
     }
     setChatPayload(initialPayload);
-    // if (messagesContainerRef.current) {
-    //   messagesContainerRef.current.scrollTop =
-    //     messagesContainerRef.current.scrollHeight;
-    // }
   }, [messages]);
 
   return (
@@ -372,6 +442,11 @@ function Chat({
         setIsInitialLoad={setIsInitialLoad}
         containerRef={messagesContainerRef}
       />
+      {showGoToBottom && (
+        <div className='go_to_bottom' onClick={scrollToBottom}>
+          <IoIosArrowDropdown color='#ff00b7' size={32} />
+        </div>
+      )}
       <InputField onSend={handleSend} isLoading={isLoading} />
     </div>
   );
@@ -454,16 +529,6 @@ function Message({
           {/* <Skeleton.Input className='msg_skeleton' active /> */}
         </div>
       )}
-
-      {/* <div className={`message ${sender}`}>
-        {!isLoadingAnswer ? (
-          <ReactMarkdown>{text}</ReactMarkdown>
-        ) : (
-          <div style={{ width: "100px", height: "20px" }}>
-            <Skeleton active paragraph={{ rows: 1 }} />
-          </div>
-        )}
-      </div> */}
     </>
   );
 }
