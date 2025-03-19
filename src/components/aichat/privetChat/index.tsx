@@ -47,8 +47,8 @@ export default function PrivetChat() {
       }
       return res[0];
     },
-    staleTime: 1000 * 30 * 1,
-    refetchOnWindowFocus: true,
+    // staleTime: 1000 * 30 * 1,
+    // refetchOnWindowFocus: true,
   });
 
   const { data: chatHistory, isLoading: chatLoading } = useQuery({
@@ -76,6 +76,13 @@ export default function PrivetChat() {
     setChats([]);
     setpId(null);
   };
+  // console.log("TOKEN", cookies.token);
+  // useEffect(() => {
+  //   console.log("TOKEN", cookies.token);
+  //   queryClient.invalidateQueries({ queryKey: ["chatSession"] });
+  //   queryClient.invalidateQueries({ queryKey: ["chatHistory"] });
+  //   queryClient.invalidateQueries({ queryKey: ["privateagent"] });
+  // }, [cookies?.token]);
 
   const handleWalletConnect = async () => {
     if (!isConnected) {
@@ -91,9 +98,27 @@ export default function PrivetChat() {
           typ: "EVM",
         });
         message.success("Authentication successful!");
-        queryClient.invalidateQueries({ queryKey: ["chatSession"] });
-        queryClient.invalidateQueries({ queryKey: ["chatHistory"] });
-        queryClient.invalidateQueries({ queryKey: ["privateagent"] });
+        await queryClient.invalidateQueries({ queryKey: ["chatSession"] });
+        await queryClient.invalidateQueries({ queryKey: ["chatHistory"] });
+        await queryClient.invalidateQueries({ queryKey: ["privateagent"] });
+        // await queryClient.refetchQueries({ queryKey: ["privateagent"] });
+
+        // // Polling to check for auth token
+        // const checkTokenInterval = setInterval(async () => {
+        //   const updatedCookies = getTokens(); // Fetch latest cookies
+        //   if (updatedCookies.token) {
+        //     clearInterval(checkTokenInterval); // Stop checking once token is set
+
+        //     console.log("Token detected, forcing query refetch...");
+
+        //     // Force invalidate queries to ensure they fetch fresh data
+        //     await queryClient.invalidateQueries({ queryKey: ["chatSession"] });
+        //     await queryClient.invalidateQueries({ queryKey: ["chatHistory"] });
+        //     await queryClient.invalidateQueries({ queryKey: ["privateagent"] });
+
+        //     console.log("All queries invalidated and refetched successfully.");
+        //   }
+        // }, 300);
       } catch (error) {
         console.error("Error during signing:", error);
         message.error("Failed to sign message. Please try again.");
@@ -448,7 +473,7 @@ function Chat({
       />
       {showGoToBottom && (
         <div className='go_to_bottom' onClick={scrollToBottom}>
-          <IoIosArrowDropdown color='black' size={28} />
+          <IoIosArrowDropdown color='black' size={32} />
         </div>
       )}
       <InputField onSend={handleSend} isLoading={isLoading} />
