@@ -392,6 +392,7 @@ export default function PublicAiChats({
                 {/* <div className='go_to_bottom' onClick={() => {}}>
                   <IoIosArrowDropdown color='black' size={28} />
                 </div> */}
+
                 {/* {isAtBottom && (
                   <div
                     className='go_to_bottom'
@@ -405,7 +406,6 @@ export default function PublicAiChats({
                     <IoIosArrowDropdown color='black' size={28} />
                   </div>
                 )} */}
-
                 <ChatInput
                   adminAddress={instanceData?.adminAddress}
                   tokenAddress={instanceData?.tokenAddress}

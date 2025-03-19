@@ -15,6 +15,7 @@ import { useAccount } from "wagmi";
 import NotificationMessage from "../../common/notificationMessage.tsx";
 import { getAgentByID } from "../../../services/agent.ts";
 import { useParams } from "react-router-dom";
+import { IoIosArrowDropdown } from "react-icons/io";
 
 interface IProps {
   chatInstanceId: number;
@@ -301,6 +302,9 @@ export default function ChatFeed({
             />
           </>
         )}
+      </div>
+      <div className='go_to_bottom' onClick={() => setIsInitialLoad(true)}>
+        <IoIosArrowDropdown color='black' size={28} />
       </div>
     </div>
   );

@@ -1,11 +1,14 @@
 .feedContainer {
   max-height: 712px;
-  height: calc(100% - 74px);
+  flex-grow: 1;
+  // height: calc(100% - 74px);
   background-color: var(--chat-bg);
+
   &.fullHeight {
     .listContainer {
       max-height: 612px;
-      height: calc(100% - 68px);
+      // height: calc(100% - 68px);
+      flex-grow: 1;
     }
     .feed_header {
       .super_listContainer {
@@ -29,6 +32,21 @@
         margin-top: 5px;
       }
     }
+
+    // .go_to_bottom {
+    //   position: absolute;
+    //   right: 16px;
+    //   bottom: 64px;
+    //   z-index: 10;
+    //   :hover {
+    //     path {
+    //       color: var(--primary);
+    //     }
+    //   }
+    //   svg {
+    //     cursor: pointer;
+    //   }
+    // }
   }
   .feed_header {
     padding: 10px;
@@ -157,12 +175,14 @@
 
 .adminfeedContainer {
   max-height: 712px;
-  height: calc(100% - 110px);
+  // height: calc(100% - 110px);
+  flex-grow: 1;
 
   &.fullHeight {
     .listContainer {
-      max-height: 564px;
-      height: calc(100% - 72px);
+      // max-height: 564px;
+      // height: calc(100% - 72px);
+      flex-grow: 1;
     }
   }
 
