@@ -97,8 +97,8 @@ const ChatInstanceForm: React.FC = () => {
     }
 
     try {
-      await createInstance(formData);
-      // navigate(`/agent/${1}`);
+      const res = await createInstance(formData);
+      navigate(`/agent/${res?.aId}`);
     } catch (error) {
       console.log("FAILED TO CREATE INSTANCE", error);
     }

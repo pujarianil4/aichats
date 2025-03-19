@@ -97,10 +97,8 @@ export const connectAddress = async (address: string, instance: number = 1) => {
 export const createInstance = async (payload: any) => {
   delete payload?.chainId; // TODO: REMOVE THIS AFTER BE ADDS CHAINID
   try {
-    const { data } = await axios.post(
-      `${BASE_URL_BALANCE}/address/instance`,
-      payload
-    );
+    const { data } = await axios.post(`${BASE_URL_CHAT}/grp-intance`, payload);
+    console.log("CREATE_INSTANCE", data);
     return data;
   } catch (error) {
     console.log("ADD_ADDRESS_Error", error);
@@ -115,7 +113,7 @@ export const updateChatInstance = async (
 ) => {
   try {
     const { data } = await axios.patch(
-      `${BASE_URL_BALANCE}/address/instance/${instanceId}`,
+      `${BASE_URL_CHAT}/grp-intance/${instanceId}`,
       {
         streamUrl: link,
         minTokenValue: Number(minTokenValue),
@@ -142,9 +140,7 @@ export const getChatInstanceAdmin = async (instance: number = 1) => {
 
 export const getChatInstanceWithAgentId = async (agentId: string) => {
   try {
-    const { data } = await axios.get(
-      `${BASE_URL_BALANCE}/address/instance/agent/${agentId}`
-    );
+    const { data } = await axios.get(`${BASE_URL_CHAT}/grp-intance/${agentId}`);
     return data;
   } catch (error) {
     console.log(error);
@@ -264,8 +260,6 @@ export const getAllAgents = async () => {
     throw error;
   }
 };
-
-
 
 export const getAllAgentByUser = async () => {
   try {

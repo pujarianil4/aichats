@@ -13,6 +13,9 @@ import {
 import SuperChatMessage from "../superChat/index.tsx";
 import { useAccount } from "wagmi";
 import NotificationMessage from "../../common/notificationMessage.tsx";
+import { getAgentByID } from "../../../services/agent.ts";
+import { useParams } from "react-router-dom";
+import { IoIosArrowDropdown } from "react-icons/io";
 
 interface IProps {
   chatInstanceId: number;
@@ -26,9 +29,11 @@ export default function ChatFeed({
   mutedUsers,
   isModerator,
 }: IProps) {
+  const { agentId } = useParams();
   const { isConnected, address } = useAccount();
   const [page, setPage] = useState<number>(1);
   const [chat, setChat] = useState<any[]>([]);
+  const [agentData, setAgentData] = useState();
   const [superChat, setSuperChat] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -36,7 +41,39 @@ export default function ChatFeed({
   const [isInitialLoad, setIsInitialLoad] = useState(false);
   const [firstItemIndex, setFirstItemIndex] = useState(0);
   const loadingArray = Array(10).fill(() => 0);
-  const symbol = JSON.parse(localStorage?.getItem("tokenData") || "")?.symbol;
+  const [symbol, setSymbol] = useState();
+
+  useEffect(() => {
+    const fetchTokenData = () => {
+      const data = JSON.parse(
+        localStorage.getItem("tokenData") || "{}"
+      )?.symbol;
+      setSymbol(data);
+    };
+
+    fetchTokenData();
+
+    const handleStorageChange = () => {
+      fetchTokenData();
+    };
+
+    window.addEventListener("tokenDataUpdated", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("tokenDataUpdated", handleStorageChange);
+    };
+  }, [agentData]);
+
+  const getAgentData = async () => {
+    const res = await getAgentByID(agentId as string);
+    setAgentData(res);
+  };
+
+  useEffect(() => {
+    if (agentId) {
+      getAgentData();
+    }
+  }, [agentId]);
 
   useEffect(() => {
     if (isConnected) {
@@ -257,6 +294,7 @@ export default function ChatFeed({
                   isAdmin={isAdmin}
                   isModerator={isModerator}
                   mutedUsers={mutedUsers}
+                  agentData={agentData}
                   onDeleteMessage={handleDeleteMessage}
                 />
               )}
@@ -264,6 +302,9 @@ export default function ChatFeed({
             />
           </>
         )}
+      </div>
+      <div className='go_to_bottom' onClick={() => setIsInitialLoad(true)}>
+        <IoIosArrowDropdown color='black' size={28} />
       </div>
     </div>
   );

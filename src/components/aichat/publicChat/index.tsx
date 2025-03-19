@@ -22,6 +22,7 @@ import ChatAdminSettings from "../adminSettings/index.tsx";
 import { IoSettingsOutline } from "react-icons/io5";
 import useIsMobile from "../../../hooks/useIsMobile.ts";
 import AdminReply from "./adminReply.tsx";
+import { IoIosArrowDropdown } from "react-icons/io";
 
 export interface InstanceData {
   id: number;
@@ -53,6 +54,8 @@ export default function PublicAiChats({
   const [mutedUsers, setMutedUsers] = useState<string[]>([]);
   const [mobileView, setMobileView] = useState(1);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [symbol, setSymbol] = useState<string | null>(null);
+  const [isAtBottom, setIsAtBottom] = useState(true);
   const chatRef = useRef(null);
   const isMobile = useIsMobile(992);
 
@@ -60,10 +63,11 @@ export default function PublicAiChats({
 
   const handleScroll = () => {
     if (chatRef.current) {
-      const { scrollTop } = chatRef.current;
+      const { scrollTop, scrollHeight, clientHeight } = chatRef.current;
       if (scrollTop === 0) {
         setIsChatOpen(false);
       }
+      setIsAtBottom(scrollTop + clientHeight >= scrollHeight - 10);
     }
   };
 
@@ -97,20 +101,6 @@ export default function PublicAiChats({
   }, [isConnected, address, instanceData?.id]);
 
   const getTokenDetails = async () => {
-    // Fetch token symbol
-    // const symbol = await readContract({
-    //   address: instanceData?.tokenAddress,
-    //   abi: erc20Abi,
-    //   functionName: "symbol",
-    //   chainId: 1,
-    // });
-
-    // // Fetch token decimals
-    // const decimals = await readContract({
-    //   address: instanceData?.tokenAddress,
-    //   abi: erc20Abi,
-    //   functionName: "decimals",
-    // });
     const results = await multicall(wagmiConfig, {
       contracts: [
         {
@@ -126,10 +116,13 @@ export default function PublicAiChats({
       ],
       chainId: chainId,
     });
-    localStorage.setItem(
-      "tokenData",
-      JSON.stringify({ symbol: results[0].result, decimals: results[1].result })
-    );
+    const tokenData = {
+      symbol: results[0].result,
+      decimals: results[1].result,
+    };
+    localStorage.setItem("tokenData", JSON.stringify(tokenData));
+    setSymbol(tokenData?.symbol as string);
+    window.dispatchEvent(new Event("tokenDataUpdated"));
   };
 
   useEffect(() => {
@@ -145,6 +138,23 @@ export default function PublicAiChats({
       getMutedUsers();
     }
   }, [isConnected, instanceData?.id]);
+
+  // useEffect(() => {
+  //   handleScroll();
+  //   if (chatRef?.current) {
+  //     chatRef?.current?.addEventListener("scroll", handleScroll);
+  //   }
+
+  //   return () => {
+  //     chatRef.current?.removeEventListener("scroll", handleScroll);
+  //   };
+  // }, []);
+
+  // useEffect(() => {
+  //   if (isAtBottom && chatRef.current) {
+  //     chatRef.current.scrollTop = chatRef?.current.scrollHeight;
+  //   }
+  // }, [instanceData?.id]);
 
   const handleWalletConnected = async (connectedAddress: string) => {
     try {
@@ -333,6 +343,7 @@ export default function PublicAiChats({
               <AdminReply />
             ) : (
               <YoutubeVideo youtubeLink={instanceData?.streamUrl} />
+              // <></>
             )}
 
             {/* {isModerator ||
@@ -378,6 +389,23 @@ export default function PublicAiChats({
                   mutedUsers={mutedUsers}
                   isModerator={isModerator}
                 />
+                {/* <div className='go_to_bottom' onClick={() => {}}>
+                  <IoIosArrowDropdown color='black' size={28} />
+                </div> */}
+
+                {/* {isAtBottom && (
+                  <div
+                    className='go_to_bottom'
+                    onClick={() =>
+                      chatRef.current?.scrollTo({
+                        top: chatRef?.current.scrollHeight,
+                        behavior: "smooth",
+                      })
+                    }
+                  >
+                    <IoIosArrowDropdown color='black' size={28} />
+                  </div>
+                )} */}
                 <ChatInput
                   adminAddress={instanceData?.adminAddress}
                   tokenAddress={instanceData?.tokenAddress}

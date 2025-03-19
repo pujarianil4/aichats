@@ -74,6 +74,21 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+
+    .go_to_bottom {
+      position: absolute;
+      right: 16px;
+      bottom: 64px;
+      z-index: 10;
+      :hover {
+        path {
+          color: var(--primary);
+        }
+      }
+      svg {
+        cursor: pointer;
+      }
+    }
   }
 
   .live {

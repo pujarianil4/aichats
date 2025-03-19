@@ -23,7 +23,7 @@ export default function SuperChatMessage({ ensName, data }: UserMessageProps) {
           <span className='admin__value'>
             {data.amnt}&nbsp; {symbol}
           </span>
-          <div className='admin__text'>{data.content}</div>
+          <div className='admin__text'>{data.content?.response}</div>
         </div>
       </div>
       {/* <div>:</div> */}

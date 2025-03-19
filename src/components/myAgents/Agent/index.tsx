@@ -88,6 +88,7 @@ export default function AgentHome() {
     enabled: !!agentId,
   });
   const [isEmulatorOpen, setIsEmulatorOpen] = useState(false);
+  const [edit, setEdit] = useState<boolean>(false);
   const toggleEmulator = (bool?: boolean) => {
     if (typeof bool === "boolean") {
       setIsEmulatorOpen(bool);
@@ -107,6 +108,8 @@ export default function AgentHome() {
           isEmulatorOpen={isEmulatorOpen}
           toggleEmulator={toggleEmulator}
           agent={{ ...agent, id: agentId }}
+          edit={edit}
+          setEdit={setEdit}
         />
       </div>
 
@@ -114,6 +117,7 @@ export default function AgentHome() {
         <div className='emulator'>
           {/* <Emulator toggleEmulator={toggleEmulator} /> */}
           <Emulatorr
+            key={edit ? "edit-mode" : "normal-mode"}
             isEmulatorOpen={isEmulatorOpen}
             toggleEmulator={toggleEmulator}
             agentInfo={agent.data}
