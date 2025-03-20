@@ -67,6 +67,7 @@
   }
   .live,
   .chatfeed {
+    box-sizing: border-box;
     width: 50%;
     // width: calc(85vh / 2);
     // max-width: calc(792px / 2);
@@ -88,6 +89,9 @@
       svg {
         cursor: pointer;
       }
+    }
+
+    .chatinputContainer {
     }
   }
 
