@@ -23,6 +23,7 @@ import { IoSettingsOutline } from "react-icons/io5";
 import useIsMobile from "../../../hooks/useIsMobile.ts";
 import AdminReply from "./adminReply.tsx";
 import { IoIosArrowDropdown } from "react-icons/io";
+import { getTokens } from "../../../services/apiconfig.ts";
 
 export interface InstanceData {
   id: number;
@@ -56,6 +57,7 @@ export default function PublicAiChats({
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [symbol, setSymbol] = useState<string | null>(null);
   const [isAtBottom, setIsAtBottom] = useState(true);
+  const [isJoined, setJoined] = useState(false);
   const chatRef = useRef(null);
   const isMobile = useIsMobile(992);
 
@@ -75,6 +77,9 @@ export default function PublicAiChats({
     () => instanceData?.moderators?.includes(address as string) || false,
     [instanceData?.moderators, address]
   );
+
+  const tokenData = useMemo(() => getTokens(), []);
+  // const tokenData = getTokens();
 
   const getMutedUsers = async () => {
     try {
@@ -126,18 +131,45 @@ export default function PublicAiChats({
   };
 
   useEffect(() => {
-    if (isConnected && instanceData?.id) {
+    if (instanceData?.id) {
       socket.on("connect", () => {
         console.log("Connected:", socket.id);
         socket.emit("join", {
-          walletAddress: address,
+          walletAddress: null, //address
           instanceId: instanceData?.id,
         });
+        setJoined(true);
       });
-      getTokenDetails();
-      getMutedUsers();
     }
-  }, [isConnected, instanceData?.id]);
+
+    setTimeout(() => {
+      if (isConnected && instanceData?.id && tokenData?.token && isJoined) {
+        console.log("TOken", tokenData?.token);
+        socket.emit("authenticate", {
+          token: tokenData?.token,
+        });
+        getTokenDetails();
+        getMutedUsers();
+      }
+    }, 100);
+
+    // if (isConnected && instanceData?.id) {
+    //   socket.on("connect", () => {
+    //     console.log("Connected:", socket.id);
+    //     socket.emit("join", {
+    //       // walletAddress: address,
+    //       walletAddress: null,
+    //       instanceId: instanceData?.id,
+    //     });
+    //     console.log("TOken", tokenData?.token);
+    //     socket.emit("authenticate", {
+    //       token: tokenData?.token,
+    //     });
+    //   });
+    //   getTokenDetails();
+    //   getMutedUsers();
+    // }
+  }, [isConnected, instanceData?.id, tokenData, isJoined]);
 
   // useEffect(() => {
   //   handleScroll();
