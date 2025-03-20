@@ -71,6 +71,12 @@ export default function PrivetChat() {
     }
   }, [chatHistory]);
 
+  useEffect(() => {
+    if (isConnected && !cookies.token) {
+      handleWalletConnect();
+    }
+  }, [isConnected, cookies.token]);
+
   const handleReset = async () => {
     await deleteOnetoOneChatHistory(sessionData?.id);
     setChats([]);
@@ -91,34 +97,22 @@ export default function PrivetChat() {
       try {
         const signature = await signMessageAsync({ message: authSignMsg });
         console.log("Signature:", signature);
-
         await handleAuthConnect({
           sig: signature,
           msg: authSignMsg,
           typ: "EVM",
         });
         message.success("Authentication successful!");
-        await queryClient.invalidateQueries({ queryKey: ["chatSession"] });
-        await queryClient.invalidateQueries({ queryKey: ["chatHistory"] });
-        await queryClient.invalidateQueries({ queryKey: ["privateagent"] });
-        // await queryClient.refetchQueries({ queryKey: ["privateagent"] });
 
-        // // Polling to check for auth token
-        // const checkTokenInterval = setInterval(async () => {
-        //   const updatedCookies = getTokens(); // Fetch latest cookies
-        //   if (updatedCookies.token) {
-        //     clearInterval(checkTokenInterval); // Stop checking once token is set
-
-        //     console.log("Token detected, forcing query refetch...");
-
-        //     // Force invalidate queries to ensure they fetch fresh data
-        //     await queryClient.invalidateQueries({ queryKey: ["chatSession"] });
-        //     await queryClient.invalidateQueries({ queryKey: ["chatHistory"] });
-        //     await queryClient.invalidateQueries({ queryKey: ["privateagent"] });
-
-        //     console.log("All queries invalidated and refetched successfully.");
-        //   }
-        // }, 300);
+        const checkTokenInterval = setInterval(async () => {
+          const updatedCookies = getTokens();
+          if (updatedCookies.token) {
+            clearInterval(checkTokenInterval);
+            await queryClient.invalidateQueries({ queryKey: ["chatSession"] });
+            await queryClient.invalidateQueries({ queryKey: ["chatHistory"] });
+            await queryClient.invalidateQueries({ queryKey: ["privateagent"] });
+          }
+        }, 300);
       } catch (error) {
         console.error("Error during signing:", error);
         message.error("Failed to sign message. Please try again.");
