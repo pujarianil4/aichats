@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, Spin } from "antd";
 import { FaDiscord, FaTelegramPlane } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
@@ -7,42 +7,42 @@ import Twitter from "./social/twitter.tsx";
 import Discord from "./social/discord.tsx";
 import { FaCheck } from "react-icons/fa";
 import { BsDash } from "react-icons/bs";
-import { handleDiscordLogin, handleTelegramAuth } from "../../services/auth.ts";
-
-interface SocialData {
-  id: string;
-  username: string;
-  name: string;
-}
+import {
+  handleDiscordLogin,
+  handleTelegramAuth,
+  handleXLogin,
+} from "../../services/auth.ts";
+import { updateUser } from "../../services/userApi.ts";
+import NotificationMessage from "../common/notificationMessage.tsx";
 
 interface SocialModalProps {
-  discord?: SocialData;
-  telegram?: SocialData;
-  x?: SocialData;
+  user: any;
   type?: "user" | "agent";
 }
 
-const SocialModal: React.FC<SocialModalProps> = ({
-  discord,
-  telegram,
-  x,
-  type = "agent",
-}) => {
+const SocialModal: React.FC<SocialModalProps> = ({ user, type = "agent" }) => {
   const [connectedAccounts, setConnectedAccounts] = useState({
-    Twitter: discord?.username as string | null,
-    Telegram: telegram?.username as string | null,
-    Discord: x?.username as string | null,
+    X: user?.x?.username || null,
+    Telegram: user?.telegram?.username || null,
+    Discord: user?.discord?.username || null,
   });
 
+  useEffect(() => {
+    setConnectedAccounts({
+      X: user?.x?.username || null,
+      Telegram: user?.telegram?.username || null,
+      Discord: user?.discord?.username || null,
+    });
+  }, [user]);
+  console.log("connecte4d account", connectedAccounts);
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalRemove, setModalRemove] = useState(false);
   const [activePlatform, setActivePlatform] = useState<
-    "Twitter" | "Telegram" | "Discord" | null
+    "X" | "Telegram" | "Discord" | null
   >(null);
   const [loading, setLoading] = useState(false);
 
-  const handleOpenModal = async (
-    platform: "Twitter" | "Telegram" | "Discord"
-  ) => {
+  const handleOpenModal = async (platform: "X" | "Telegram" | "Discord") => {
     if (type == "agent") {
       setActivePlatform(platform);
       setModalVisible(true);
@@ -51,12 +51,20 @@ const SocialModal: React.FC<SocialModalProps> = ({
         await handleTeleAuth();
       } else if (platform == "Discord") {
         await handleDiscordAuth();
+      } else if (platform == "X") {
+        await handleXAuth();
+      } else {
       }
     }
   };
 
+  const handleRemoveModal = (platform: "X" | "Telegram" | "Discord") => {
+    setActivePlatform(platform);
+    setModalRemove(true);
+  };
+
   const handleConnectionSuccess = (
-    platform: "Twitter" | "Telegram" | "Discord",
+    platform: "X" | "Telegram" | "Discord",
     username: string
   ) => {
     setConnectedAccounts((prev) => ({
@@ -71,9 +79,27 @@ const SocialModal: React.FC<SocialModalProps> = ({
     setLoading(false);
   };
 
+  const handleXAuth = async () => {
+    try {
+      const data = await handleXLogin();
+    } catch (error) {}
+  };
+
   const handleTeleAuth = async () => {
     try {
       const data = await handleTelegramAuth();
+      const updateData = {
+        telegram: {
+          id: String(data.id),
+          username: data.username,
+        },
+      };
+      const response = await updateUser(user.id, updateData);
+
+      if (response) {
+        NotificationMessage("success", "Telegram Added Successfully!");
+      }
+      console.log("data", data);
     } catch (error) {}
   };
 
@@ -85,11 +111,11 @@ const SocialModal: React.FC<SocialModalProps> = ({
 
   const renderActivePlatformComponent = () => {
     switch (activePlatform) {
-      case "Twitter":
+      case "X":
         return (
           <Twitter
             onSuccess={(username: string) =>
-              handleConnectionSuccess("Twitter", username)
+              handleConnectionSuccess("X", username)
             }
             onFailure={handleConnectionFailure}
           />
@@ -119,44 +145,99 @@ const SocialModal: React.FC<SocialModalProps> = ({
     }
   };
 
+  const handleRemoveAccount = async () => {
+    if (!activePlatform) return;
+
+    try {
+      const updateData = {
+        [activePlatform.toLowerCase()]: null,
+      };
+
+      const response = await updateUser(user.id, updateData);
+      if (response) {
+        setConnectedAccounts((prev) => ({
+          ...prev,
+          [activePlatform]: null,
+        }));
+        setModalRemove(false);
+        NotificationMessage(
+          "success",
+          `${activePlatform} account removed successfully!`
+        );
+      }
+    } catch (error) {
+      NotificationMessage(
+        "error",
+        `Failed to remove ${activePlatform} account.`
+      );
+    }
+  };
+
   return (
     <>
-      <p onClick={() => handleOpenModal("Twitter")}>
-        {connectedAccounts.Twitter ? (
-          <span className='c_icon'>
-            <FaCheck color='#ff00b7' />
-          </span>
+      <p>
+        {connectedAccounts.X ? (
+          <div onClick={() => handleRemoveModal("X")}>
+            <span className='c_icon'>
+              <FaCheck color='#ff00b7' />
+            </span>
+
+            <FaXTwitter />
+            <span>{connectedAccounts.X}</span>
+          </div>
         ) : (
-          <span className='c_icon'>
-            <BsDash color='#fff' />
-          </span>
+          <div onClick={() => handleOpenModal("X")}>
+            <span className='c_icon'>
+              <BsDash color='#fff' />
+            </span>
+
+            <FaXTwitter />
+            <span>Twitter</span>
+          </div>
         )}
-        <FaXTwitter /> <span>{connectedAccounts.Twitter || "Twitter"}</span>
       </p>
-      <p onClick={() => handleOpenModal("Telegram")}>
+
+      <p>
         {connectedAccounts.Telegram ? (
-          <span className='c_icon'>
-            <FaCheck color='#ff00b7' />
-          </span>
+          <div onClick={() => handleRemoveModal("Telegram")}>
+            <span className='c_icon'>
+              <FaCheck color='#ff00b7' />
+            </span>
+
+            <FaTelegramPlane />
+            <span>{connectedAccounts.Telegram}</span>
+          </div>
         ) : (
-          <span className='c_icon'>
-            <BsDash color='#fff' />
-          </span>
+          <div onClick={() => handleOpenModal("Telegram")}>
+            <span className='c_icon'>
+              <BsDash color='#fff' />
+            </span>
+
+            <FaTelegramPlane />
+            <span>Telegram</span>
+          </div>
         )}
-        <FaTelegramPlane />{" "}
-        <span>{connectedAccounts.Telegram || "Telegram"}</span>
       </p>
-      <p onClick={() => handleOpenModal("Discord")}>
+      <p>
         {connectedAccounts.Discord ? (
-          <span className='c_icon'>
-            <FaCheck color='#ff00b7' />
-          </span>
+          <div onClick={() => handleRemoveModal("Discord")}>
+            <span className='c_icon'>
+              <FaCheck color='#ff00b7' />
+            </span>
+
+            <FaDiscord />
+            <span>{connectedAccounts.Discord}</span>
+          </div>
         ) : (
-          <span className='c_icon'>
-            <BsDash color='#fff' />
-          </span>
+          <div onClick={() => handleOpenModal("Discord")}>
+            <span className='c_icon'>
+              <BsDash color='#fff' />
+            </span>
+
+            <FaDiscord />
+            <span>Discord</span>
+          </div>
         )}
-        <FaDiscord /> <span>{connectedAccounts.Discord || "Discord"}</span>
       </p>
 
       <Modal
@@ -174,6 +255,24 @@ const SocialModal: React.FC<SocialModalProps> = ({
         ) : (
           renderActivePlatformComponent()
         )}
+      </Modal>
+      <Modal
+        title='Remove Your Account'
+        open={modalRemove}
+        onCancel={() => setModalRemove(false)}
+        footer={null}
+        centered
+        className='social_modal'
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <button onClick={handleRemoveAccount}>Remove {activePlatform}</button>
+        </div>
       </Modal>
     </>
   );

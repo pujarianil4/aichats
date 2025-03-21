@@ -7,11 +7,8 @@ export const getUser = async (userId: string | null) => {
   try {
     console.log("userdata", userId);
     const response = await api.get(`/users/${userId}`);
-    const tokenData = await getMaketDataByTokenAddress(
-      "base",
-      response.data.token.tCAddress
-    );
-    return { ...response.data, tokenData };
+
+    return { ...response.data };
   } catch (error) {
     console.error("Error", error);
     throw error;
@@ -27,5 +24,27 @@ export const updateUser = async (userId: string | null, data: any) => {
   } catch (error) {
     console.error("Error", error);
     throw error;
+  }
+};
+
+export const checkUserExist = async (username: string) => {
+  try {
+    const response = await api.get(`/users/checkuname?uName=${username}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error checking username:", error);
+    return { available: false };
+  }
+};
+
+export const handleSocialCallback = async (data: any) => {
+  try {
+    console.log("userdata", data);
+    const response = await api.post(`/users/verifyToken`, data);
+
+    return { ...response.data };
+  } catch (error) {
+    console.error("Error verifying Twitter auth:", error);
+    return { success: false };
   }
 };

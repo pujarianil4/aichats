@@ -6,7 +6,7 @@ import { handleSocialCallback } from "../../services/userApi.ts";
 import { useAppSelector } from "../../hooks/reduxHooks.tsx";
 import NotificationMessage from "../../components/common/notificationMessage.tsx";
 
-const DiscordCallback = () => {
+const XCallback = () => {
   const navigate = useNavigate();
   const { isLoading, profile, error } = useAppSelector((state) => state.user);
   const userId = profile?.uId;
@@ -19,11 +19,10 @@ const DiscordCallback = () => {
         console.error("🚨 No OAuth code found!");
         return;
       }
-
       const data = {
         id: userId,
         code: code,
-        name: "discord",
+        name: "x",
         type: "user",
       };
 
@@ -32,7 +31,7 @@ const DiscordCallback = () => {
         console.log("User Data:", response);
 
         if (response) {
-          NotificationMessage("success", "Discord Added Successfully!");
+          NotificationMessage("success", "X Added Successfully!");
         }
         navigate("/profile");
       } catch (error) {
@@ -45,7 +44,7 @@ const DiscordCallback = () => {
     fetchToken();
   }, [navigate]);
 
-  return <p>verify token...</p>;
+  return <p>Logging in...</p>;
 };
 
-export default DiscordCallback;
+export default XCallback;
