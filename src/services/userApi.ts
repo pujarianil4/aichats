@@ -29,7 +29,7 @@ export const updateUser = async (userId: string | null, data: any) => {
 
 export const checkUserExist = async (username: string) => {
   try {
-    const response = await api.get(`/users/checkuname?uName=${username}`);
+    const response = await api.get(`/users/${username}`);
     return response.data;
   } catch (error) {
     console.error("Error checking username:", error);

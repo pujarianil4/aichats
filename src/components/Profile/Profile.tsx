@@ -15,9 +15,8 @@ import { getUser } from "../../services/userApi.ts";
 export default function UserProfile() {
   const queryClient = useQueryClient();
   const { isLoading, profile, error } = useAppSelector((state) => state.user);
-  console.log("user", profile);
-  const userId = profile?.uId;
 
+  const userId = profile?.uId;
   const {
     data: user,
     isLoading: loader,
@@ -41,7 +40,7 @@ export default function UserProfile() {
     null
   );
   const [checkingUsername, setCheckingUsername] = useState(false);
-
+  const [errorMsg, setErrorMsg] = useState("");
   const [userInfo, setUserInfo] = useState({
     username: user?.uName || "",
     email: user?.email || "",
@@ -83,6 +82,23 @@ export default function UserProfile() {
   }, [userInfo.username, edit]);
 
   const handleInputChange = (key: string, value: string) => {
+    if (key === "username") {
+      const trimmedValue = value.replace(/\s/g, "");
+      if (trimmedValue.length > 15) {
+        setErrorMsg(
+          "Username must be 15 characters or less (excluding spaces)"
+        );
+        return;
+      }
+      if (trimmedValue.length < 3) {
+        setErrorMsg(
+          "Username must be at least 3 characters (excluding spaces)"
+        );
+        return;
+      }
+      setErrorMsg("");
+    }
+
     setUserInfo((prevInfo) => ({
       ...prevInfo,
       [key]: value,
@@ -97,7 +113,7 @@ export default function UserProfile() {
         if (!validateImage(file)) return;
         const imgURL = await uploadSingleFile(file);
         handleInputChange("profilePic", imgURL);
-        event.target.value = ""; // Reset input
+        event.target.value = "";
       } catch (error) {
         setImageUploading(false);
         event.target.value = "";
@@ -108,7 +124,7 @@ export default function UserProfile() {
   };
 
   const handleSubmit = async () => {
-    if (usernameAvailable === false) {
+    if (usernameAvailable === true) {
       NotificationMessage("error", "Username is already taken.");
       return;
     }
@@ -169,6 +185,11 @@ export default function UserProfile() {
       <div className='form'>
         <div className='input_container'>
           <label htmlFor='user_name'>User Name</label>
+          {errorMsg && (
+            <p style={{ color: "red", marginBottom: "2px", fontSize: "12px" }}>
+              {errorMsg}
+            </p>
+          )}
           <input
             id='user_name'
             value={userInfo.username}
@@ -176,8 +197,11 @@ export default function UserProfile() {
             type='text'
             disabled={!edit}
           />
-          {checkingUsername && <Spin size='small' />}
-          {usernameAvailable === false && (
+
+          {usernameAvailable === false && !errorMsg && (
+            <p style={{ color: "green" }}>Username is available</p>
+          )}
+          {usernameAvailable === true && !errorMsg && (
             <p style={{ color: "red" }}>Username is already taken</p>
           )}
         </div>
