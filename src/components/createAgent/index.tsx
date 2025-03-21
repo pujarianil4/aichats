@@ -536,7 +536,7 @@ export default function CreateAgent() {
               <span className='errormsg'>{errorMsg.desc}</span>
             </div>
 
-            <div className='input_container'>
+            {/* <div className='input_container'>
               <label htmlFor='name'>
                 Flow Chart <span className='required'>*</span>
               </label>
@@ -574,7 +574,7 @@ export default function CreateAgent() {
                   style={{ visibility: "hidden", position: "absolute" }}
                 />
               </div>
-            </div>
+            </div> */}
 
             <div className='input_container'>
               <label htmlFor='agenttype'>
