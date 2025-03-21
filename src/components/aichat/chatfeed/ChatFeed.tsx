@@ -298,7 +298,7 @@ export default function ChatFeed({
                   onDeleteMessage={handleDeleteMessage}
                 />
               )}
-              footerHeight={24}
+              footerHeight={16}
             />
           </>
         )}
