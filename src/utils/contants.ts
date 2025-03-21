@@ -41,6 +41,10 @@ export const FBXMAP = [
     path: "/fbx/anim/neutral_kiss.fbx",
     label: "neutral_kiss",
   },
+  {
+    path: "/fbx/anim/CatwalkIdleToTwistR.fbx",
+    label: "neutral_walk",
+  },
 ];
 
 export const ACTIONMAP = [
@@ -66,6 +70,7 @@ export const ACTIONMAP = [
       "/fbx/anim/neutral_greeting.fbx",
       "/fbx/anim/neutral_thankful.fbx",
       "/fbx/anim/neutral_kiss.fbx",
+      "/fbx/anim/CatwalkIdleToTwistR.fbx",
     ],
   },
 ];

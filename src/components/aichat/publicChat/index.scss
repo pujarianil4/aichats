@@ -67,6 +67,7 @@
   }
   .live,
   .chatfeed {
+    box-sizing: border-box;
     width: 50%;
     // width: calc(85vh / 2);
     // max-width: calc(792px / 2);
@@ -74,6 +75,24 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+
+    .go_to_bottom {
+      position: absolute;
+      right: 16px;
+      bottom: 64px;
+      z-index: 10;
+      :hover {
+        path {
+          color: var(--primary);
+        }
+      }
+      svg {
+        cursor: pointer;
+      }
+    }
+
+    .chatinputContainer {
+    }
   }
 
   .live {

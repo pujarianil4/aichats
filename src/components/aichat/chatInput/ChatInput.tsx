@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { useAccount } from "wagmi";
+import { useAccount, useDisconnect, useSignMessage } from "wagmi";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import "./chatinput.scss";
-
+import { message as antdMessage } from "antd";
 import socket from "../../../services/socket.ts";
 import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { erc20Abi } from "../../../helpers/contracts/abi.ts";
@@ -10,6 +10,9 @@ import { parseUnits } from "viem";
 import TipPopup from "./TipPanel.tsx";
 import EmojiPicker from "../emoji/EmojiPicker.tsx";
 import NotificationMessage from "../../common/notificationMessage.tsx";
+import { getTokens } from "../../../services/apiconfig.ts";
+import { handleAuthConnect } from "../../../services/auth.ts";
+import { authSignMsg } from "../../../utils/contants.ts";
 
 interface IProps {
   adminAddress: string;
@@ -29,6 +32,9 @@ export default function ChatInput({
   const [showTipPopup, setShowTipPopup] = useState(false);
   const [customAmount, setCustomAmount] = useState("");
   const { openConnectModal } = useConnectModal();
+  const { signMessageAsync } = useSignMessage();
+  const { disconnect } = useDisconnect();
+  const cookies = getTokens();
 
   // Transaction hash and status
   const { data: hash, isPending, writeContract } = useWriteContract();
@@ -125,6 +131,30 @@ export default function ChatInput({
     setMessage(message + emoji);
   };
 
+  const handleWalletConnect = async () => {
+    if (!isConnected) {
+      openConnectModal?.();
+    } else if (isConnected && !cookies.token) {
+      try {
+        // Request message signing
+        const signature = await signMessageAsync({ message: authSignMsg });
+        console.log("Signature:", signature);
+
+        // Authenticate user with the signature
+        await handleAuthConnect({
+          sig: signature,
+          msg: authSignMsg,
+          typ: "EVM",
+        });
+        antdMessage.success("Authentication successful!");
+      } catch (error) {
+        console.error("Error during signing:", error);
+        antdMessage.error("Failed to sign message. Please try again.");
+        disconnect();
+      }
+    }
+  };
+
   return (
     <div className='chatinputContainer'>
       {showTipPopup && (
@@ -188,7 +218,7 @@ export default function ChatInput({
 
           <div
             className='send_btn'
-            onClick={isConnected ? handleSend : openConnectModal}
+            onClick={isConnected ? handleSend : handleWalletConnect}
           >
             <svg
               width='16'

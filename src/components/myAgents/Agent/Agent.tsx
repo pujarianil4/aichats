@@ -18,15 +18,19 @@ interface IProps {
   isEmulatorOpen: boolean;
   toggleEmulator: (bool?: boolean) => void;
   agent: any;
+  edit: boolean;
+  setEdit: (bool: boolean) => void;
 }
 
 export default function Agent({
   isEmulatorOpen,
   toggleEmulator,
   agent,
+  edit,
+  setEdit,
 }: IProps) {
   const { data: agentData, isLoading } = agent;
-  const [edit, setEdit] = useState<boolean>(false);
+  // const [edit, setEdit] = useState<boolean>(false);
   const onChange = (key: string | string[]) => {
     // console.log(key);
   };
@@ -122,11 +126,10 @@ export default function Agent({
               </div>
             </div>
             {!isEmulatorOpen && (
-              <LuPanelLeftClose
-                size={18}
-                className='toggle_btn'
-                onClick={() => toggleEmulator()}
-              />
+              <p className='toggle_btn'>
+                <span>View Emulator</span>
+                <LuPanelLeftClose size={18} onClick={() => toggleEmulator()} />
+              </p>
             )}
             <div className='credits_card'>
               <div>

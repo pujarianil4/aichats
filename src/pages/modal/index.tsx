@@ -19,7 +19,7 @@ const ModelPage = () => {
   const [animationPath, setAnimationPath] = useState(selectedAnim.path);
   // const characterPath = "../../assets/fbx/model/character1.fbx";
   const characterPath = "/fbx/model/character1.fbx";
-  console.log("CHARECTOR_PATH", characterPath);
+  // const characterPath = "/fbx/model/character2.fbx";
   const character = useLoader(FBXLoader as any, characterPath); // Load character
   console.log("CHARACTER", character);
 
