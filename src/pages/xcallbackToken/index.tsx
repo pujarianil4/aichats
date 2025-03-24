@@ -19,8 +19,8 @@ const XCallback = () => {
         console.error("🚨 No OAuth code found!");
         return;
       }
+
       const data = {
-        id: userId,
         code: code,
         name: "x",
         type: "user",
@@ -44,7 +44,7 @@ const XCallback = () => {
     fetchToken();
   }, [navigate]);
 
-  return <p>Logging in...</p>;
+  return <p className='verify_txt'>Verify Token please wait..</p>;
 };
 
 export default XCallback;

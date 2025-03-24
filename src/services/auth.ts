@@ -115,7 +115,7 @@ export const handleXLogin = async () => {
 
   const rootUrl = "https://twitter.com/i/oauth2/authorize";
   const clientId = import.meta.env.VITE_TWITTER_ID;
-  const codeVerifier = import.meta.env.NEXT_PUBLIC_X_CODEVERIFIER;
+  const codeVerifier = import.meta.env.VITE_X_CODEVERIFIER;
   const redirectUri = `${currentDomain}/xcallback`;
   const state = "state";
   const codeChallenge = codeVerifier as string;
@@ -131,8 +131,8 @@ export const handleXLogin = async () => {
   };
   const qs = new URLSearchParams(options).toString();
   const authUrl = `${rootUrl}?${qs}`;
-  // window.location.href = authUrl;
-  window.open(authUrl, "_blank");
+  window.location.href = authUrl;
+  // window.open(authUrl, "_blank");
 };
 
 export const handleDiscordLogin = async () => {

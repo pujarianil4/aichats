@@ -14,13 +14,17 @@ import {
 } from "../../services/auth.ts";
 import { updateUser } from "../../services/userApi.ts";
 import NotificationMessage from "../common/notificationMessage.tsx";
-
 interface SocialModalProps {
   user: any;
   type?: "user" | "agent";
+  setDataLoad: any;
 }
 
-const SocialModal: React.FC<SocialModalProps> = ({ user, type = "agent" }) => {
+const SocialModal: React.FC<SocialModalProps> = ({
+  user,
+  type = "agent",
+  setDataLoad,
+}) => {
   const [connectedAccounts, setConnectedAccounts] = useState({
     X: user?.x?.username || null,
     Telegram: user?.telegram?.username || null,
@@ -97,10 +101,12 @@ const SocialModal: React.FC<SocialModalProps> = ({ user, type = "agent" }) => {
       const response = await updateUser(user.id, updateData);
 
       if (response) {
+        setDataLoad(true);
         NotificationMessage("success", "Telegram Added Successfully!");
       }
-      console.log("data", data);
-    } catch (error) {}
+    } catch (error) {
+      NotificationMessage("error", "Telegram not Added!");
+    }
   };
 
   const handleDiscordAuth = async () => {

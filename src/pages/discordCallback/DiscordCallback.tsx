@@ -21,7 +21,6 @@ const DiscordCallback = () => {
       }
 
       const data = {
-        id: userId,
         code: code,
         name: "discord",
         type: "user",
@@ -45,7 +44,7 @@ const DiscordCallback = () => {
     fetchToken();
   }, [navigate]);
 
-  return <p>verify token...</p>;
+  return <p className='verify_txt'>Verify Token please wait..</p>;
 };
 
 export default DiscordCallback;

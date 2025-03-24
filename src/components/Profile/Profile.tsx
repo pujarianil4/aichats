@@ -15,7 +15,7 @@ import { getUser } from "../../services/userApi.ts";
 export default function UserProfile() {
   const queryClient = useQueryClient();
   const { isLoading, profile, error } = useAppSelector((state) => state.user);
-
+  const [dataLoad, setDataLoad] = useState(false);
   const userId = profile?.uId;
   const {
     data: user,
@@ -29,8 +29,12 @@ export default function UserProfile() {
     refetchOnWindowFocus: true,
   });
 
-  useEffect(() => {}, [refetch]);
-
+  useEffect(() => {
+    if (dataLoad) {
+      refetch().then(() => setDataLoad(false));
+    }
+  }, [dataLoad]);
+  console.log("dataload state", dataLoad);
   const [edit, setEdit] = useState<boolean>(false);
   const { validateImage } = useImageNameValidator();
   const fileRefs = useRef<HTMLInputElement>(null);
@@ -176,7 +180,7 @@ export default function UserProfile() {
               </span>
             </h2>
             <div className='social_tab'>
-              <SocialModal user={user} type='user' />
+              <SocialModal user={user} type='user' setDataLoad={setDataLoad} />
             </div>
           </div>
         </div>
