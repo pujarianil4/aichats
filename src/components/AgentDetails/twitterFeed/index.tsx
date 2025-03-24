@@ -36,18 +36,24 @@ const TwitterFeed = ({ username }: props) => {
 
   return (
     <div className='twitter-feed-wrapper'>
-      {isLoading && <div className='loader'>Loading tweets...</div>}
-      <div className='twitter-feed-container' ref={containerRef}>
-        <a
-          className='twitter-timeline'
-          data-width='100%'
-          data-theme='dark'
-          href={account_Url}
-          data-chrome='noscrollbar noborders transparent'
-          data-tweet-limit='5'
-          data-aria-polite='assertive'
-        ></a>
-      </div>
+      {username === null ? (
+        <div> </div>
+      ) : (
+        <>
+          {isLoading && <div className='loader'>Loading tweets...</div>}
+          <div className='twitter-feed-container' ref={containerRef}>
+            <a
+              className='twitter-timeline'
+              data-width='100%'
+              data-theme='dark'
+              href={account_Url}
+              data-chrome='noscrollbar noborders transparent'
+              data-tweet-limit='5'
+              data-aria-polite='assertive'
+            ></a>
+          </div>
+        </>
+      )}
     </div>
   );
 };

@@ -71,4 +71,20 @@ export const ROUTES = [
     name: "modalPage",
     isPrivate: false,
   },
+  {
+    path: "/xcallback",
+    exact: true,
+    component: lazy(() => import("../pages/xcallbackToken/index.tsx")),
+    name: "callbackToken",
+    isPrivate: true,
+  },
+  {
+    path: "/discordcallback",
+    exact: true,
+    component: lazy(
+      () => import("../pages/discordCallback/DiscordCallback.tsx")
+    ),
+    name: "callbackToken",
+    isPrivate: true,
+  },
 ];
