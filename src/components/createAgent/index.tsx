@@ -172,6 +172,33 @@ export default function CreateAgent() {
             "Invalid contract address. Please enter a valid Ethereum address.",
         }));
       }
+    } else if (key === "persona") {
+      const charLength = value.trim().length;
+      setFormData((prev) => ({
+        ...prev,
+        [key]: value,
+      }));
+
+      setErrorMsg((prev) => ({
+        ...prev,
+        persona:
+          charLength < 50 || charLength > 300
+            ? "Persona must be between 50 and 300 characters (excluding spaces)."
+            : "",
+      }));
+    } else if (key === "desc") {
+      const charLength = value.trim().length;
+      setFormData((prev) => ({
+        ...prev,
+        [key]: value,
+      }));
+      setErrorMsg((prev) => ({
+        ...prev,
+        desc:
+          charLength < 150 || charLength > 500
+            ? "Description must be between 150 and 500 characters (excluding spaces)."
+            : "",
+      }));
     } else {
       setFormData((prev) => ({
         ...prev,
@@ -297,6 +324,11 @@ export default function CreateAgent() {
       setIsFlowUploading(false);
       //setImgSrc(imgURL);
     }
+  };
+
+  const handleSelect = (value: string) => {
+    setModalVisible(false);
+    setFormData({ ...formData, interfaceType: value });
   };
 
   const formValidation = () => {
@@ -543,10 +575,10 @@ export default function CreateAgent() {
                 rows={10}
                 id='instructions'
                 placeholder={`- Always stretch certain words with multiple 'o's or 's's
-- Start or end messages with location updates from different parts of your body
-- Use phrases like "speaking from my middle section" or "my tail end agrees"
-- Make frequent references to your length being both a blessing and a curse
-`}
+                - Start or end messages with location updates from different parts of your body
+                - Use phrases like "speaking from my middle section" or "my tail end agrees"
+                - Make frequent references to your length being both a blessing and a curse
+                `}
               />
               <span className='errormsg'>{errorMsg.desc}</span>
             </div> */}
@@ -682,6 +714,9 @@ export default function CreateAgent() {
                 </Popover>
               </div>
             </div>
+            <button className='interface_btn' onClick={handleOpenModal}>
+              {formData.interfaceType || "Select Chat Interface Type"}
+            </button>
             {/* <div
             className='viewmore'
             style={isViewMore ? { height: "max-content" } : { height: "0px" }}
@@ -767,7 +802,7 @@ export default function CreateAgent() {
                 quisquam voluptate, iure eos quasi natus labore fugit
                 consequatur, nemo molestias praesentium aliquam error minima.
               </p>
-              <button>Select</button>
+              <button onClick={() => handleSelect("private")}>Select</button>
             </div>
           </div>
           <div>
@@ -781,7 +816,7 @@ export default function CreateAgent() {
                 quisquam voluptate, iure eos quasi natus labore fugit
                 consequatur, nemo molestias praesentium aliquam error minima.
               </p>
-              <button>Select</button>
+              <button onClick={() => handleSelect("private")}>Select</button>
             </div>
           </div>
           <div>
@@ -795,7 +830,7 @@ export default function CreateAgent() {
                 quisquam voluptate, iure eos quasi natus labore fugit
                 consequatur, nemo molestias praesentium aliquam error minima.
               </p>
-              <button>Select</button>
+              <button onClick={() => handleSelect("private")}>Select</button>
             </div>
           </div>
         </CustomCarousel>
