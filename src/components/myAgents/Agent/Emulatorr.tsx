@@ -37,6 +37,7 @@ export default function Emulatorr({
   const [chats, setChats] = useState<any[]>([]);
   const [viewSize, setViewSize] = useState(2);
   const [pId, setpId] = useState(null);
+  const [showSettings, setShowSettings] = useState(false);
   const clearHistory = useAppSelector(
     (state) => state.user.currentAgent.clearHistory
   );
@@ -128,14 +129,40 @@ export default function Emulatorr({
               /> */}
             </div>
           </div>
-          <Chat
-            messages={chats}
-            setMessages={setChats}
-            sessionId={sessionData?.id}
-            pId={pId}
-            setpId={setpId}
-            agentInfo={agentInfo}
-          />
+          {!showSettings ? (
+            <section className='emulator_settings'>
+              <h3>Chat Settings</h3>
+              {/* <div>
+                <label></label> <input placeholder='Type Here' />
+
+              </div> */}
+              <p>Set Minimum Amount</p>
+              <div className='setting_item'>
+                {/* <p>Set Minimum Amount</p> */}
+                {/* TODO: add regex fo number */}
+                <input
+                  placeholder='0'
+                  // value={minAmount}
+                  // onChange={handleChange}
+                />
+                <button onClick={() => {}}>Update</button>
+              </div>
+              <p>Set Free Chats</p>
+              <div className='setting_item'>
+                <input placeholder='0' />
+                <button onClick={() => {}}>Update</button>
+              </div>
+            </section>
+          ) : (
+            <Chat
+              messages={chats}
+              setMessages={setChats}
+              sessionId={sessionData?.id}
+              pId={pId}
+              setpId={setpId}
+              agentInfo={agentInfo}
+            />
+          )}
         </div>
       )}
       {viewSize == 1 && (

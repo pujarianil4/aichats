@@ -26,12 +26,12 @@
     gap: 8px;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid var(--light);
+    border-bottom: 1px solid var(--dark);
     padding: 0 8px 8px;
 
     h3 {
       font-weight: 500;
-      color: var(--light);
+      color: var(--light-text);
     }
 
     &:nth-child(3) {
@@ -39,11 +39,75 @@
     }
 
     svg {
-      color: var(--light);
+      color: var(--light-text);
       margin-right: 8px;
       &:hover {
         color: var(--primary);
         cursor: pointer;
+      }
+    }
+  }
+
+  .emulator_settings {
+    // padding: 12px 0;
+
+    h3 {
+      padding: 12px 0 0;
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--light-text);
+    }
+
+    p {
+      color: var(--light-text);
+      margin: 12px 0 0;
+    }
+
+    .setting_item {
+      padding: 8px 0 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      // padding: 8px 0;
+      border-bottom: 1px solid var(--light-text);
+
+      p {
+        max-width: 100px;
+        font-size: 14px;
+      }
+
+      input {
+        width: 172px;
+        height: 20px;
+        outline: none;
+        border: none;
+        padding: 4px;
+        border-radius: 8px;
+        margin-left: auto;
+        background-color: white;
+        color: var(--dark);
+      }
+      svg {
+        padding-left: 8px;
+        cursor: pointer;
+      }
+
+      div {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      button {
+        width: max-content;
+        margin-left: 8px;
+        background-color: var(--primary);
+        padding: 4px 8px;
+        border-radius: 8px;
+        font-size: 14px;
+        &:hover {
+          color: var(--light);
+        }
       }
     }
   }

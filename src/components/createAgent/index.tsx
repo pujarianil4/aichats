@@ -41,6 +41,7 @@ type FormData = {
   agentType: string;
   search_engine_id: string;
   model_id: string;
+  interfaceType: string; // TODO update with exact type
   // greeting: string;
   // environmentPrompts: EnvironmentPrompts;
   // sampleConversations: IConversation[];
@@ -76,6 +77,7 @@ export default function CreateAgent() {
     agentType: "none",
     search_engine_id: "none",
     model_id: "none",
+    interfaceType: "",
     // greeting: "",
     // environmentPrompts: {
     //   forum: { prefix: "", suffix: "" },
@@ -121,6 +123,7 @@ export default function CreateAgent() {
       agentType: "none",
       search_engine_id: "none",
       model_id: "none",
+      interfaceType: "",
     });
   };
 

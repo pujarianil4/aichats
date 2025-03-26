@@ -173,17 +173,18 @@
         padding: 4px;
         border-radius: 8px;
         margin-left: auto;
+        background-color: white !important;
       }
-      svg {
-        padding-left: 8px;
-        cursor: pointer;
-      }
+      // svg {
+      //   padding-left: 8px;
+      //   cursor: pointer;
+      // }
 
-      div {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
+      // div {
+      //   display: flex;
+      //   align-items: center;
+      //   justify-content: center;
+      // }
     }
   }
 
