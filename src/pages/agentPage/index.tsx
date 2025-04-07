@@ -10,7 +10,7 @@ export default function AgentPage() {
   };
   return (
     <main>
-      <button onClick={handleSetChat}>Set Live Chat</button>
+      {/* <button onClick={handleSetChat}>Set Live Chat</button> */}
       {/* <ChatInstanceForm /> */}
       {/* <AgentDetails /> */}
       {/*  */}
