@@ -401,6 +401,7 @@ export default function CreateAgent() {
           persona: formData.persona,
           search_engine_id: formData.search_engine_id,
           model_id: formData.model_id,
+          interfaceType: formData.interfaceType,
 
           // instructions: formData.instructions
           //   .split("\n")
@@ -797,10 +798,9 @@ export default function CreateAgent() {
                 <img src={superchatSS} alt='superchat' />
               </div>
               <p>
-                Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                Molestias sequi incidunt corporis assumenda laborum. Non
-                quisquam voluptate, iure eos quasi natus labore fugit
-                consequatur, nemo molestias praesentium aliquam error minima.
+                Private chat: Lorem ipsum dolor sit amet consectetur,
+                adipisicing elit. Molestias sequi incidunt corporis assumenda
+                laborum.
               </p>
               <button onClick={() => handleSelect("private")}>Select</button>
             </div>
@@ -811,12 +811,13 @@ export default function CreateAgent() {
                 <img src={superchatSS} alt='superchat' />
               </div>
               <p>
-                Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                Molestias sequi incidunt corporis assumenda laborum. Non
-                quisquam voluptate, iure eos quasi natus labore fugit
-                consequatur, nemo molestias praesentium aliquam error minima.
+                Public chat with admin reply: Lorem ipsum dolor sit amet
+                consectetur, adipisicing elit. Molestias sequi incidunt corporis
+                assumenda laborum.
               </p>
-              <button onClick={() => handleSelect("private")}>Select</button>
+              <button onClick={() => handleSelect("publicWithReply")}>
+                Select
+              </button>
             </div>
           </div>
           <div>
@@ -825,12 +826,13 @@ export default function CreateAgent() {
                 <img src={superchatSS} alt='superchat' />
               </div>
               <p>
-                Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                Molestias sequi incidunt corporis assumenda laborum. Non
-                quisquam voluptate, iure eos quasi natus labore fugit
-                consequatur, nemo molestias praesentium aliquam error minima.
+                Public chat with Modal: Lorem ipsum dolor sit amet consectetur,
+                adipisicing elit. Molestias sequi incidunt corporis assumenda
+                laborum.
               </p>
-              <button onClick={() => handleSelect("private")}>Select</button>
+              <button onClick={() => handleSelect("publicWithModal")}>
+                Select
+              </button>
             </div>
           </div>
         </CustomCarousel>
