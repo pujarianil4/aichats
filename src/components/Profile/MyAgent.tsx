@@ -56,41 +56,13 @@ export default function MyAgentsComponent() {
                     <span>(4days ago)</span>
                   </p>
                   <p className='agent_description'>{agent?.desc}</p>
-                  <div className='tabs'>
+                  {/* <div className='tabs'>
                     <p>tag 1</p>
                     <p>tag 2</p>
                     <p>tag 3</p>
-                  </div>
+                  </div> */}
                 </div>
               ))}
-
-              <div className='agent_card'>
-                <div className='card_head'>
-                  <img src='' />
-                </div>
-                {/* TODO: Update status later */}
-
-                <div className='title_head'>
-                  <p className='agent_head'>
-                    <strong>Name</strong> &nbsp; $Lamaa&nbsp;
-                    <span>(4days ago)</span>
-                  </p>
-                  <p className={`${true ? "active" : "deactive"}`}>Active</p>
-                </div>
-
-                <p className='agent_description'>
-                  Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                  Laudantium assumenda obcaecati praesentium, qui deserunt
-                  labore deleniti animi, iusto, quo debitis consectetur
-                  recusandae velit alias harum quae repellendus esse dolorum.
-                  Fuga.
-                </p>
-                {/* <div className='tabs'>
-                  <p>tag 1</p>
-                  <p>tag 2</p>
-                  <p>tag 3</p>
-                </div> */}
-              </div>
             </div>
           ) : (
             <NoData />
