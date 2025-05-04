@@ -6,6 +6,7 @@ import { shortenAddress } from "../../utils/index.ts";
 import CopyButton from "../common/copyButton.tsx";
 import UpdateProfile from "./updateProfile.tsx";
 import { FiEdit } from "react-icons/fi";
+import MyAgentsComponent from "./MyAgent.tsx";
 
 interface IProps {
   user: any;
@@ -82,7 +83,7 @@ export default function UserProfile({ user }: IProps) {
             </div>
           </div>
 
-          <div className='form'>
+          {/* <div className='form'>
             <div className='input_container'>
               <label htmlFor='user_name'>
                 User Name
@@ -110,8 +111,24 @@ export default function UserProfile({ user }: IProps) {
                 id='bio'
                 placeholder='This is the short bio that will be shown at your users profile.'
               />
-              {/* <span className='errormsg'>{errorMsg.desc}</span> */}
+              <span className='errormsg'>{errorMsg.desc}</span>
             </div>
+          </div> */}
+
+          <div className='user_agents'>
+            <div className='agent_tabs'>
+              <p className='active'>
+                <span>All</span>
+              </p>
+              <p>
+                <span>With Token</span>
+              </p>
+              <p>
+                <span>Without Token</span>
+              </p>
+            </div>
+
+            <MyAgentsComponent />
           </div>
         </div>
       )}

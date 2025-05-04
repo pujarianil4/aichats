@@ -280,3 +280,22 @@
     max-width: 500px;
   }
 }
+
+.user_agents {
+  margin-top: 50px;
+  .agent_tabs {
+    display: flex;
+    gap: 10px;
+    p {
+      border: 1.5px solid var(--light);
+      padding: 5px 20px;
+      border-radius: 8px;
+      background: var(--dark);
+      cursor: pointer;
+    }
+    .active {
+      background-color: var(--primary);
+      border-color: var(--primary);
+    }
+  }
+}
