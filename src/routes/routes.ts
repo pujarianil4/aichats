@@ -71,4 +71,11 @@ export const ROUTES = [
     name: "modalPage",
     isPrivate: false,
   },
+  {
+    path: "/create-agents",
+    exact: true,
+    component: lazy(() => import("../pages/createAgents/index.tsx")),
+    name: "CreateAgentPage",
+    isPrivate: false,
+  },
 ];
