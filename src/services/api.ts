@@ -270,3 +270,20 @@ export const getAllAgentByUser = async () => {
     throw error;
   }
 };
+
+export const connectWithTelegram = async (data: {
+  token: string;
+  aId: string;
+}) => {
+  try {
+    const response = await axios.post(
+      "https://tele-ai-bot.onrender.com/bot",
+      data
+    );
+    console.log("RESPONSE", response);
+    return response.data;
+  } catch (error) {
+    console.error("Error", error);
+    throw error;
+  }
+};
