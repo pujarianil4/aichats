@@ -127,7 +127,13 @@ export const handleXLogin = async () => {
     state: state,
     code_challenge: codeChallenge,
     code_challenge_method: "plain",
-    scope: ["tweet.read", "users.read", "offline.access"].join(" "),
+    scope: [
+      "tweet.read",
+      "tweet.write",
+      "users.read",
+      "like.write",
+      "offline.access",
+    ].join(" "),
   };
   const qs = new URLSearchParams(options).toString();
   const authUrl = `${rootUrl}?${qs}`;
