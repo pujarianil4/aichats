@@ -12,7 +12,7 @@ export default function ProfileHome() {
   // const { agentId } = useParams();
   const { isLoading, profile, error } = useAppSelector((state) => state.user);
   console.log("user", profile);
-  const userId = profile?.uid;
+  const userId = profile?.uId;
 
   const user = useQuery({
     queryKey: ["privateuser", userId],

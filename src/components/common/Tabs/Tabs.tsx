@@ -3,18 +3,18 @@ import "./tabs.scss";
 import { Tabs } from "antd";
 import type { TabsProps } from "antd";
 
-type props = {
+type Props = {
   items: TabsProps["items"];
+  onChange: (key: string) => void;
+  activeKey: string;
 };
 
-export default function CustomTabs({ items }: props) {
-  const onChange = (key: string) => {
-    console.log(key);
-  };
+export default function CustomTabs({ items, onChange, activeKey }: Props) {
   return (
     <div>
       <Tabs
         onChange={onChange}
+        activeKey={activeKey}
         className='custom_tabs'
         type='card'
         items={items}
