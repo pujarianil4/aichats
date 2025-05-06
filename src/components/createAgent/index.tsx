@@ -101,7 +101,8 @@ export default function CreateAgent() {
     formData.persona &&
     formData.agentType != "none" &&
     formData.search_engine_id != "none" &&
-    formData.model_id != "none";
+    formData.model_id != "none" &&
+    formData.interfaceType;
 
   // (tabs == "new" ? formData.ticker : formData.contractAddress);
   const setFallbackURL = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
@@ -815,8 +816,8 @@ export default function CreateAgent() {
                 consectetur, adipisicing elit. Molestias sequi incidunt corporis
                 assumenda laborum.
               </p>
-              <button onClick={() => handleSelect("publicWithReply")}>
-                Select
+              <button disabled onClick={() => handleSelect("publicWithReply")}>
+                Coming soon
               </button>
             </div>
           </div>
@@ -830,8 +831,8 @@ export default function CreateAgent() {
                 adipisicing elit. Molestias sequi incidunt corporis assumenda
                 laborum.
               </p>
-              <button onClick={() => handleSelect("publicWithModal")}>
-                Select
+              <button disabled onClick={() => handleSelect("publicWithModal")}>
+                Coming soon
               </button>
             </div>
           </div>
