@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import "./profile.scss";
 import { Button, Spin } from "antd";
 import { FiEdit } from "react-icons/fi";
+import MyAgentsComponent from "./MyAgent.tsx";
 import { uploadSingleFile } from "../../services/api.ts";
 import { updateUser, checkUserExist } from "../../services/userApi.ts";
 import NotificationMessage from "../common/notificationMessage.tsx";
@@ -86,6 +87,10 @@ export default function UserProfile() {
   }, [userInfo.username, edit]);
 
   const handleInputChange = (key: string, value: string) => {
+    setUserInfo((prevInfo) => ({
+      ...prevInfo,
+      [key]: value,
+    }));
     if (key === "username") {
       const trimmedValue = value.replace(/\s/g, "");
       if (trimmedValue.length > 15) {
@@ -102,11 +107,6 @@ export default function UserProfile() {
       }
       setErrorMsg("");
     }
-
-    setUserInfo((prevInfo) => ({
-      ...prevInfo,
-      [key]: value,
-    }));
   };
 
   const uploadProfile = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -183,50 +183,111 @@ export default function UserProfile() {
               <SocialModal user={user} type='user' setDataLoad={setDataLoad} />
             </div>
           </div>
+
+          {/* <div className='form'>
+            <div className='input_container'>
+              <label htmlFor='user_name'>
+                User Name
+                <span className='required'>*</span>
+              </label>
+              <input
+                id='user_name'
+                value={userInfo.username}
+                onChange={(e) => handleInputChange("username", e.target.value)}
+                type='text'
+                placeholder='Add User Name'
+              />
+              <span className='errormsg'></span>
+            </div>
+
+            <div className='input_container'>
+              <label htmlFor='bio'>
+                User Biography
+                <span className='required'>*</span>
+              </label>
+              <textarea
+                value={userInfo.bio}
+                onChange={(e) => handleInputChange("bio", e.target.value)}
+                rows={10}
+                id='bio'
+                placeholder='This is the short bio that will be shown at your users profile.'
+              />
+              <span className='errormsg'>{errorMsg.desc}</span>
+          <div className='info'>
+            <h2>
+              {userInfo.username}{" "}
+              <span className='edit_btn' onClick={() => setEdit(!edit)}>
+                <FiEdit /> Edit
+              </span>
+            </h2>
+            <div className='social_tab'>
+              <SocialModal user={user} type='user' setDataLoad={setDataLoad} />
+            </div>
+          </div> */}
         </div>
       </div>
 
-      <div className='form'>
-        <div className='input_container'>
-          <label htmlFor='user_name'>User Name</label>
-          {errorMsg && (
-            <p style={{ color: "red", marginBottom: "2px", fontSize: "12px" }}>
-              {errorMsg}
+      {!edit ? (
+        <div className='user_agents'>
+          <div className='agent_tabs'>
+            <p className='active'>
+              <span>All</span>
             </p>
-          )}
-          <input
-            id='user_name'
-            value={userInfo.username}
-            onChange={(e) => handleInputChange("username", e.target.value)}
-            type='text'
-            disabled={!edit}
-          />
+            <p>
+              <span>With Token</span>
+            </p>
+            <p>
+              <span>Without Token</span>
+            </p>
+          </div>
 
-          {usernameAvailable === false && !errorMsg && (
-            <p style={{ color: "green" }}>Username is available</p>
-          )}
-          {usernameAvailable === true && !errorMsg && (
-            <p style={{ color: "red" }}>Username is already taken</p>
+          <MyAgentsComponent />
+        </div>
+      ) : (
+        <div className='form'>
+          <div className='input_container'>
+            <label htmlFor='user_name'>User Name</label>
+            {errorMsg && (
+              <p
+                style={{ color: "red", marginBottom: "2px", fontSize: "12px" }}
+              >
+                {errorMsg}
+              </p>
+            )}
+            <input
+              id='user_name'
+              value={userInfo.username}
+              onChange={(e) => handleInputChange("username", e.target.value)}
+              type='text'
+              disabled={!edit}
+            />
+
+            {usernameAvailable === false && !errorMsg && (
+              <p style={{ color: "green" }}>Username is available</p>
+            )}
+            {usernameAvailable === true && !errorMsg && (
+              <p style={{ color: "red" }}>Username is already taken</p>
+            )}
+          </div>
+
+          <div className='input_container'>
+            <label htmlFor='email'>Email</label>
+            <input
+              id='email'
+              value={userInfo.email}
+              onChange={(e) => handleInputChange("email", e.target.value)}
+              type='text'
+              disabled={!edit}
+            />
+          </div>
+
+          {edit && (
+            <Button onClick={handleSubmit} type='primary' loading={loading}>
+              Update Profile
+            </Button>
           )}
         </div>
-
-        <div className='input_container'>
-          <label htmlFor='email'>Email</label>
-          <input
-            id='email'
-            value={userInfo.email}
-            onChange={(e) => handleInputChange("email", e.target.value)}
-            type='text'
-            disabled={!edit}
-          />
-        </div>
-
-        {edit && (
-          <Button onClick={handleSubmit} type='primary' loading={loading}>
-            Update Profile
-          </Button>
-        )}
-      </div>
+      )}
     </div>
   );
 }

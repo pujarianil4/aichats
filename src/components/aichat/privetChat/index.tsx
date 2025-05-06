@@ -130,56 +130,58 @@ export default function PrivetChat({ agent }: any) {
   //   };
   // }, [userId]);
 
-  if (!isConnected) {
-    return (
-      <div className='emulator_container'>
-        <div className='emulator_container_connect'>
-          <p>Please connect your wallet to start chat</p>
-          <Button onClick={handleWalletConnect} type='primary'>
-            Connect Wallet
-          </Button>
-        </div>
-      </div>
-    );
-  }
+  // if (!isConnected) {
+  //   return (
+  //     <div className='emulator_container'>
+  //       <div className='emulator_container_connect'>
+  //         <p>Please connect your wallet to start chat</p>
+  //         <Button onClick={handleWalletConnect} type='primary'>
+  //           Connect Wallet
+  //         </Button>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
-  if (chatLoading || !sessionData) {
-    return (
-      <div className='emulator_container'>
-        <PageLoader />
-      </div>
-    );
-  }
+  // if (chatLoading || !sessionData) {
+  //   return (
+  //     <div className='emulator_container'>
+  //       <PageLoader />
+  //     </div>
+  //   );
+  // }
 
   return (
     <>
       {viewSize == 2 && (
-        <div className='emulator_container'>
-          <div className='emulator_head'>
-            <h3 style={{ textAlign: "center" }}>
-              Chat with {agent?.data?.name}
-            </h3>
-            <div>
-              <MdDeleteOutline
-                size={18}
-                onClick={handleReset}
-                style={{ cursor: "pointer" }}
-              />
-              <BsTextareaResize
-                size={18}
-                onClick={() => setViewSize(1)}
-                style={{ cursor: "pointer" }}
-              />
+        <div className='private_chat'>
+          <div className='emulator_container'>
+            <div className='emulator_head'>
+              <h3 style={{ textAlign: "center" }}>
+                Chat with {agent?.data?.name}
+              </h3>
+              <div>
+                <MdDeleteOutline
+                  size={18}
+                  onClick={handleReset}
+                  style={{ cursor: "pointer" }}
+                />
+                <BsTextareaResize
+                  size={18}
+                  onClick={() => setViewSize(1)}
+                  style={{ cursor: "pointer" }}
+                />
+              </div>
             </div>
+            <Chat
+              messages={chats}
+              setMessages={setChats}
+              sessionId={sessionData?.id}
+              pId={pId}
+              setpId={setpId}
+              agent={agent}
+            />
           </div>
-          <Chat
-            messages={chats}
-            setMessages={setChats}
-            sessionId={sessionData?.id}
-            pId={pId}
-            setpId={setpId}
-            agent={agent}
-          />
         </div>
       )}
       {viewSize == 1 && (
