@@ -49,8 +49,6 @@ export default function MyAgentsComponent() {
                   <div className='card_head'>
                     <img src={agent?.pic} />
                   </div>
-                  {/* TODO: Update status later */}
-
                   <div className='title_head'>
                     <p className='agent_head'>
                       <strong>{agent?.name}</strong> &nbsp; $Lamaa&nbsp;
