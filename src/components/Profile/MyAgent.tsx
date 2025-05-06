@@ -50,11 +50,15 @@ export default function MyAgentsComponent() {
                     <img src={agent?.pic} />
                   </div>
                   {/* TODO: Update status later */}
-                  <p className={`${true ? "active" : "deactive"}`}>Active</p>
-                  <p className='agent_head'>
-                    <strong>{agent?.name}</strong> &nbsp; $Lamaa&nbsp;
-                    <span>(4days ago)</span>
-                  </p>
+
+                  <div className='title_head'>
+                    <p className='agent_head'>
+                      <strong>{agent?.name}</strong> &nbsp; $Lamaa&nbsp;
+                      <span>(4days ago)</span>
+                    </p>
+                    <p className={`${true ? "active" : "deactive"}`}>Active</p>
+                  </div>
+
                   <p className='agent_description'>{agent?.desc}</p>
                   {/* <div className='tabs'>
                     <p>tag 1</p>
