@@ -46,10 +46,22 @@
         cursor: pointer;
       }
     }
+
+    .is_active {
+      color: var(--primary);
+    }
   }
 
   .emulator_settings {
     // padding: 12px 0;
+
+    svg {
+      padding: 12px 0 0;
+      &:hover {
+        color: var(--primary);
+        cursor: pointer;
+      }
+    }
 
     h3 {
       padding: 12px 0 0;

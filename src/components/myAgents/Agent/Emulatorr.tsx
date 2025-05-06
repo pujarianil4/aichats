@@ -21,8 +21,9 @@ import NoData from "../../common/noData.tsx";
 import { useAppDispatch, useAppSelector } from "../../../hooks/reduxHooks.tsx";
 import { setClearHistory } from "../../../contexts/reducers/index.ts";
 import Cookies from "js-cookie";
-import { IoIosArrowDropdown } from "react-icons/io";
+import { IoIosArrowDropdown, IoMdArrowBack } from "react-icons/io";
 import { decryptToken } from "../../../services/apiconfig.ts";
+import { IoSettingsOutline } from "react-icons/io5";
 
 export default function Emulatorr({
   isEmulatorOpen,
@@ -117,21 +118,23 @@ export default function Emulatorr({
             />
             <h3 style={{ textAlign: "center" }}>Emulator</h3>
             <div>
-              <MdDeleteOutline
+              <MdDeleteOutline size={18} onClick={handleReset} />
+
+              <IoSettingsOutline
                 size={18}
-                onClick={handleReset}
-                style={{ cursor: "pointer" }}
+                onClick={() => setShowSettings(!showSettings)}
+                className={`${showSettings ? "is_active" : ""}`}
               />
-              {/* <BsTextareaResize
-                size={18}
-                onClick={() => setViewSize(1)}
-                style={{ cursor: "pointer" }}
-              /> */}
             </div>
           </div>
-          {!showSettings ? (
+          {showSettings ? (
             <section className='emulator_settings'>
-              <h3>Chat Settings</h3>
+              <div
+                style={{ display: "flex", gap: "8px", alignItems: "center" }}
+              >
+                <IoMdArrowBack onClick={() => setShowSettings(!showSettings)} />
+                <h3>Chat Settings</h3>
+              </div>
               {/* <div>
                 <label></label> <input placeholder='Type Here' />
 
