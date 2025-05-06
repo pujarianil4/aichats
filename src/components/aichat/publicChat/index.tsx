@@ -152,23 +152,6 @@ export default function PublicAiChats({
         getMutedUsers();
       }
     }, 100);
-
-    // if (isConnected && instanceData?.id) {
-    //   socket.on("connect", () => {
-    //     console.log("Connected:", socket.id);
-    //     socket.emit("join", {
-    //       // walletAddress: address,
-    //       walletAddress: null,
-    //       instanceId: instanceData?.id,
-    //     });
-    //     console.log("TOken", tokenData?.token);
-    //     socket.emit("authenticate", {
-    //       token: tokenData?.token,
-    //     });
-    //   });
-    //   getTokenDetails();
-    //   getMutedUsers();
-    // }
   }, [isConnected, instanceData?.id, tokenData, isJoined]);
 
   // useEffect(() => {

@@ -11,8 +11,6 @@ interface AppState {
   groupChatLimit: number;
   groupChatNotification: boolean;
 }
-const TwitterID = import.meta.env.NEXT_PUBLIC_TWITTER_ID;
-const CODEVERIFIER = import.meta.env.NEXT_PUBLIC_X_CODEVERIFIER;
 
 const Twitter: React.FC<{
   onSuccess: (username: string) => void;
@@ -38,12 +36,14 @@ const Twitter: React.FC<{
   };
 
   async function handleTwitterLogin() {
-    const currentDomain = getCurrentDomain();
+    const currentDomain = window.location.origin; // More reliable
+
     const rootUrl = "https://twitter.com/i/oauth2/authorize";
-    const clientId = TwitterID as string;
-    const redirectUri = `${currentDomain}/api/twitter`;
+    const clientId = import.meta.env.VITE_TWITTER_ID;
+    const codeVerifier = import.meta.env.NEXT_PUBLIC_X_CODEVERIFIER;
+    const redirectUri = `${currentDomain}/xcallback`;
     const state = "state";
-    const codeChallenge = CODEVERIFIER as string;
+    const codeChallenge = codeVerifier as string;
 
     const options = {
       response_type: "code",
@@ -54,9 +54,9 @@ const Twitter: React.FC<{
       code_challenge_method: "plain",
       scope: ["tweet.read", "users.read", "offline.access"].join(" "),
     };
-
     const qs = new URLSearchParams(options).toString();
     const authUrl = `${rootUrl}?${qs}`;
+    // window.location.href = authUrl;
     window.open(authUrl, "_blank");
   }
 

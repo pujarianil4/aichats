@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import "./index.scss";
+import { connectWithTelegram } from "../../../services/api.ts";
+import { useParams } from "react-router-dom";
 const Telegram: React.FC<{
   onSuccess: (username: string) => void;
   onFailure: () => void;
   initialUsername?: string;
 }> = ({ onSuccess, onFailure, initialUsername }) => {
+  const { agentId } = useParams();
   const [botToken, setBotToken] = useState("");
   const [isUserConnected, setIsUserConnected] = useState(false);
   const [telegramUsername, setTelegramUsername] = useState<string | null>(
@@ -25,6 +28,11 @@ const Telegram: React.FC<{
       console.log("Telegram Bot Data", data);
       console.group("data", data);
       if (data.ok) {
+        const payload = {
+          token: botToken,
+          aId: agentId as string,
+        };
+        await connectWithTelegram(payload);
         const username = `@${data.result.username}`;
         setTelegramUsername(username);
         setIsUserConnected(true);
