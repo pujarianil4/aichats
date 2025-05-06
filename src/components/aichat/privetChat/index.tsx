@@ -26,7 +26,7 @@ import { authSignMsg } from "../../../utils/contants.ts";
 import { handleAuthConnect } from "../../../services/auth.ts";
 import { IoIosArrowDropdown } from "react-icons/io";
 
-export default function PrivetChat() {
+export default function PrivetChat({ agent }: any) {
   const { isConnected } = useAccount();
   const { agentId } = useParams();
   const [chats, setChats] = useState<any[]>([]);
@@ -59,11 +59,11 @@ export default function PrivetChat() {
     refetchOnWindowFocus: true,
   });
 
-  const agent = useQuery({
-    queryKey: ["privateagent", agentId],
-    queryFn: () => getMyAgentData(agentId!),
-    enabled: !!agentId,
-  });
+  // const agent = useQuery({
+  //   queryKey: ["privateagent", agentId],
+  //   queryFn: () => getMyAgentData(agentId!),
+  //   enabled: !!agentId,
+  // });
 
   useEffect(() => {
     if (chatHistory?.length > 0) {

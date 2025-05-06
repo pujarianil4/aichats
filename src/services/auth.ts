@@ -1,12 +1,11 @@
-
-import axios from 'axios';
-import { getCurrentDomain } from '../utils/index.ts';
+import axios from "axios";
+import { getCurrentDomain } from "../utils/index.ts";
 import { api } from "./apiconfig.ts";
 
 export const handleAuthConnect = async (payload: {
   sig: `0x${string}` | string | undefined;
   msg: string;
-   typ: string
+  typ: string;
 }) => {
   const response = await api.post("/auth/connect", payload);
 
@@ -53,14 +52,13 @@ declare global {
   }
 }
 
-
 export const handleTelegramAuth = (): Promise<any> => {
   return new Promise((resolve, reject) => {
     const script = document.createElement("script");
     script.src = "https://telegram.org/js/telegram-widget.js?27";
     script.async = true;
     document.body.appendChild(script);
-   const botID = import.meta.env.VITE_TELEGRAM_BOT_ID;
+    const botID = import.meta.env.VITE_TELEGRAM_BOT_ID_USER;
     script.onload = () => {
       if (window.Telegram) {
         window.Telegram.Login.auth(
@@ -76,7 +74,6 @@ export const handleTelegramAuth = (): Promise<any> => {
               typeof data.id === "number" &&
               typeof data.username === "string"
             ) {
-
               // updateUser({
               //   telegram: {
               //     id: String(data.id),
@@ -93,7 +90,7 @@ export const handleTelegramAuth = (): Promise<any> => {
               //   });
             } else {
               console.error("Invalid Telegram data received:", data);
-             
+
               reject("Invalid Telegram data");
               return;
             }
@@ -112,23 +109,60 @@ export const handleTelegramAuth = (): Promise<any> => {
     };
   });
 };
+
+export const handleXLogin = async () => {
+  const currentDomain = window.location.origin; // More reliable
+
+  const rootUrl = "https://twitter.com/i/oauth2/authorize";
+  const clientId = import.meta.env.VITE_TWITTER_ID;
+  const codeVerifier = import.meta.env.VITE_X_CODEVERIFIER;
+  const redirectUri = `${currentDomain}/xcallback`;
+  const state = "state";
+  const codeChallenge = codeVerifier as string;
+
+  const options = {
+    response_type: "code",
+    client_id: clientId,
+    redirect_uri: redirectUri,
+    state: state,
+    code_challenge: codeChallenge,
+    code_challenge_method: "plain",
+    scope: [
+      "tweet.read",
+      "tweet.write",
+      "users.read",
+      "like.write",
+      "offline.access",
+    ].join(" "),
+  };
+  const qs = new URLSearchParams(options).toString();
+  const authUrl = `${rootUrl}?${qs}`;
+  window.location.href = authUrl;
+  // window.open(authUrl, "_blank");
+};
+
 export const handleDiscordLogin = async () => {
   const currentDomain = window.location.origin; // More reliable
-  const clientId = import.meta.env.VITE_PUBLIC_DISCORD_ID || "default_client_id";
+  const clientId =
+    import.meta.env.VITE_PUBLIC_DISCORD_ID || "default_client_id";
 
   if (!clientId || clientId === "default_client_id") {
     console.error("🚨 Discord Client ID is missing! Check your .env file.");
     return;
   }
 
-  const redirectUri = encodeURIComponent(`${currentDomain}/api/callback/discord`);
+  const redirectUri = encodeURIComponent(
+    `${currentDomain}/discordcallback`
+    // "https://samdevai.netlify.app/profile"
+  );
+
   const oauthUrl = `https://discord.com/oauth2/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&scope=identify`;
 
   console.log("Redirecting to:", oauthUrl); // Debugging
   window.location.href = oauthUrl;
 };
 
-export const fetchDiscordData = async (code: string)=> {
+export const fetchDiscordData = async (code: string) => {
   try {
     console.log("fetch code works");
     if (!code) {
@@ -138,7 +172,7 @@ export const fetchDiscordData = async (code: string)=> {
     const currentDomain = getCurrentDomain();
     const redirectUri = `${currentDomain}/api/callback/discord`;
     const secretCode = import.meta.env.VITE_PUBLIC_DISCORD_ID;
-    const clientSecret = import.meta.env.VITE_PUBLIC_DISCORD_SECRET;
+    const clientSecret = import.meta.env.Vite_PUBLIC_DISCORD_SECRET;
     if (!secretCode || !clientSecret || !redirectUri) {
       throw new Error("Discord client ID or secret is missing");
     }
@@ -172,4 +206,4 @@ export const fetchDiscordData = async (code: string)=> {
     console.error("Error during Discord OAuth callback:", error);
     throw error;
   }
-}
+};
