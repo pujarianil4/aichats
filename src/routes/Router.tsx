@@ -10,7 +10,7 @@ import PageLoader from "../components/common/PageLoader.tsx";
 import { useAppSelector } from "../hooks/reduxHooks.tsx";
 import { getTokens } from "../services/apiconfig.ts";
 import DiscordCallback from "../pages/discordCallback/DiscordCallback.tsx";
-
+import Sidebar from "../components/Sidebar/index.tsx";
 interface IRoutesProps {
   children: ReactNode;
 }
@@ -30,7 +30,7 @@ function PrivateRoute({ children }: { children: ReactNode }) {
   }
 
   return token ? (
-    <div style={{ minHeight: "70vh" }}>{children as JSX.Element}</div>
+    <div className='containr'>{children as JSX.Element}</div>
   ) : (
     <Navigate to='/' replace />
   );
@@ -38,13 +38,14 @@ function PrivateRoute({ children }: { children: ReactNode }) {
 
 function PublicRoute(props: IRoutesProps) {
   const { children } = props;
-  return <div style={{ minHeight: "70vh" }}>{children as JSX.Element}</div>;
+  return <div className='containr'>{children as JSX.Element}</div>;
 }
 
 function AppRoutes() {
   return (
     <Suspense fallback={<PageLoader />}>
-      <Navbar />
+      {/* <Navbar /> */}
+      <Sidebar />
       <Routes>
         {ROUTES.map((route) =>
           route.isPrivate ? (
@@ -90,7 +91,7 @@ function AppRoutes() {
           }
         />
       </Routes>
-      <Footer />
+      {/* <Footer /> */}
     </Suspense>
   );
 }

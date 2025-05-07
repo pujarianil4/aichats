@@ -41,6 +41,15 @@
   min-height: 70vh;
 }
 
+main {
+  display: flex;
+}
+
+.containr {
+  padding: 20px;
+  width: 65%;
+  margin: 0 auto;
+}
 .gradient-border {
   background: #000;
   border: 1px solid transparent;

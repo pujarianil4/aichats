@@ -1,0 +1,219 @@
+@import "/src/styles/breakPoints";
+.sidebar {
+  background-color: #18181b;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: 100vh;
+  position: relative;
+  transition: all 0.3s ease;
+
+  &.open {
+    width: 300px;
+  }
+
+  &.closed {
+    width: 60px;
+  }
+
+  .sidebar-bx {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  &.closed {
+    .sidebar-bx {
+      display: block;
+    }
+  }
+  .sidebar-logo {
+    display: flex;
+    justify-content: center;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+
+    img {
+      width: 40px;
+      height: 40px;
+      background-color: #ffffff;
+      border-radius: 50%;
+    }
+  }
+
+  &.closed {
+    .sidebar-logo {
+      display: none;
+    }
+  }
+
+  .toggle-button {
+    display: flex;
+    justify-content: center;
+    .toggle-icon {
+      background: transparent;
+      border: none;
+      color: #ffffff;
+      font-size: 24px;
+      padding: 5px;
+      transition: background 0.3s ease, transform 0.3s ease;
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+
+  .sidebar-menu {
+    .ant-menu {
+      background: #1a1a1a;
+      color: #ffffff;
+      border-right: none;
+
+      .ant-menu-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        padding: 10px !important;
+        border-radius: 10px;
+        color: #ffffff;
+        transition: padding 0.3s ease, background-color 0.3s ease;
+
+        .ant-menu-item-icon {
+          color: #ffffff;
+          margin-right: 10px;
+          transition: margin-right 0.3s ease;
+        }
+
+        .ant-menu-title-content {
+          opacity: 1;
+          transition: opacity 0.3s ease;
+        }
+
+        &.ant-menu-item-selected {
+          background-color: #ff00b7;
+          color: #ffffff;
+
+          .ant-menu-item-icon {
+            color: #ffffff;
+          }
+        }
+
+        &:hover {
+          background-color: #ff00b7;
+          color: #ffffff;
+
+          .ant-menu-item-icon {
+            color: #ffffff;
+          }
+        }
+      }
+    }
+
+    .sidebar.closed & {
+      .ant-menu-item {
+        justify-content: center;
+        padding: 10px 5px !important;
+        .ant-menu-title-content {
+          opacity: 0;
+        }
+        .ant-menu-item-icon {
+          margin-right: 0;
+        }
+      }
+    }
+  }
+
+  .wallet_bx {
+    position: absolute;
+    bottom: 6%;
+    width: calc(100% - 40px);
+
+    .connect-wallet,
+    .address {
+      width: 100%;
+      background-color: #ff00b7;
+      color: #ffffff;
+      border: none;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 500;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: padding 0.3s ease, font-size 0.3s ease;
+
+      &:hover {
+        background-color: #e600a3 !important;
+        color: #ffffff !important;
+      }
+
+      span {
+        opacity: 1;
+        transition: opacity 0.3s ease;
+      }
+    }
+
+    .sidebar.closed & {
+      .connect-wallet,
+      .address {
+        padding: 10px;
+        font-size: 20px;
+        span {
+          opacity: 0;
+        }
+      }
+    }
+  }
+}
+.modal_content {
+  display: flex;
+  justify-content: space-around;
+  gap: 20px;
+  align-items: center;
+  @include lessThan(sm) {
+    flex-direction: column;
+  }
+  div {
+    width: 200px;
+    background: var(--dark);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    margin: 20px;
+    justify-content: center;
+    text-align: center;
+
+    h3 {
+      font-size: 1.2rem;
+      @include lessThan(md) {
+        font-size: 1rem;
+      }
+    }
+    p {
+      font-size: 0.7rem;
+      color: var(--light-text);
+    }
+    button {
+      // border-radius: 15px;
+      // border-color: var(--primary);
+      // padding-block: 15px;
+      // padding: 10px 20px;
+      font-size: 16px;
+      @include lessThan(md) {
+        font-size: 14px;
+      }
+      @include lessThan(sm) {
+        font-size: 12px;
+      }
+    }
+  }
+  .magic {
+    h3 {
+      color: var(--primary);
+    }
+  }
+}
