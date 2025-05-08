@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./index.scss";
 import { connectWithTelegram } from "../../../services/api.ts";
 import { useParams } from "react-router-dom";
+import { updateAgentData } from "../../../services/agent.ts";
 const Telegram: React.FC<{
   onSuccess: (username: string) => void;
   onFailure: () => void;
@@ -9,12 +10,16 @@ const Telegram: React.FC<{
 }> = ({ onSuccess, onFailure, initialUsername }) => {
   const { agentId } = useParams();
   const [botToken, setBotToken] = useState("");
+  const [connectionStatus, setConnectionStatus] = useState<
+    "idle" | "connecting" | "connected"
+  >("idle");
   const [isUserConnected, setIsUserConnected] = useState(false);
   const [telegramUsername, setTelegramUsername] = useState<string | null>(
     initialUsername || null
   );
 
   const handleConnect = async () => {
+    setConnectionStatus("connecting");
     try {
       if (!botToken) {
         alert("Please enter a valid Bot Access Token.");
@@ -34,10 +39,16 @@ const Telegram: React.FC<{
         };
         await connectWithTelegram(payload);
         const username = `@${data.result.username}`;
+        // TODO path user Data, telegram
+        await updateAgentData(agentId as string, {
+          telegram: data.result.username,
+        });
         setTelegramUsername(username);
         setIsUserConnected(true);
         onSuccess(username);
+        setConnectionStatus("connected");
       } else {
+        setConnectionStatus("idle");
         throw new Error("Invalid Bot Token.");
       }
     } catch (error) {
@@ -45,6 +56,7 @@ const Telegram: React.FC<{
       onFailure();
       console.error("Error connecting bot:", error);
       alert("Failed to connect bot. Please check the token and try again.");
+      setConnectionStatus("idle");
     }
   };
 
@@ -167,7 +179,11 @@ const Telegram: React.FC<{
         </>
       </div>
       <div className='connect_btn' onClick={handleConnect}>
-        Connect
+        {connectionStatus === "connected"
+          ? "Connected"
+          : connectionStatus === "connecting"
+          ? "Connecting..."
+          : "Connect"}
       </div>
     </div>
   );
